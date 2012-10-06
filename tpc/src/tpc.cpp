@@ -24,9 +24,13 @@ int main() {
 		exit ( res );
 	} else {
 		// Esperamos que muera el generador de autos
-		cout << "Padre: Espero que muera el generador.  " << getpid() << endl;
-		wait(NULL);
-		cout << "Padre: Hola, soy el proceso padre.  Mi process ID es " << getpid() << endl;
+		cout << "Padre: Espero. Process id: " << getpid() << endl;
+		sleep(60);
+		cout << "Padre: Envio SIGINT." << endl;
+		int res= kill(id,SIGINT);
+		cout << "Padre: Resultado: " << res << endl;
+		//wait(NULL);
+		cout << "Padre: Fin"<< endl;
 
 		exit ( 0 );
 	}
