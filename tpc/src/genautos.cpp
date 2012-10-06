@@ -22,8 +22,8 @@ int generarAutos(){
 	// se registra el event handler declarado antes
 	SignalHandler::getInstance()->registrarHandler ( SIGINT,&sigint_handler );
 
-	//bool continuar=true;
-	//int i=0;
+	// Variable para contar la cantidad de autos creados
+	int autos=0;
 	cout << "Generador de Autos: Hola, soy el generador.  Mi process ID es " << getpid() << endl;
 
 	// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
@@ -33,24 +33,23 @@ int generarAutos(){
 		pid_t id = fork ();
 		if ( id == 0 ) {
 			// Auto creado
+			// Hace falta eliminar el handler heredado en el stack
+			SignalHandler::destruir ();
 			int res = manejarAuto();
 			exit (res);
 		} else {
-			//wait(NULL);
+			autos++;
+			// Dormir un tiempo random
+
 			sleep(1);
-			//i++;
-			//if (i==30) continuar=false;
 		}
 	}
 
-/*
-	i=0;
-	while (i<30){
-		cout << "Generador de Autos: Espero por un auto " << i << endl;
-		wait(NULL);
-		i++;
-	}
-*/
+	// Se recibio la senial SIGINT, el proceso termina
+	SignalHandler::getInstance()->removerHandler ( SIGINT);
+	SignalHandler::destruir ();
+
+	cout << "Generador de Autos: Fin. Autos creados: " << autos << endl;
 
 	return 0;
 }
