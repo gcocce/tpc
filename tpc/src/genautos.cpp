@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/wait.h>
 #include "genautos.h"
 #include "auto.h"
 #include "SIGINT_Handler.h"
@@ -32,14 +33,19 @@ int generarAutos(){
 
 	// Variable para contar la cantidad de autos creados
 	int autos=0;
+	int autos_liberados=0;
+
+	pid_t auto_pid;
+	int status=0;
+
 	cout << "Generador de Autos: Hola, soy el generador.  Mi process ID es " << getpid() << endl;
 
 	// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
 	// while (continuar==true){
 	while (sigint_handler.getGracefulQuit()==0){
 		// Se crea un auto
-		pid_t id = fork ();
-		if ( id == 0 ) {
+		pid_t auto_id = fork ();
+		if (auto_id == 0 ) {
 			// Auto creado
 			// Hace falta eliminar el handler heredado en el stack
 			SignalHandler::destruir ();
@@ -51,6 +57,14 @@ int generarAutos(){
 			dormir = rand() % 10 + 1; // devuelve un valor entre 1 y 10
 			cout << "Generador de Autos: duermo unos segundos: " << dormir << endl;
 			sleep(dormir);
+
+			// Pruebo limpiar la estructura de un auto cuyo proceso haya terminado
+			// La opción implica que si no hay continua la ejecución de este proceso
+			auto_pid= waitpid((pid_t)-1,&status,WNOHANG);
+			cout << "Generador de Autos: Resultado waitpid: " << auto_pid << endl;
+			if (auto_pid>0){
+				autos_liberados++;
+			}
 		}
 	}
 
@@ -58,7 +72,18 @@ int generarAutos(){
 	SignalHandler::getInstance()->removerHandler ( SIGINT);
 	SignalHandler::destruir ();
 
-	cout << "Generador de Autos: Fin. Autos creados: " << autos << endl;
+	cout << "Generador de Autos: Autos creados: " << autos << endl;
+	cout << "Generador de Autos: Autos liberados: " << autos_liberados << endl;
+
+	while (autos_liberados < autos){
+		auto_pid= wait(NULL);
+		if (auto_pid>0){
+			autos_liberados++;
+			cout << "Generador de Autos: Se libera: " << auto_pid << endl;
+		}
+	}
+
+	cout << "Generador de Autos: FIN" << endl;
 
 	return 0;
 }

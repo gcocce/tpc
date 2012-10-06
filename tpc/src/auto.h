@@ -16,5 +16,4 @@
 
 int manejarAuto();
 
-
 #endif /* CAR_H_ */
