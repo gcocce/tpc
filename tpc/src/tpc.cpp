@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
 	} else {
 		// Esperamos que muera el generador de autos
 		cout << "Padre: Espero. Process id: " << getpid() << endl;
-		sleep(3);
+		sleep(60);
 		cout << "Padre: Envio SIGINT." << endl;
 		int res= kill(genid,SIGINT);
 		cout << "Padre: Resultado de la señal: " << res << endl;

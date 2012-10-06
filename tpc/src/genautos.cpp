@@ -5,6 +5,9 @@
  *      Author: gk
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "genautos.h"
 #include "auto.h"
 #include "SIGINT_Handler.h"
@@ -16,11 +19,16 @@ void bloquearSigint ();
 using namespace std;
 
 int generarAutos(){
-	// event handler para la senial SIGINT (-2)
+	// event handler para la senial SIGINT (2)
 	SIGINT_Handler sigint_handler;
 
 	// se registra el event handler declarado antes
 	SignalHandler::getInstance()->registrarHandler ( SIGINT,&sigint_handler );
+
+
+	/* initialize random seed: */
+	srand(time(NULL));
+	int dormir=0;
 
 	// Variable para contar la cantidad de autos creados
 	int autos=0;
@@ -40,8 +48,9 @@ int generarAutos(){
 		} else {
 			autos++;
 			// Dormir un tiempo random
-
-			sleep(1);
+			dormir = rand() % 10 + 1; // devuelve un valor entre 1 y 10
+			cout << "Generador de Autos: duermo unos segundos: " << dormir << endl;
+			sleep(dormir);
 		}
 	}
 
