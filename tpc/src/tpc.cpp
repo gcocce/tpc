@@ -5,6 +5,7 @@
 //============================================================================
 
 #include <iostream>
+#include <ctype.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -43,14 +44,40 @@ int main(int argc, char* argv[]){
 		mostrar_ayuda();
 		exit ( 0 );
 	}else{
-		// TODO: comprobar que sean numeros
-		tiempo=atoi(argv[1]);
-		cantidad=atoi(argv[2]);
-		costo=atof(argv[3]);
+		// Comprobamos que los parametros sean numericos.
+		bool param_error=false;
+		if(isdigit(*argv[1])){
+			tiempo=atoi(argv[1]);
+			if (tiempo==0){
+				cout << "Error: el tiempo de la simulacion no puede ser cero." << endl;
+				param_error=true;
+			}
+		}else{
+			param_error=true;
+			cout << "Error: El primer argumento debe ser numerico." << endl;
+		}
+		if(isdigit(*argv[2])){
+			cantidad=atoi(argv[2]);
+		}else{
+			param_error=true;
+			cout << "Error: El segundo argumento debe ser numerico." << endl;
+		}
+		if(isdigit(*argv[3])){
+			costo=atof(argv[3]);
+		}else{
+			param_error=true;
+			cout << "Error: El tercer argumento debe ser numerico." << endl;
+		}
+		if (param_error){
+			mostrar_ayuda();
+			exit(0);
+		}
+		// Comprobamos si está la opción del modo debug
 		if (argc==5){
-			if (strcmp("-d",argv[5])==0){
+			if (strcmp("-d",argv[4])==0){
 				debug=true;
 			}else{
+				cout << "Error: El cuarto argumento debe ser: -d" << endl;
 				mostrar_ayuda();
 				exit(0);
 			}
@@ -61,10 +88,10 @@ int main(int argc, char* argv[]){
 	cout << "Trabajo practico de concurrentes." << endl;
 	if (debug){
 		cout << "Modo Debug." << endl;
+		// TODO: Crear el objeto LOG.
 	}else{
 		cout << "Modo Normal. " << endl;
 	}
-
 
 	int status=0;
 	pid_t wpid;
@@ -83,7 +110,7 @@ int main(int argc, char* argv[]){
 		// Esperamos que finalice el generador de autos
 		wpid = waitpid(genid, &status,0);
 
-		cout << "Padre: Finalizó el generados con estado: "<< status << endl;
+		cout << "Padre: Finalizó el generador de autos con estado: "<< status << endl;
 		cout << "Padre: FIN"<< endl;
 		exit ( 0 );
 	}
