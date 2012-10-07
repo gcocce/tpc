@@ -100,7 +100,7 @@ int generarAutos(){
 	}
 
 	cout << "Generador de Autos: finalizaron correctamente " << finalizados_bien << " autos." << endl;
-	cout << "Generador de Autos: finalizaron incorrectamente " << finalizados_bien << " autos." << endl;
+	cout << "Generador de Autos: finalizaron incorrectamente " << finalizados_mal << " autos." << endl;
 	cout << "Generador de Autos: FIN" << endl;
 
 	return 0;
