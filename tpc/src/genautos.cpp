@@ -34,11 +34,13 @@ int generarAutos(){
 	// Variable para contar la cantidad de autos creados
 	int autos=0;
 	int autos_liberados=0;
+	int finalizados_bien=0;
+	int finalizados_mal=0;
 
 	pid_t auto_pid;
 	int status=0;
 
-	cout << "Generador de Autos: Hola, soy el generador.  Mi process ID es " << getpid() << endl;
+	cout << "Generador de Autos: Mi process ID es " << getpid() << endl;
 
 	// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
 	// while (continuar==true){
@@ -55,15 +57,20 @@ int generarAutos(){
 			autos++;
 			// Dormir un tiempo random
 			dormir = rand() % 10 + 1; // devuelve un valor entre 1 y 10
-			cout << "Generador de Autos: duermo unos segundos: " << dormir << endl;
+			cout << "Generador de Autos: duermo " << dormir << " segundos." << endl;
 			sleep(dormir);
 
 			// Pruebo limpiar la estructura de un auto cuyo proceso haya terminado
 			// La opción implica que si no hay continua la ejecución de este proceso
 			auto_pid= waitpid((pid_t)-1,&status,WNOHANG);
-			cout << "Generador de Autos: Resultado waitpid: " << auto_pid << endl;
+			cout << "Generador de Autos: Resultado waitpid= " << auto_pid << endl;
 			if (auto_pid>0){
 				autos_liberados++;
+				if (status==0){
+					finalizados_bien++;
+				}else{
+					finalizados_mal++;
+				}
 			}
 		}
 	}
@@ -72,17 +79,28 @@ int generarAutos(){
 	SignalHandler::getInstance()->removerHandler ( SIGINT);
 	SignalHandler::destruir ();
 
-	cout << "Generador de Autos: Autos creados: " << autos << endl;
-	cout << "Generador de Autos: Autos liberados: " << autos_liberados << endl;
+	cout << "Generador de Autos: Se inicia la finalizacion." << endl;
+	cout << "Generador de Autos: Autos creados= " << autos << endl;
+	cout << "Generador de Autos: Autos liberados= " << autos_liberados << endl;
 
+	// Se espera a que finalice el resto de los hijos
 	while (autos_liberados < autos){
-		auto_pid= wait(NULL);
+		//auto_pid= wait(NULL);
+		cout << "Generador de Autos: Se espera que finalice un auto." << endl;
+		auto_pid= waitpid((pid_t)-1,&status,0);
 		if (auto_pid>0){
 			autos_liberados++;
-			cout << "Generador de Autos: Se libera: " << auto_pid << endl;
+			if (status==0){
+				finalizados_bien++;
+			}else{
+				finalizados_mal++;
+			}
+			cout << "Generador de Autos: Se libera= " << auto_pid << endl;
 		}
 	}
 
+	cout << "Generador de Autos: finalizaron correctamente " << finalizados_bien << " autos." << endl;
+	cout << "Generador de Autos: finalizaron incorrectamente " << finalizados_bien << " autos." << endl;
 	cout << "Generador de Autos: FIN" << endl;
 
 	return 0;

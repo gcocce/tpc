@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
 	}
 
 	//Los parametros son válidos, entonces se inicia el programa
-	cout << "Trabajo practico de concurrentes." << endl;
+	cout << "Trabajo practico de concurrentes..." << endl;
 	if (debug){
 		cout << "Modo Debug." << endl;
 		// TODO: Crear el objeto LOG.
@@ -101,16 +101,16 @@ int main(int argc, char* argv[]){
 		int res = generarAutos();
 		exit ( res );
 	} else {
-		cout << "Padre: Espero. Process id: " << getpid() << endl;
+		cout << "Padre: Espero. Process id= " << getpid() << endl;
 		sleep(tiempo);
 		cout << "Padre: Envio SIGINT." << endl;
 		int res= kill(genid,SIGINT);
-		cout << "Padre: Resultado de la señal: " << res << endl;
+		cout << "Padre: Resultado de la señal= " << res << endl;
 
 		// Esperamos que finalice el generador de autos
 		wpid = waitpid(genid, &status,0);
 
-		cout << "Padre: Finalizó el generador de autos con estado: "<< status << endl;
+		cout << "Padre: Finalizó el generador de autos con estado= "<< status << endl;
 		cout << "Padre: FIN"<< endl;
 		exit ( 0 );
 	}
