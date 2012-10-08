@@ -13,6 +13,8 @@
 #include <sys/wait.h>
 
 #include "genautos.h"
+#include "ventanilla_entrada.h"
+#include "ventanilla_salida.h"
 
 using namespace std;
 
@@ -95,6 +97,47 @@ int main(int argc, char* argv[]){
 
 	int status=0;
 	pid_t wpid;
+	pid_t vent_1, vent_2, vent_3, vent_4, vent_5;
+	vent_1= fork();
+	if ( vent_1 == 0 ) {
+		// Proceso ventanilla 1
+		int res=m_ventanilla_entrada(1);
+		exit(res);
+	}else{
+		vent_2=fork();
+		if(vent_2==0){
+			// Proceso ventanilla 2
+			int res=m_ventanilla_entrada(2);
+			exit(res);
+		}else{
+			vent_3=fork();
+			if (vent_3==0){
+				// Proceso ventanilla 3
+				int res=m_ventanilla_entrada(3);
+				exit(res);
+			}else{
+				vent_4=fork();
+				if (vent_4==0){
+					// Proceso ventanilla 4
+					int res=m_ventanilla_salida(4);
+					exit (res);
+				}else{
+					vent_5=fork();
+					if(vent_5==0){
+						// Proceso ventanilla 5
+						int res=m_ventanilla_salida(5);
+						exit(res);
+					}else{
+						// Proceso padre continua más abajo
+
+
+					}
+				}
+			}
+		}
+	}
+
+	// El proceso principal continua por aquí.
 	pid_t genid = fork ();
 	if ( genid == 0 ) {
 		// Lanzar el generador de autos
@@ -103,14 +146,34 @@ int main(int argc, char* argv[]){
 	} else {
 		cout << "Padre: Espero. Process id= " << getpid() << endl;
 		sleep(tiempo);
-		cout << "Padre: Envio SIGINT." << endl;
+		cout << "Padre: Envio SIGINT al generador de autos." << endl;
 		int res= kill(genid,SIGINT);
 		cout << "Padre: Resultado de la señal= " << res << endl;
 
 		// Esperamos que finalice el generador de autos
 		wpid = waitpid(genid, &status,0);
-
 		cout << "Padre: Finalizó el generador de autos con estado= "<< status << endl;
+
+		// Cerramos las ventanillas
+		cout << "Padre: Envio SIGINT a las ventanillas." << endl;
+		int res_v1 = kill(vent_1,SIGINT);
+		int res_v2 = kill(vent_2,SIGINT);
+		int res_v3 = kill(vent_3,SIGINT);
+		int res_v4 = kill(vent_4,SIGINT);
+		int res_v5 = kill(vent_5,SIGINT);
+		cout << "Padre: Resultados de las señales = " << res_v1 << "," << res_v2 << "," << res_v3 << "," << res_v4 << "," << res_v5 << endl;
+
+		wpid = waitpid(vent_1, &status,0);
+		cout << "Padre: Ventanilla 1 finalizó con estado= "<< status << endl;
+		wpid = waitpid(vent_2, &status,0);
+		cout << "Padre: Ventanilla 2 finalizó con estado= "<< status << endl;
+		wpid = waitpid(vent_3, &status,0);
+		cout << "Padre: Ventanilla 3 finalizó con estado= "<< status << endl;
+		wpid = waitpid(vent_4, &status,0);
+		cout << "Padre: Ventanilla 4 finalizó con estado= "<< status << endl;
+		wpid = waitpid(vent_5, &status,0);
+		cout << "Padre: Ventanilla 5 finalizó con estado= "<< status << endl;
+
 		cout << "Padre: FIN"<< endl;
 		exit ( 0 );
 	}
