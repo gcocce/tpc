@@ -1,13 +1,19 @@
 #include "Semaforo.h"
 
-Semaforo :: Semaforo ( char* nombre,int valorInicial ) {
+Semaforo :: Semaforo ( char* path, char code, int value ) {
 
-	this->valorInicial = valorInicial;
+	this->valorInicial = value;
 
-	key_t clave = ftok ( nombre,'a' );
-	this->id = semget ( clave,1,0666 | IPC_CREAT );
+	key_t clave = ftok ( path,code );
+	if(ftok!=-1){
+		this->id = semget ( clave,1,0666 | IPC_CREAT | IPC_EXCL );
+		if(this->id!=-1 && errno!=EEXIST){
+			this->inicializar ();
+		}
+	}else{
+		perror(strerror(errno));
+	}
 
-	this->inicializar ();
 }
 
 Semaforo::~Semaforo() {

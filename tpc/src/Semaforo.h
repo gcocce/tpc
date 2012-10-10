@@ -4,6 +4,9 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/types.h>
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
 
 class Semaforo {
 
@@ -14,7 +17,7 @@ private:
 	int inicializar ();
 
 public:
-	Semaforo ( char* nombre,int valorInicial );
+	Semaforo ( char* path, char code, int value );
 	virtual ~Semaforo();
 
 	int p (); // decrementa
