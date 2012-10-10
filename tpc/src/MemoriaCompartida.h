@@ -11,6 +11,7 @@
 #include	<sys/ipc.h>
 #include	<sys/shm.h>
 
+
 template <class T> class MemoriaCompartida {
 
 private:
