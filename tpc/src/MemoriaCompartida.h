@@ -32,6 +32,8 @@ public:
 };
 
 template <class T> MemoriaCompartida<T> :: MemoriaCompartida () {
+	shmId=0;
+	ptrDatos=NULL;
 }
 
 template <class T> MemoriaCompartida<T> :: ~MemoriaCompartida () {
