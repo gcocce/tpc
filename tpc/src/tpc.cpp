@@ -95,6 +95,7 @@ int main(int argc, char* argv[]){
 		cout << "Modo Normal. " << endl;
 	}
 
+	// Se inician los procesos de las ventanillas
 	int status=0;
 	pid_t wpid;
 	pid_t vent_1, vent_2, vent_3, vent_4, vent_5;
@@ -138,6 +139,7 @@ int main(int argc, char* argv[]){
 	}
 
 	// El proceso principal continua por aquí.
+	// Se inicia el proceso del generador de autos
 	pid_t genid = fork ();
 	if ( genid == 0 ) {
 		// Lanzar el generador de autos
