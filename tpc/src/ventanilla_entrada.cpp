@@ -31,6 +31,10 @@ int m_ventanilla_entrada(int n){
 	while (sigint_handler.getGracefulQuit()==0){
 		// TODO: lo que hace la ventanilla hasta que la cierran
 
+
+
+
+
 		sleep(1);
 	}
 

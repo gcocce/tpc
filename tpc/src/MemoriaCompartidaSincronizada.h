@@ -10,17 +10,30 @@ private:
 	Semaforo sem;
 	MemoriaCompartida<T> mem;
 
-	int inicializar ();
-
 public:
 	MemoriaCompartidaSincronizada ( char* path,char code );
 	virtual ~MemoriaCompartidaSincronizada();
 
-	int esperarLectura();
-	int listoParaLectura();
-	void escribir ( T dato );
-	T leer ();
-	void eliminar ();
+	void inicializar ( T dato){
+		this->mem.escribir(dato);
+	};
+
+	void escribir ( T dato ){
+		this->sem.p();
+		this->mem.escribir(dato);
+		this->sem.q();
+	};
+
+	T leer (){
+		this->sem.p();
+		T dato= this->mem.leer();
+		this->sem.q();
+		return dato;
+	};
+
+	void eliminar (){
+		this->sem.eliminar();
+	};
 };
 
 #endif /* MEMORIACOMPARTIDASINCRONIZADA_H_ */

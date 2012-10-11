@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/wait.h>
+#include "logger.h"
 
 #include "genautos.h"
 #include "ventanilla_entrada.h"
@@ -35,11 +36,12 @@ void mostrar_ayuda(){
  * 	3) Costo de la hora del estacionamiento (float)
  * 	Opcional: modo debug
 */
+bool debug=false;
+
 int main(int argc, char* argv[]){
 	int tiempo=0;
 	int cantidad=0;
 	float costo=0;
-	bool debug=false;
 
 	// Sección dedicada a los parametros
 	if (argc < 4 || argc > 5){
@@ -89,58 +91,56 @@ int main(int argc, char* argv[]){
 	//Los parametros son válidos, entonces se inicia el programa
 	cout << "Trabajo practico de concurrentes..." << endl;
 	if (debug){
-		cout << "Modo Debug." << endl;
+		DEBUG("Modo Debug.");
 		// TODO: Crear el objeto LOG.
 	}else{
 		cout << "Modo Normal. " << endl;
 	}
 
+	// Se inician los procesos de las ventanillas
 	int status=0;
 	pid_t wpid;
 	pid_t vent_1, vent_2, vent_3, vent_4, vent_5;
 	vent_1= fork();
 	if ( vent_1 == 0 ) {
-		// Proceso ventanilla 1
+		DEBUG("Ventanilla 1 creada.");
 		int res=m_ventanilla_entrada(1);
 		exit(res);
-	}else{
-		vent_2=fork();
-		if(vent_2==0){
-			// Proceso ventanilla 2
-			int res=m_ventanilla_entrada(2);
-			exit(res);
-		}else{
-			vent_3=fork();
-			if (vent_3==0){
-				// Proceso ventanilla 3
-				int res=m_ventanilla_entrada(3);
-				exit(res);
-			}else{
-				vent_4=fork();
-				if (vent_4==0){
-					// Proceso ventanilla 4
-					int res=m_ventanilla_salida(4);
-					exit (res);
-				}else{
-					vent_5=fork();
-					if(vent_5==0){
-						// Proceso ventanilla 5
-						int res=m_ventanilla_salida(5);
-						exit(res);
-					}else{
-						// Proceso padre continua más abajo
+	}
 
+	vent_2=fork();
+	if(vent_2==0){
+		DEBUG("Ventanilla 2 creada.");
+		int res=m_ventanilla_entrada(2);
+		exit(res);
+	}
 
-					}
-				}
-			}
-		}
+	vent_3=fork();
+	if (vent_3==0){
+		DEBUG("Ventanilla 3 creada.");
+		int res=m_ventanilla_entrada(3);
+		exit(res);
+	}
+
+	vent_4=fork();
+	if (vent_4==0){
+		DEBUG("Salida 1 creada.");
+		int res=m_ventanilla_salida(4);
+		exit (res);
+	}
+
+	vent_5=fork();
+	if(vent_5==0){
+		DEBUG("Salida 2 creada.");
+		int res=m_ventanilla_salida(5);
+		exit(res);
 	}
 
 	// El proceso principal continua por aquí.
+	// Se inicia el proceso del generador de autos
 	pid_t genid = fork ();
 	if ( genid == 0 ) {
-		// Lanzar el generador de autos
+		DEBUG("Lanzar el generador de autos.");
 		int res = generarAutos();
 		exit ( res );
 	} else {

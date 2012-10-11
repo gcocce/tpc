@@ -6,6 +6,7 @@
 #define ERROR_SHMGET	-2
 #define	ERROR_SHMAT		-3
 
+#include <unistd.h>
 #include	<sys/types.h>
 #include	<sys/ipc.h>
 #include	<sys/shm.h>
@@ -32,6 +33,8 @@ public:
 };
 
 template <class T> MemoriaCompartida<T> :: MemoriaCompartida () {
+	shmId=0;
+	ptrDatos=NULL;
 }
 
 template <class T> MemoriaCompartida<T> :: ~MemoriaCompartida () {
