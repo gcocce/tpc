@@ -12,11 +12,16 @@
 
 using namespace std;
 
-int manejarAuto(){
-	int tiempo_estacionado;
+int manejarAuto(pid_t vent[]){
+	int tiempo_estacionado=0;
+	int ventanilla_entrada=0;
+
 	tiempo_estacionado = rand() % 24 + 1;
+	ventanilla_entrada = rand() % 3 + 1;
 
 	cout << "Auto: id= " << getpid() << " tiempo estacionado: " << tiempo_estacionado << endl;
+
+	cout << "Auto: id= " << getpid() << " venanilla " << ventanilla_entrada << " pid= " << vent[ventanilla_entrada] << endl;
 
 	sleep(tiempo_estacionado);
 

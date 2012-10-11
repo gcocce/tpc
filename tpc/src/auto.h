@@ -13,7 +13,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/wait.h>
+#include "definiciones.h"
 
-int manejarAuto();
+int manejarAuto(pid_t vent[]);
 
 #endif /* CAR_H_ */
