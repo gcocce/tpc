@@ -8,6 +8,7 @@
 #ifndef VENTANILLA_ENTRADA_H_
 #define VENTANILLA_ENTRADA_H_
 
+#include "estacionamiento.h"
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>

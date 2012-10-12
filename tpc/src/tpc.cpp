@@ -13,9 +13,11 @@
 #include <sys/wait.h>
 #include "logger.h"
 
+#include "estacionamiento.h"
 #include "genautos.h"
 #include "ventanilla_entrada.h"
 #include "ventanilla_salida.h"
+#include "definiciones.h"
 
 using namespace std;
 
@@ -97,56 +99,68 @@ int main(int argc, char* argv[]){
 		cout << "Modo Normal. " << endl;
 	}
 
+	// Se crea el objeto estacionamiento que permite gestionar los lugares
+	Estacionamiento est(cantidad);
+
+	pid_t vent[6]; // Almacena el id de proceso de las ventanillas
 	// Se inician los procesos de las ventanillas
 	int status=0;
 	pid_t wpid;
-	pid_t vent_1, vent_2, vent_3, vent_4, vent_5;
-	vent_1= fork();
-	if ( vent_1 == 0 ) {
-		DEBUG("Ventanilla 1 creada.");
+
+	vent[1] = fork();
+	if ( vent[1] == 0 ) {
+		// Proceso ventanilla 1
+
 		int res=m_ventanilla_entrada(1);
+		//cout << "Ventanilla 1 : estacionamiento " << est.getLugares() << endl;
 		exit(res);
-	}
+	}else{
+		vent[2]=fork();
+		if(vent[2]==0){
+			// Proceso ventanilla 2
+			int res=m_ventanilla_entrada(2);
+			exit(res);
+		}else{
+			vent[3]=fork();
+			if (vent[3]==0){
+				// Proceso ventanilla 3
+				int res=m_ventanilla_entrada(3);
+				exit(res);
+			}else{
+				vent[4]=fork();
+				if (vent[4]==0){
+					// Proceso ventanilla 4
+					int res=m_ventanilla_salida(4);
+					exit (res);
+				}else{
+					vent[5]=fork();
+					if(vent[5]==0){
+						// Proceso ventanilla 5
+						int res=m_ventanilla_salida(5);
+						exit(res);
+					}else{
+						// Proceso padre continua más abajo
 
-	vent_2=fork();
-	if(vent_2==0){
-		DEBUG("Ventanilla 2 creada.");
-		int res=m_ventanilla_entrada(2);
-		exit(res);
-	}
 
-	vent_3=fork();
-	if (vent_3==0){
-		DEBUG("Ventanilla 3 creada.");
-		int res=m_ventanilla_entrada(3);
-		exit(res);
-	}
-
-	vent_4=fork();
-	if (vent_4==0){
-		DEBUG("Salida 1 creada.");
-		int res=m_ventanilla_salida(4);
-		exit (res);
-	}
-
-	vent_5=fork();
-	if(vent_5==0){
-		DEBUG("Salida 2 creada.");
-		int res=m_ventanilla_salida(5);
-		exit(res);
+					}
+				}
+			}
+		}
 	}
 
 	// El proceso principal continua por aquí.
 	// Se inicia el proceso del generador de autos
 	pid_t genid = fork ();
 	if ( genid == 0 ) {
-		DEBUG("Lanzar el generador de autos.");
-		int res = generarAutos();
+		// Lanzar el generador de autos
+		int res = generarAutos(vent);
 		exit ( res );
 	} else {
 		cout << "Padre: Espero. Process id= " << getpid() << endl;
 		sleep(tiempo);
+
 		cout << "Padre: Envio SIGINT al generador de autos." << endl;
+
 		int res= kill(genid,SIGINT);
 		cout << "Padre: Resultado de la señal= " << res << endl;
 
@@ -156,25 +170,18 @@ int main(int argc, char* argv[]){
 
 		// Cerramos las ventanillas
 		cout << "Padre: Envio SIGINT a las ventanillas." << endl;
-		int res_v1 = kill(vent_1,SIGINT);
-		int res_v2 = kill(vent_2,SIGINT);
-		int res_v3 = kill(vent_3,SIGINT);
-		int res_v4 = kill(vent_4,SIGINT);
-		int res_v5 = kill(vent_5,SIGINT);
-		cout << "Padre: Resultados de las señales = " << res_v1 << "," << res_v2 << "," << res_v3 << "," << res_v4 << "," << res_v5 << endl;
+		for (int i=1;i<6;i++){
+			int res = kill(vent[i],SIGINT);
+			cout << "Padre: Resultados de la señal a ventanilla " << i << "= " << res << endl;
+		}
 
-		wpid = waitpid(vent_1, &status,0);
-		cout << "Padre: Ventanilla 1 finalizó con estado= "<< status << endl;
-		wpid = waitpid(vent_2, &status,0);
-		cout << "Padre: Ventanilla 2 finalizó con estado= "<< status << endl;
-		wpid = waitpid(vent_3, &status,0);
-		cout << "Padre: Ventanilla 3 finalizó con estado= "<< status << endl;
-		wpid = waitpid(vent_4, &status,0);
-		cout << "Padre: Ventanilla 4 finalizó con estado= "<< status << endl;
-		wpid = waitpid(vent_5, &status,0);
-		cout << "Padre: Ventanilla 5 finalizó con estado= "<< status << endl;
+		for (int i=1;i<6;i++){
+			wpid = waitpid(vent[i], &status,0);
+			cout << "Padre: Ventanilla "<< i << " finalizó con estado= "<< status << endl;
+		}
 
 		cout << "Padre: FIN"<< endl;
+
 		exit ( 0 );
 	}
 }

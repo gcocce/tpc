@@ -27,6 +27,7 @@ int m_ventanilla_entrada(int n){
 
 	cout << "Ventanilla " << ventanilla << ": process ID " << getpid() << endl;
 
+
 	// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
 	while (sigint_handler.getGracefulQuit()==0){
 		// TODO: lo que hace la ventanilla hasta que la cierran

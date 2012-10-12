@@ -10,9 +10,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/wait.h>
+#include "definiciones.h"
 
 
-int generarAutos();
+int generarAutos(pid_t vent[]);
 
 
 #endif /* CARGENERATOR_H_ */

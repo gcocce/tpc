@@ -19,7 +19,7 @@ void bloquearSigint ();
 
 using namespace std;
 
-int generarAutos(){
+int generarAutos(pid_t vent[6]){
 	// event handler para la senial SIGINT (2)
 	SIGINT_Handler sigint_handler;
 
@@ -51,7 +51,7 @@ int generarAutos(){
 			// Auto creado
 			// Hace falta eliminar el handler heredado en el stack
 			SignalHandler::destruir ();
-			int res = manejarAuto();
+			int res = manejarAuto(vent);
 			exit (res);
 		} else {
 			autos++;
