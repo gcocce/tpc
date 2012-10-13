@@ -12,7 +12,7 @@
 
 using namespace std;
 
-int manejarAuto(pid_t vent[]){
+int manejarAuto(pid_t vent[6]){
 	int tiempo_estacionado=0;
 	int ventanilla_entrada=0;
 

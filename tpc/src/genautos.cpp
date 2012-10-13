@@ -19,7 +19,7 @@ void bloquearSigint ();
 
 using namespace std;
 
-int generarAutos(pid_t vent[]){
+int generarAutos(pid_t vent[6]){
 	// event handler para la senial SIGINT (2)
 	SIGINT_Handler sigint_handler;
 
