@@ -242,9 +242,9 @@ template <class T> void ArrayMemComp<T>::inicializar () {
 
 template <class T> void ArrayMemComp<T> :: liberar () {
 	// detach del bloque de memoria de datos tipo T
-	shmdt ( (void *) this->ptrDatos );
+	shmdt ((void*)this->ptrDatos );
 	// detach del bloque de memoria de variables lectores
-	shmdt ( (void *) this->ptrLectores );
+	shmdt ((void*)this->ptrLectores );
 
 	int procAdosados = this->cantidadProcesosAdosados();
 
@@ -268,13 +268,13 @@ template <class T> void ArrayMemComp<T> :: liberar () {
 
 template <class T> void ArrayMemComp<T> :: liberar_mem_lectores () {
 	// detach del bloque de memoria de variables lectores
-	shmdt ( (void *) this->ptrLectores );
+	shmdt ((void*)this->ptrLectores );
 
 	shmid_ds estado;
-	shmctl ( this->shmIdL,IPC_STAT,&estado );
+	shmctl (this->shmIdL,IPC_STAT,&estado );
 	int procAdosados = estado.shm_nattch;
 
-	if ( procAdosados == 0 ) {
+	if (procAdosados == 0) {
 		shmctl ( this->shmIdL, IPC_RMID, NULL);
 	}
 }

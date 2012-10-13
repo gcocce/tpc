@@ -18,7 +18,7 @@ using namespace std;
 
 extern bool debug;
 
-int m_ventanilla_salida(int n){
+int m_ventanilla_salida(int n, ArrayMemComp<int> estacionamiento){
 	int ventanilla=n;
 
 	Logger log(debug);
@@ -34,12 +34,19 @@ int m_ventanilla_salida(int n){
 	// se registra el event handler declarado antes
 	SignalHandler::getInstance()->registrarHandler ( SIGINT,&sigint_handler );
 
+	int estadoMemoria = estacionamiento.crear();
+	if ( estadoMemoria != 0 ) {
+		cout << "Error al crear el espacio de memoria compartida: " << estadoMemoria << endl;
+	}
+
 	// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
 	while (sigint_handler.getGracefulQuit()==0){
 		// TODO: lo que hace la ventanilla hasta que la cierran
 
 		sleep(1);
 	}
+
+	estacionamiento.liberar();
 
 	// Se recibio la senial SIGINT, el proceso termina
 	SignalHandler::getInstance()->removerHandler ( SIGINT);

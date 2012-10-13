@@ -14,8 +14,9 @@
 #include <time.h>
 #include <sys/wait.h>
 #include "logger.h"
+#include "arraymemcomp.h"
 
-int m_ventanilla_salida(int n);
+int m_ventanilla_salida(int n, ArrayMemComp<int> memoria);
 
 
 #endif /* VENTANILLA_SALIDA_H_ */

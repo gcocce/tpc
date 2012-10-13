@@ -94,11 +94,32 @@ int main(int argc, char* argv[]){
 	cout << "Se inicia la simulacion practico de concurrentes..." << endl;
 
 	Logger log(debug);
-	log.flush("Modo debug");
+	if (debug){
+		char buffer [100];
+		sprintf (buffer, "Se inicia la simulación, duracion: %d, cocheras: %d, costo: %d", tiempo,cantidad,costo);
+		log.flush(buffer);
+	}
 
-	log.flush("Se crea la memoria compartida que modela el estacionamiento.");
+	log.flush("Se crea el objeto de memoria compartida que modela el estacionamiento.");
 	// Se crea el objeto estacionamiento que permite gestionar los lugares
-	//ArrayMemComp<int>	estacionamiento(cantidad);
+	ArrayMemComp<int>	estacionamiento(cantidad);
+
+	if (!estacionamiento.getEstado()){
+		log.flush("Error: El objeto de memoria comp conc no tiene un estado valido!");
+		cout << "Error: El objeto de memoria comp conc no tiene un estado valido!"<< endl;
+		return -1;
+	}
+
+	int estadoMemoria = estacionamiento.crear();
+	if ( estadoMemoria != SHM_OK ) {
+		if (debug){
+			char buffer [100];
+			sprintf (buffer, "Error al crear el espacio de memoria compartida: %d!", estadoMemoria);
+			log.flush(buffer);
+		}
+		cout << "Error al crear el espacio de memoria compartida: " << estadoMemoria << endl;
+		return -1;
+	}
 
 	pid_t vent[6]; // Almacena el id de proceso de las ventanillas
 	// Se inician los procesos de las ventanillas
@@ -108,31 +129,31 @@ int main(int argc, char* argv[]){
 	vent[1] = fork();
 	if ( vent[1] == 0 ) {
 		// Proceso ventanilla 1
-		int res=m_ventanilla_entrada(1);
+		int res=m_ventanilla_entrada(1,estacionamiento);
 		exit(res);
 	}else{
 		vent[2]=fork();
 		if(vent[2]==0){
 			// Proceso ventanilla 2
-			int res=m_ventanilla_entrada(2);
+			int res=m_ventanilla_entrada(2,estacionamiento);
 			exit(res);
 		}else{
 			vent[3]=fork();
 			if (vent[3]==0){
 				// Proceso ventanilla 3
-				int res=m_ventanilla_entrada(3);
+				int res=m_ventanilla_entrada(3,estacionamiento);
 				exit(res);
 			}else{
 				vent[4]=fork();
 				if (vent[4]==0){
 					// Proceso ventanilla 4
-					int res=m_ventanilla_salida(4);
+					int res=m_ventanilla_salida(4,estacionamiento);
 					exit (res);
 				}else{
 					vent[5]=fork();
 					if(vent[5]==0){
 						// Proceso ventanilla 5
-						int res=m_ventanilla_salida(5);
+						int res=m_ventanilla_salida(5,estacionamiento);
 						exit(res);
 					}else{
 						// Proceso padre continua más abajo
@@ -146,6 +167,9 @@ int main(int argc, char* argv[]){
 
 	// El proceso principal continua por aquí.
 	log.flush("Ventanillas creadas.");
+
+	// Liberamos los recursos del estacionamiento
+	estacionamiento.liberar();
 
 	log.flush("Se forkea el proceso para crear el generador de autos.");
 	pid_t genid = fork ();
@@ -191,6 +215,9 @@ int main(int argc, char* argv[]){
 				log.debug(buffer);
 			}
 		}
+
+		// Liberamos los recursos del estacionamiento
+		estacionamiento.liberar();
 
 		cout << "Finaliza la simulacion"<< endl;
 		log.debug("Finaliza la simulación");
