@@ -23,6 +23,7 @@ public:
 private:
     FILE* fplog;
     bool log;
+    int	pid;
 
     //time_t rawtime;
     //struct tm * timeinfo;

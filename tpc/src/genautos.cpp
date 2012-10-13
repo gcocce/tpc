@@ -68,7 +68,7 @@ int generarAutos(pid_t vent[6]){
 
 			autos++;
 
-			srand(time(NULL));
+			srand(time(NULL) + autos);
 			dormir = rand() % RANGO_TIEMPO; // devuelve un valor entre 0 y RANGO_TIEMPO
 			if (debug){
 				char buffer [100];
