@@ -6,7 +6,7 @@
 #define ERROR_SHMGET	-2
 #define	ERROR_SHMAT		-3
 
-#include <unistd.h>
+#include	<unistd.h>
 #include	<sys/types.h>
 #include	<sys/ipc.h>
 #include	<sys/shm.h>
