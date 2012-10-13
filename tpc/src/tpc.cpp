@@ -13,7 +13,7 @@
 #include <sys/wait.h>
 #include "logger.h"
 
-#include "estacionamiento.h"
+#include "arraymemcomp.h"
 #include "genautos.h"
 #include "ventanilla_entrada.h"
 #include "ventanilla_salida.h"
@@ -100,7 +100,6 @@ int main(int argc, char* argv[]){
 	}
 
 	// Se crea el objeto estacionamiento que permite gestionar los lugares
-	Estacionamiento est(cantidad);
 
 	pid_t vent[6]; // Almacena el id de proceso de las ventanillas
 	// Se inician los procesos de las ventanillas
