@@ -91,13 +91,10 @@ int main(int argc, char* argv[]){
 	}
 
 	//Los parametros son válidos, entonces se inicia el programa
-	cout << "Trabajo practico de concurrentes..." << endl;
-	if (debug){
-		DEBUG("Modo Debug.");
-		// TODO: Crear el objeto LOG.
-	}else{
-		cout << "Modo Normal. " << endl;
-	}
+	cout << "Se inicia la simulacion practico de concurrentes..." << endl;
+
+	Logger log(debug);
+	log.flush("Modo debug");
 
 	// Se crea el objeto estacionamiento que permite gestionar los lugares
 
@@ -109,7 +106,6 @@ int main(int argc, char* argv[]){
 	vent[1] = fork();
 	if ( vent[1] == 0 ) {
 		// Proceso ventanilla 1
-
 		int res=m_ventanilla_entrada(1);
 		//cout << "Ventanilla 1 : estacionamiento " << est.getLugares() << endl;
 		exit(res);
@@ -159,12 +155,15 @@ int main(int argc, char* argv[]){
 		sleep(tiempo);
 
 		cout << "Padre: Envio SIGINT al generador de autos." << endl;
+		log.debug("Se envia la señal de finalizacion SIGINT");
 
 		int res= kill(genid,SIGINT);
 		cout << "Padre: Resultado de la señal= " << res << endl;
 
 		// Esperamos que finalice el generador de autos
 		wpid = waitpid(genid, &status,0);
+		log.debug("Finaliza el generador de autos");
+
 		cout << "Padre: Finalizó el generador de autos con estado= "<< status << endl;
 
 		// Cerramos las ventanillas
@@ -181,7 +180,8 @@ int main(int argc, char* argv[]){
 
 		cout << "Padre: FIN"<< endl;
 
-		exit ( 0 );
+		log.debug("Finaliza la simulación");
+		return 0;
 	}
 }
 

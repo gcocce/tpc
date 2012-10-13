@@ -8,6 +8,7 @@
 #include "ventanilla_entrada.h"
 #include "SIGINT_Handler.h"
 #include "SignalHandler.h"
+#include "logger.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,8 +17,13 @@
 
 using namespace std;
 
+extern bool debug;
+
 int m_ventanilla_entrada(int n){
 	int ventanilla=n;
+
+	Logger log(debug);
+	log.debug("Ventanilla");
 
 	// event handler para la senial SIGINT (2)
 	SIGINT_Handler sigint_handler;
@@ -42,7 +48,7 @@ int m_ventanilla_entrada(int n){
 	// Se recibio la senial SIGINT, el proceso termina
 	SignalHandler::getInstance()->removerHandler ( SIGINT);
 	SignalHandler::destruir ();
-
+	log.debug("Finaliza la ventanilla");
 	cout << "Ventanilla " << ventanilla << ": FIN." << endl;
 
 	return 0;
