@@ -27,10 +27,10 @@ int manejarAuto(pid_t vent[6]){
 
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "El auto selecciona la ventanilla de entrada numero %d \n", ventanilla_entrada);
+		sprintf (buffer, "El auto selecciona la ventanilla de entrada numero %d", ventanilla_entrada);
 		log.debug(buffer);
 
-		sprintf (buffer, "Tiempo estacionado %d \n", tiempo_estacionado);
+		sprintf (buffer, "Tiempo estacionado %d", tiempo_estacionado);
 		log.debug(buffer);
 	}
 

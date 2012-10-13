@@ -160,7 +160,6 @@ int main(int argc, char* argv[]){
 		log.debug("Se envia la señal de finalización SIGINT");
 
 		int res= kill(genid,SIGINT);
-		cout << "Padre: Resultado de la señal= " << res << endl;
 
 		// Esperamos que finalice el generador de autos
 		wpid = waitpid(genid, &status,0);
@@ -168,7 +167,7 @@ int main(int argc, char* argv[]){
 
 		if (debug){
 			char buffer [100];
-			sprintf (buffer, "El generador de autos finalizó con estado %d \n", status);
+			sprintf (buffer, "El generador de autos finalizó con estado %d", status);
 			log.debug(buffer);
 		}
 
@@ -179,7 +178,7 @@ int main(int argc, char* argv[]){
 
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "Resultados de la señal a ventanilla %d :%d \n", i, res);
+				sprintf (buffer, "Resultados de la señal a ventanilla %d :%d", i, res);
 				log.debug(buffer);
 			}
 		}
@@ -188,7 +187,7 @@ int main(int argc, char* argv[]){
 			wpid = waitpid(vent[i], &status,0);
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "Ventanilla %d finalizó con estado %d \n", i, status);
+				sprintf (buffer, "Ventanilla %d finalizó con estado %d", i, status);
 				log.debug(buffer);
 			}
 		}

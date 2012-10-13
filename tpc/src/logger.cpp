@@ -21,7 +21,7 @@ Logger::Logger(bool debug){
 			//fprintf(this->fplog,"%d, %s\n",time(NULL),"Inicia el proceso de loggeo...");
 			timeval tp;
 			gettimeofday(&tp,NULL);
-			fprintf(this->fplog,"%d,%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, "Inicia el proceso de loggeo...");
+			fprintf(this->fplog,"%d%06d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, "Inicia el proceso de loggeo...");
 
 		}
 	}
@@ -48,7 +48,7 @@ void Logger::debug(const char* msg){
 			//fprintf(this->fplog,"%d, %s\n",time(NULL),msg);
 			timeval tp;
 			gettimeofday(&tp,NULL);
-			fprintf(this->fplog,"%d,%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, msg);
+			fprintf(this->fplog,"%d%06d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, msg);
 		}
 	}
 }
@@ -66,7 +66,7 @@ void Logger::flush(const char* msg){
 			//fprintf(this->fplog,"%d, %s\n",time(NULL),msg);
 			timeval tp;
 			gettimeofday(&tp,NULL);
-			fprintf(this->fplog,"%d,%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, msg);
+			fprintf(this->fplog,"%d%06d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, msg);
 			fclose(this->fplog);
 			this->fplog=NULL;
 		}

@@ -62,7 +62,7 @@ int generarAutos(pid_t vent[6]){
 		} else {
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "Se crea un auto con proces id %d\n", auto_id);
+				sprintf (buffer, "Se crea un auto con proces id %d", auto_id);
 				log.flush(buffer);
 			}
 
@@ -72,7 +72,7 @@ int generarAutos(pid_t vent[6]){
 			dormir = rand() % RANGO_TIEMPO; // devuelve un valor entre 0 y RANGO_TIEMPO
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "El proceso duerme por %d segundos.\n", dormir);
+				sprintf (buffer, "El proceso duerme por %d segundos.", dormir);
 				log.flush(buffer);
 			}
 			sleep(dormir);
@@ -83,7 +83,7 @@ int generarAutos(pid_t vent[6]){
 			if (auto_pid>0){
 				if (debug){
 					char buffer [100];
-					sprintf (buffer, "Se borra el registro del auto con pid %d con estado %d.\n", auto_pid,status);
+					sprintf (buffer, "Se borra el registro del auto con pid %d con estado %d.", auto_pid,status);
 					log.flush(buffer);
 				}
 
@@ -105,7 +105,7 @@ int generarAutos(pid_t vent[6]){
 
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "Autos creados %d, autos liberados %d.\n", autos, autos_liberados);
+		sprintf (buffer, "Autos creados %d, autos liberados %d.", autos, autos_liberados);
 		log.debug(buffer);
 	}
 
@@ -126,7 +126,7 @@ int generarAutos(pid_t vent[6]){
 
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "Se borra el registro del auto con pid %d con estado %d.\n", auto_pid,status);
+				sprintf (buffer, "Se borra el registro del auto con pid %d con estado %d.", auto_pid,status);
 				log.debug(buffer);
 			}
 		}
@@ -134,7 +134,7 @@ int generarAutos(pid_t vent[6]){
 
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "Finalizaron correctamente %d, incorrectamente %d\n", finalizados_bien, finalizados_mal);
+		sprintf (buffer, "Finalizaron correctamente %d, incorrectamente %d", finalizados_bien, finalizados_mal);
 		log.debug(buffer);
 	}
 

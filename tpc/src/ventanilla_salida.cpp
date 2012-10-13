@@ -24,7 +24,7 @@ int m_ventanilla_salida(int n){
 	Logger log(debug);
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "Inicia ventanilla de salida %d \n", ventanilla);
+		sprintf (buffer, "Inicia ventanilla de salida %d", ventanilla);
 		log.debug(buffer);
 	}
 
