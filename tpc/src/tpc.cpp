@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/wait.h>
+#include "logger.h"
 
 #include "arraymemcomp.h"
 #include "genautos.h"
@@ -37,11 +38,12 @@ void mostrar_ayuda(){
  * 	3) Costo de la hora del estacionamiento (float)
  * 	Opcional: modo debug
 */
+bool debug=false;
+
 int main(int argc, char* argv[]){
 	int tiempo=0;
 	int cantidad=0;
 	float costo=0;
-	bool debug=false;
 
 	// Sección dedicada a los parametros
 	if (argc < 4 || argc > 5){
@@ -91,7 +93,7 @@ int main(int argc, char* argv[]){
 	//Los parametros son válidos, entonces se inicia el programa
 	cout << "Trabajo practico de concurrentes..." << endl;
 	if (debug){
-		cout << "Modo Debug." << endl;
+		DEBUG("Modo Debug.");
 		// TODO: Crear el objeto LOG.
 	}else{
 		cout << "Modo Normal. " << endl;
@@ -107,6 +109,7 @@ int main(int argc, char* argv[]){
 	vent[1] = fork();
 	if ( vent[1] == 0 ) {
 		// Proceso ventanilla 1
+
 		int res=m_ventanilla_entrada(1);
 		//cout << "Ventanilla 1 : estacionamiento " << est.getLugares() << endl;
 		exit(res);
