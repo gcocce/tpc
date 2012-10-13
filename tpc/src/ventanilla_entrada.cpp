@@ -37,18 +37,18 @@ int m_ventanilla_entrada(int n, ArrayMemComp<int> estacionamiento){
 
 	int estadoMemoria = estacionamiento.crear();
 	if ( estadoMemoria != 0 ) {
-		cout << "Error al crear el espacio de memoria compartida: " << estadoMemoria << endl;
-	}
-
-	// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
-	while (sigint_handler.getGracefulQuit()==0){
-		// TODO: lo que hace la ventanilla hasta que la cierran
-
+		log.debug("Memoria compartida falla al crear.");
+	}else{
+		// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
+		while (sigint_handler.getGracefulQuit()==0){
+			// TODO: lo que hace la ventanilla hasta que la cierran
 
 
 
 
-		sleep(1);
+
+			sleep(1);
+		}
 	}
 
 	estacionamiento.liberar();

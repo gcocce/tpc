@@ -74,8 +74,6 @@ int SemaforoSB :: v (int sem) {
 	operacion.sem_op  = 1;	// sumar 1 al semaforo
 	operacion.sem_flg = SEM_UNDO;
 
-	//cout << "SemaforoSB: se hace signal en el semaforo " << sem << endl;
-
 	int resultado = semop ( this->id,&operacion,1 );
 	return resultado;
 }

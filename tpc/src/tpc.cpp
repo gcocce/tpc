@@ -96,12 +96,12 @@ int main(int argc, char* argv[]){
 	Logger log(debug);
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "Se inicia la simulación, duracion: %d, cocheras: %d, costo: %d", tiempo,cantidad,costo);
+		sprintf (buffer, "Se inicia la simulación, duracion: %d, cocheras: %d, costo: %f", tiempo,cantidad,costo);
 		log.flush(buffer);
 	}
 
-	log.flush("Se crea el objeto de memoria compartida que modela el estacionamiento.");
 	// Se crea el objeto estacionamiento que permite gestionar los lugares
+	log.flush("Se crea el objeto de memoria compartida que modela el estacionamiento.");
 	ArrayMemComp<int>	estacionamiento(cantidad);
 
 	if (!estacionamiento.getEstado()){
@@ -168,7 +168,7 @@ int main(int argc, char* argv[]){
 	// El proceso principal continua por aquí.
 	log.flush("Ventanillas creadas.");
 
-	// Liberamos los recursos del estacionamiento
+	// Liberamos los recursos del estacionamiento para que no sean hereados
 	estacionamiento.liberar();
 
 	log.flush("Se forkea el proceso para crear el generador de autos.");
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]){
 
 		log.debug("Se envia la señal de finalización SIGINT");
 
-		int res= kill(genid,SIGINT);
+		kill(genid,SIGINT);
 
 		// Esperamos que finalice el generador de autos
 		wpid = waitpid(genid, &status,0);
@@ -216,7 +216,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-		// Liberamos los recursos del estacionamiento
+		// Aseguramos que no queden recursos tomados
 		estacionamiento.liberar();
 
 		cout << "Finaliza la simulacion"<< endl;
