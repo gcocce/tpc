@@ -43,15 +43,21 @@ int m_ventanilla_entrada(int n, ArrayMemComp<int> estacionamiento){
 		while (sigint_handler.getGracefulQuit()==0){
 			// TODO: lo que hace la ventanilla hasta que la cierran
 
+			if (ventanilla==1){
+				// Se accede al las cocheras para comprobar su estado
+				for (int i=0;i< estacionamiento.getSize();i++){
+					int resultado = estacionamiento.leer (i);
 
-
+				}
+			}
 
 
 			sleep(1);
 		}
 	}
 
-	estacionamiento.liberar();
+	estacionamiento.liberarMemoria();
+	estacionamiento.deleteSemaforos();
 
 	// Se recibio la senial SIGINT, el proceso termina
 	SignalHandler::getInstance()->removerHandler ( SIGINT);

@@ -70,9 +70,21 @@ public:
 	bool	getEstado();
 	int		getSize();
 
-	// crear() se tiene que ejecutar inicialmente en el proceso padre antes de hacer fork()
+	// Crea la memoria compartida y se conecta a ella
+	// Inicialmente en el proceso padre antes de hacer fork()
 	int 	crear ();
-	void	liberar ();
+
+	// Se desafecta de la memoria compartida
+	// Si no queda nadie conectado se elimina
+	void	liberarMemoria ();
+
+	// Borra el espacio de memoria ocupado
+	// por los objetos que hacen referencia a los semaforos
+	void 	deleteSemaforos ();
+
+	// Elimina los semaforos del sistema
+	void	eliminarSemaforos();
+
 	int		escribir ( T dato, int pos );
 	T 		leer (int pos);
 };
@@ -225,7 +237,7 @@ template <class T> void ArrayMemComp<T>::inicializar () {
 	}
 }
 
-template <class T> void ArrayMemComp<T> :: liberar () {
+template <class T> void ArrayMemComp<T> :: liberarMemoria () {
 	// detach del bloque de memoria de datos tipo T
 	shmdt ((void*)this->ptrDatos );
 	// detach del bloque de memoria de variables lectores
@@ -238,6 +250,9 @@ template <class T> void ArrayMemComp<T> :: liberar () {
 		shmctl ( this->shmIdL, IPC_RMID, NULL);
 	}
 
+}
+
+template <class T> void ArrayMemComp<T> :: eliminarSemaforos () {
 	if (this->mutexLectura!=NULL){
 		this->mutexLectura->eliminar();
 		delete(this->mutexLectura);
@@ -250,6 +265,16 @@ template <class T> void ArrayMemComp<T> :: liberar () {
 	}
 }
 
+template <class T> void ArrayMemComp<T> :: deleteSemaforos () {
+	if (this->mutexLectura!=NULL){
+		delete(this->mutexLectura);
+		this->mutexLectura=NULL;
+	}
+	if (this->mutexEscritura!=NULL){
+		delete(this->mutexEscritura);
+		this->mutexEscritura=NULL;
+	}
+}
 
 template <class T> void ArrayMemComp<T> :: liberar_mem_lectores () {
 	// detach del bloque de memoria de variables lectores
@@ -304,7 +329,10 @@ template <class T> T ArrayMemComp<T> :: leer (int pos) {
 template <class T> void ArrayMemComp<T> :: open (int pos, int modo) {
 	if (modo==MODO_LECTURA){
 		// wait(mutex)
-		this->mutexLectura->p(pos);
+		int res=this->mutexLectura->p(pos);
+		if(res!=0){
+			printf("ArrayMemComp: Resultado open Lec mutexL->p(%d): %d\n",pos,res);
+		}
 		//lectores=lectores+1
 		*(this->ptrLectores + pos)=*(this->ptrLectores + pos)+1;
 		// if (lectores==1)
@@ -316,14 +344,21 @@ template <class T> void ArrayMemComp<T> :: open (int pos, int modo) {
 		this->mutexLectura->v(pos);
 	}else{
 		// wait(escritura)
-		this->mutexEscritura->p(pos);
+		int res=this->mutexEscritura->p(pos);
+		if(res!=0){
+			printf("ArrayMemComp: Resultado open Esc mutexL->p(%d): %d\n",pos,res);
+		}
 	}
 }
 
 template <class T> void ArrayMemComp<T> :: close(int pos, int modo) {
 	if (modo==MODO_LECTURA){
 		// wait(mutex)
-		this->mutexLectura->p(pos);
+
+		int res= this->mutexLectura->p(pos);
+		if(res!=0){
+			printf("ArrayMemComp: Resultado close Lec mutexL->p(%d): %d\n",pos,res);
+		}
 		//lectores=lectores-1
 		*(this->ptrLectores + pos)=*(this->ptrLectores + pos)-1;
 		// if (lectores==0)
@@ -335,7 +370,10 @@ template <class T> void ArrayMemComp<T> :: close(int pos, int modo) {
 		this->mutexLectura->v(pos);
 	}else{
 		// signal(escritura)
-		this->mutexEscritura->v(pos);
+		int res=this->mutexEscritura->v(pos);
+		if(res!=0){
+			printf("ArrayMemComp: Resultado close Esc mutexL->p(%d): %d\n",pos,res);
+		}
 	}
 
 }

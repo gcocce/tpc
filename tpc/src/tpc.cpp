@@ -119,6 +119,12 @@ int main(int argc, char* argv[]){
 		}
 		cout << "Error al crear el espacio de memoria compartida: " << estadoMemoria << endl;
 		return -1;
+	}else{
+		//Se inicializa el estado de las cocheras
+		log.flush("Se inicializa el estado de las cocheras.");
+		for (int i=0;i<estacionamiento.getSize();i++){
+			estacionamiento.escribir (0 ,i);
+		}
 	}
 
 	pid_t vent[6]; // Almacena el id de proceso de las ventanillas
@@ -126,6 +132,7 @@ int main(int argc, char* argv[]){
 	int status=0;
 	pid_t wpid;
 
+	log.flush("Se crean las ventanillas.");
 	vent[1] = fork();
 	if ( vent[1] == 0 ) {
 		// Proceso ventanilla 1
@@ -168,13 +175,12 @@ int main(int argc, char* argv[]){
 	// El proceso principal continua por aquí.
 	log.flush("Ventanillas creadas.");
 
-	// Liberamos los recursos del estacionamiento para que no sean hereados
-	estacionamiento.liberar();
-
+	// Lanzar el generador de autos
 	log.flush("Se forkea el proceso para crear el generador de autos.");
 	pid_t genid = fork ();
 	if ( genid == 0 ) {
-		// Lanzar el generador de autos
+		// Liberamos los recursos del estacionamiento para que no sean hereados
+		estacionamiento.deleteSemaforos();
 		int res = generarAutos(vent);
 		exit ( res );
 	} else {
@@ -217,7 +223,8 @@ int main(int argc, char* argv[]){
 		}
 
 		// Aseguramos que no queden recursos tomados
-		estacionamiento.liberar();
+		estacionamiento.liberarMemoria();
+		estacionamiento.eliminarSemaforos();
 
 		cout << "Finaliza la simulacion"<< endl;
 		log.debug("Finaliza la simulación");

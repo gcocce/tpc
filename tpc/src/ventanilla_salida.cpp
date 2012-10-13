@@ -49,7 +49,10 @@ int m_ventanilla_salida(int n, ArrayMemComp<int> estacionamiento){
 			sleep(1);
 		}
 	}
-	estacionamiento.liberar();
+
+	estacionamiento.liberarMemoria();
+	estacionamiento.deleteSemaforos();
+
 
 	// Se recibio la senial SIGINT, el proceso termina
 	SignalHandler::getInstance()->removerHandler ( SIGINT);
