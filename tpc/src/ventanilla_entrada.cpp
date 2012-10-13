@@ -23,16 +23,17 @@ int m_ventanilla_entrada(int n){
 	int ventanilla=n;
 
 	Logger log(debug);
-	log.debug("Ventanilla");
+	if (debug){
+		char buffer [100];
+		sprintf (buffer, "Inicia ventanilla de entrada %d \n", ventanilla);
+		log.debug(buffer);
+	}
 
 	// event handler para la senial SIGINT (2)
 	SIGINT_Handler sigint_handler;
 
 	// se registra el event handler declarado antes
 	SignalHandler::getInstance()->registrarHandler ( SIGINT,&sigint_handler );
-
-	cout << "Ventanilla " << ventanilla << ": process ID " << getpid() << endl;
-
 
 	// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
 	while (sigint_handler.getGracefulQuit()==0){
@@ -48,8 +49,8 @@ int m_ventanilla_entrada(int n){
 	// Se recibio la senial SIGINT, el proceso termina
 	SignalHandler::getInstance()->removerHandler ( SIGINT);
 	SignalHandler::destruir ();
-	log.debug("Finaliza la ventanilla");
-	cout << "Ventanilla " << ventanilla << ": FIN." << endl;
+
+	log.debug("Finaliza la ventanilla.");
 
 	return 0;
 }

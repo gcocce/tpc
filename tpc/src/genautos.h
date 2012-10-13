@@ -11,6 +11,7 @@
 #include <time.h>
 #include <sys/wait.h>
 #include "definiciones.h"
+#include "logger.h"
 
 
 int generarAutos(pid_t vent[]);

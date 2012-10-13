@@ -96,7 +96,9 @@ int main(int argc, char* argv[]){
 	Logger log(debug);
 	log.flush("Modo debug");
 
+	log.flush("Se crea la memoria compartida que modela el estacionamiento.");
 	// Se crea el objeto estacionamiento que permite gestionar los lugares
+	//ArrayMemComp<int>	estacionamiento(cantidad);
 
 	pid_t vent[6]; // Almacena el id de proceso de las ventanillas
 	// Se inician los procesos de las ventanillas
@@ -107,7 +109,6 @@ int main(int argc, char* argv[]){
 	if ( vent[1] == 0 ) {
 		// Proceso ventanilla 1
 		int res=m_ventanilla_entrada(1);
-		//cout << "Ventanilla 1 : estacionamiento " << est.getLugares() << endl;
 		exit(res);
 	}else{
 		vent[2]=fork();
@@ -144,42 +145,55 @@ int main(int argc, char* argv[]){
 	}
 
 	// El proceso principal continua por aquí.
-	// Se inicia el proceso del generador de autos
+	log.flush("Ventanillas creadas.");
+
+	log.flush("Se forkea el proceso para crear el generador de autos.");
 	pid_t genid = fork ();
 	if ( genid == 0 ) {
 		// Lanzar el generador de autos
 		int res = generarAutos(vent);
 		exit ( res );
 	} else {
-		cout << "Padre: Espero. Process id= " << getpid() << endl;
+		log.debug("Simulación en marcha...");
 		sleep(tiempo);
 
-		cout << "Padre: Envio SIGINT al generador de autos." << endl;
-		log.debug("Se envia la señal de finalizacion SIGINT");
+		log.debug("Se envia la señal de finalización SIGINT");
 
 		int res= kill(genid,SIGINT);
 		cout << "Padre: Resultado de la señal= " << res << endl;
 
 		// Esperamos que finalice el generador de autos
 		wpid = waitpid(genid, &status,0);
-		log.debug("Finaliza el generador de autos");
+		log.debug("Finalizó el generador de autos.");
 
-		cout << "Padre: Finalizó el generador de autos con estado= "<< status << endl;
+		if (debug){
+			char buffer [100];
+			sprintf (buffer, "El generador de autos finalizó con estado %d \n", status);
+			log.debug(buffer);
+		}
 
 		// Cerramos las ventanillas
-		cout << "Padre: Envio SIGINT a las ventanillas." << endl;
+		log.debug("Padre: Envio SIGINT a las ventanillas.");
 		for (int i=1;i<6;i++){
 			int res = kill(vent[i],SIGINT);
-			cout << "Padre: Resultados de la señal a ventanilla " << i << "= " << res << endl;
+
+			if (debug){
+				char buffer [100];
+				sprintf (buffer, "Resultados de la señal a ventanilla %d :%d \n", i, res);
+				log.debug(buffer);
+			}
 		}
 
 		for (int i=1;i<6;i++){
 			wpid = waitpid(vent[i], &status,0);
-			cout << "Padre: Ventanilla "<< i << " finalizó con estado= "<< status << endl;
+			if (debug){
+				char buffer [100];
+				sprintf (buffer, "Ventanilla %d finalizó con estado %d \n", i, status);
+				log.debug(buffer);
+			}
 		}
 
-		cout << "Padre: FIN"<< endl;
-
+		cout << "Finaliza la simulacion"<< endl;
 		log.debug("Finaliza la simulación");
 		return 0;
 	}

@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/wait.h>
+#include "logger.h"
 
 int m_ventanilla_salida(int n);
 
