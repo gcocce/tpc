@@ -10,10 +10,11 @@
 #include <time.h>
 #include "auto.h"
 #include "logger.h"
-
+#include "BufferSincronizado.h"
+#include "Semaforo2.h"
 using namespace std;
 
-extern bool debug;
+#define NOMBRE	"/tmp/log"
 
 int manejarAuto(pid_t vent[6]){
 	int tiempo_estacionado=0;
@@ -34,8 +35,28 @@ int manejarAuto(pid_t vent[6]){
 		log.debug(buffer);
 	}
 
-	sleep(tiempo_estacionado);
+//	BufferSincronizado<int> output((char*) NOMBRE ,0+30*ventanilla_entrada);
+//	BufferSincronizado<int> input((char*) NOMBRE ,10+30*ventanilla_entrada);
+//	Semaforo2 barrera((char*) NOMBRE ,20+30*ventanilla_entrada);
+//	input.abrir();
+//	output.abrir();
+//	barrera.abrir();
 
+	cout << "Auto: id= " << getpid() << " tiempo estacionado: " << tiempo_estacionado << endl;
+
+	cout << "Auto: id= " << getpid() << " venanilla " << ventanilla_entrada << " pid= " << vent[ventanilla_entrada] << endl;
+//	barrera.wait();
+//	output.waitWrite();
+//	output.escribir(12);
+//	output.signalRead();
+//	input.waitRead();
+//	int valor= input.leer();
+//	input.signalWrite();
+
+	sleep(tiempo_estacionado);
+//	cout << "Auto: id= " << getpid() << " lei " << valor << endl;
+//	input.cerrar();
+//	output.cerrar();
+//	barrera.cerrar();
 	return 0;
 }
-
