@@ -20,9 +20,6 @@
 */
 #define 	RANGO_TIEMPO 	10
 
-// Este proceso bloquea la señal SIGINT momentaneamente
-//void bloquearSigint ();
-
 using namespace std;
 
 extern bool debug;
@@ -141,12 +138,4 @@ int generarAutos(pid_t vent[6]){
 	log.debug("Finaliza el generador de autos.");
 
 	return 0;
-}
-
-// Funcion para bloquear SIGINT
-void bloquearSigint () {
-	sigset_t sa;
-	sigemptyset ( &sa );
-	sigaddset ( &sa,SIGINT );
-	sigprocmask ( SIG_BLOCK,&sa,NULL );
 }

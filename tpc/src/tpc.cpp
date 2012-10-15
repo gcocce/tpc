@@ -59,20 +59,20 @@ int main(int argc, char* argv[]){
 				param_error=true;
 			}
 		}else{
-			param_error=true;
 			cout << "Error: El primer argumento debe ser numerico." << endl;
+			param_error=true;
 		}
 		if(isdigit(*argv[2])){
 			cantidad=atoi(argv[2]);
 		}else{
-			param_error=true;
 			cout << "Error: El segundo argumento debe ser numerico." << endl;
+			param_error=true;
 		}
 		if(isdigit(*argv[3])){
 			costo=atof(argv[3]);
 		}else{
-			param_error=true;
 			cout << "Error: El tercer argumento debe ser numerico." << endl;
+			param_error=true;
 		}
 		if (param_error){
 			mostrar_ayuda();

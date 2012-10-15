@@ -23,4 +23,7 @@ class SignalHandler {
 
 };
 
+void bloquearSigint () ;
+void desbloquearSigint () ;
+
 #endif /* SIGNALHANDLER_H_ */

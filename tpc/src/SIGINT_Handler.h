@@ -31,5 +31,4 @@ class SIGINT_Handler : public EventHandler {
 		}
 
 };
-
 #endif /* SIGINT_HANDLER_H_ */

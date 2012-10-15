@@ -1,14 +1,14 @@
 #ifndef BUFFERSINCRONIZADO_H_
 #define BUFFERSINCRONIZADO_H_
 
-#include "Semaforo2.h"
+#include "Semaforo.h"
 #include "MemoriaCompartida.h"
 
 template <class T> class BufferSincronizado {
 
 private:
-	Semaforo2 semRead;
-	Semaforo2 semWrite;
+	Semaforo semRead;
+	Semaforo semWrite;
 	MemoriaCompartida<T> mem;
 
 public:

@@ -11,10 +11,13 @@
 #include "auto.h"
 #include "logger.h"
 #include "BufferSincronizado.h"
-#include "Semaforo2.h"
+#include "Semaforo.h"
+#include "SignalHandler.h"
 using namespace std;
 
 #define NOMBRE	"/tmp/log"
+
+extern bool debug;
 
 int manejarAuto(pid_t vent[6]){
 	int tiempo_estacionado=0;
@@ -35,28 +38,29 @@ int manejarAuto(pid_t vent[6]){
 		log.debug(buffer);
 	}
 
-//	BufferSincronizado<int> output((char*) NOMBRE ,0+30*ventanilla_entrada);
-//	BufferSincronizado<int> input((char*) NOMBRE ,10+30*ventanilla_entrada);
-//	Semaforo2 barrera((char*) NOMBRE ,20+30*ventanilla_entrada);
-//	input.abrir();
-//	output.abrir();
-//	barrera.abrir();
+	BufferSincronizado<int> output((char*) NOMBRE ,0+30*ventanilla_entrada);
+	BufferSincronizado<int> input((char*) NOMBRE ,10+30*ventanilla_entrada);
+	Semaforo barrera((char*) NOMBRE ,20+30*ventanilla_entrada);
+	input.abrir();
+	output.abrir();
+	barrera.abrir();
 
 	cout << "Auto: id= " << getpid() << " tiempo estacionado: " << tiempo_estacionado << endl;
 
 	cout << "Auto: id= " << getpid() << " venanilla " << ventanilla_entrada << " pid= " << vent[ventanilla_entrada] << endl;
-//	barrera.wait();
-//	output.waitWrite();
-//	output.escribir(12);
-//	output.signalRead();
-//	input.waitRead();
-//	int valor= input.leer();
-//	input.signalWrite();
-
+	bloquearSigint();
+	barrera.wait();
+	output.waitWrite();
+	output.escribir(12);
+	output.signalRead();
+	input.waitRead();
+	int valor= input.leer();
+	input.signalWrite();
+	desbloquearSigint();
 	sleep(tiempo_estacionado);
-//	cout << "Auto: id= " << getpid() << " lei " << valor << endl;
-//	input.cerrar();
-//	output.cerrar();
-//	barrera.cerrar();
+	cout << "Auto: id= " << getpid() << " lei " << valor << endl;
+	input.cerrar();
+	output.cerrar();
+	barrera.cerrar();
 	return 0;
 }

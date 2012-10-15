@@ -9,7 +9,7 @@
 #include "SIGINT_Handler.h"
 #include "SignalHandler.h"
 #include "logger.h"
-#include "Semaforo2.h"
+#include "Semaforo.h"
 #include "BufferSincronizado.h"
 
 #include <stdio.h>
@@ -24,12 +24,12 @@ extern bool debug;
 
 int m_ventanilla_entrada(int n, ArrayMemComp<int> estacionamiento){
 	int ventanilla=n;
-//	BufferSincronizado<int> input((char*) NOMBRE ,0+30*n);
-//	BufferSincronizado<int> output((char*) NOMBRE ,10+30*n);
-//	Semaforo2 barrera((char*) NOMBRE ,20+30*n);
-//	input.crear(0,1);
-//	output.crear(1,0);
-//	barrera.crear(0);
+	BufferSincronizado<int> input((char*) NOMBRE ,0+30*n);
+	BufferSincronizado<int> output((char*) NOMBRE ,10+30*n);
+	Semaforo barrera((char*) NOMBRE ,20+30*n);
+	input.crear(0,1);
+	output.crear(1,0);
+	barrera.crear(0);
 
 	Logger log(debug);
 	if (debug){
@@ -50,22 +50,23 @@ int m_ventanilla_entrada(int n, ArrayMemComp<int> estacionamiento){
 	}else{
 		// mientras no se reciba la senial SIGINT, el proceso realiza su trabajo
 		while (sigint_handler.getGracefulQuit()==0){
+			bloquearSigint();
+			barrera.signal();
+			input.waitRead();
+			input.leer();	//lee pedido auto
+			input.signalWrite();
+			output.waitWrite();
+			output.escribir(0); // responde al auto 0 --> lleno
+			output.signalRead();
+			desbloquearSigint();
 			// TODO: lo que hace la ventanilla hasta que la cierran
-
-			if (ventanilla==1){
-				// Se accede al las cocheras para comprobar su estado
-				for (int i=0;i< estacionamiento.getSize();i++){
-					int resultado = estacionamiento.leer (i);
-
-				}
-			}
-			//		barrera.signal();
-			//		input.waitRead();
-			//		input.leer();	//lee pedido auto
-			//		input.signalWrite();
-			//		output.waitWrite();
-			//		output.escribir(1); // responde al auto 0 --> lleno
-			//		output.signalRead();
+//			if (ventanilla==1){
+//				// Se accede al las cocheras para comprobar su estado
+//				for (int i=0;i< estacionamiento.getSize();i++){
+//					int resultado = estacionamiento.leer (i);
+//
+//				}
+//			}
 
 			sleep(1);
 		}
@@ -81,8 +82,8 @@ int m_ventanilla_entrada(int n, ArrayMemComp<int> estacionamiento){
 
 	log.debug("Finaliza la ventanilla.");
 
-//	input.eliminar();
-//	output.eliminar();
-//	barrera.eliminar();
+	input.eliminar();
+	output.eliminar();
+	barrera.eliminar();
 	return 0;
 }

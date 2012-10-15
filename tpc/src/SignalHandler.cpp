@@ -42,3 +42,17 @@ int SignalHandler :: removerHandler ( int signum ) {
 	SignalHandler :: signal_handlers [ signum ] = NULL;
 	return 0;
 }
+
+void bloquearSigint () {
+	sigset_t sa;
+	sigemptyset ( &sa );
+	sigaddset ( &sa,SIGINT );
+	sigprocmask ( SIG_BLOCK,&sa, NULL);
+}
+
+void desbloquearSigint () {
+	sigset_t sa;
+	sigemptyset ( &sa );
+	sigaddset ( &sa,SIGINT );
+	sigprocmask ( SIG_UNBLOCK,&sa,NULL );
+}
