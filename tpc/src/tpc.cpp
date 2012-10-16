@@ -12,7 +12,7 @@
 #include <time.h>
 #include <sys/wait.h>
 #include "logger.h"
-#include "LockFile.h"
+#include "LUResource.h"
 
 #include "arraymemcomp.h"
 #include "genautos.h"
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]){
 		log.flush(buffer);
 	}
 
-	LockFile lockAutos("autos.lok");
+	LUResource lockAutos("autos.lok");
 
 	if (lockAutos.crearRecurso()<=0){
 		log.flush("Main: se produce un error al crear el recurso auto.lok");
@@ -113,7 +113,7 @@ int main(int argc, char* argv[]){
 	lockAutos.escribirEntero(0);
 	lockAutos.liberarLock();
 
-	LockFile lockMonto("monto.lok");
+	LUResource lockMonto("monto.lok");
 
 	if (lockMonto.crearRecurso()<=0){
 		log.flush("Main: se produce un error al crear el recurso monto.lok");
