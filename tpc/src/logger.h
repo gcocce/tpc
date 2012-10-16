@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <time.h>
 
-
 class Logger {
 public:
 	Logger(bool debug);

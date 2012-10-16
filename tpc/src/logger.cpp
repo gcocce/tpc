@@ -72,7 +72,3 @@ void Logger::flush(const char* msg){
 		}
 	}
 }
-
-
-
-
