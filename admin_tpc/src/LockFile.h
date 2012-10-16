@@ -13,8 +13,10 @@ private:
 	struct flock fl;
 	int fd;
 	char nombre [ 255 ];
+
 	int escribir ( char* buffer,int buffsize );
 	int leer ( char* buffer, int buffsize);
+
 public:
 
 	LockFile ( char* nombre );
