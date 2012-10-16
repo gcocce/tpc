@@ -1,11 +1,12 @@
-#include "LockFile.h"
+#include "LUResource.h"
 #include <stdio.h>
 
-LockFile :: LockFile ( char* nombre ) {
+LUResource :: LUResource ( char* nombre ) {
 	strcpy ( this->nombre,nombre );
+	this->fd=0;
 }
 
-int LockFile :: crearRecurso() {
+int LUResource :: crearRecurso() {
 	this->fl.l_type = F_WRLCK;
 	this->fl.l_whence = SEEK_SET;
 	this->fl.l_start = 0;
@@ -15,7 +16,7 @@ int LockFile :: crearRecurso() {
 	return this->fd;
 }
 
-int LockFile :: conectarRecurso() {
+int LUResource :: conectarRecurso() {
 	this->fl.l_type = F_WRLCK;
 	this->fl.l_whence = SEEK_SET;
 	this->fl.l_start = 0;
@@ -26,7 +27,7 @@ int LockFile :: conectarRecurso() {
 }
 
 
-int LockFile :: eliminarRecurso() {
+int LUResource :: eliminarRecurso() {
 	if (unlink(this->nombre) == -1) {
 		return errno;
 	}
@@ -34,33 +35,33 @@ int LockFile :: eliminarRecurso() {
 }
 
 
-void LockFile :: setPID() {
+void LUResource :: setPID() {
 	this->fl.l_pid= getpid();
 }
 
-void LockFile :: setNombre(char* nombre) {
+void LUResource :: setNombre(char* nombre) {
 	strcpy ( this->nombre,nombre );
 }
 
-int LockFile :: tomarLockLectura () {
+int LUResource :: tomarLockLectura () {
 	this->fl.l_type = F_RDLCK;
 	int resultado = fcntl ( this->fd,F_SETLKW,&(this->fl) );
 	return resultado;
 }
 
-int LockFile :: tomarLockEscritura () {
+int LUResource :: tomarLockEscritura () {
 	this->fl.l_type = F_WRLCK;
 	int resultado = fcntl ( this->fd,F_SETLKW,&(this->fl) );
 	return resultado;
 }
 
-int LockFile :: liberarLock () {
+int LUResource :: liberarLock () {
 	this->fl.l_type = F_UNLCK;
 	int resultado = fcntl ( this->fd,F_SETLK,&(this->fl) );
 	return resultado;
 }
 
-int LockFile :: leer ( char* buffer, int buffsize){
+int LUResource :: leer ( char* buffer, int buffsize){
 	lseek ( this->fd,0,SEEK_SET );
 	int resultado = read (this->fd, buffer, buffsize);
 	if (resultado == -1) {
@@ -70,7 +71,7 @@ int LockFile :: leer ( char* buffer, int buffsize){
 	return resultado;
 }
 
-int LockFile :: escribir ( char* buffer,int buffsize ) {
+int LUResource :: escribir ( char* buffer,int buffsize ) {
 	lseek ( this->fd,0,SEEK_SET);
 	int resultado = write ( this->fd, buffer,buffsize );
 	if (resultado == -1) {
@@ -80,7 +81,7 @@ int LockFile :: escribir ( char* buffer,int buffsize ) {
 	return resultado;
 }
 
-int LockFile :: leerEntero (){
+int LUResource :: leerEntero (){
 	int resultado=0;
 	char buffer[50];
 	memset(buffer, '\0', 50);
@@ -97,7 +98,7 @@ int LockFile :: leerEntero (){
 	}
 }
 
-int LockFile :: escribirEntero ( int valor) {
+int LUResource :: escribirEntero ( int valor) {
 	char buffer[50];
 	memset(buffer, '\0', 50);
 	int n=sprintf (buffer, "%d                        ", valor);
@@ -110,7 +111,7 @@ int LockFile :: escribirEntero ( int valor) {
 	}
 }
 
-double LockFile :: leerDouble(){
+double LUResource :: leerDouble(){
 	double resultado=0;
 	char buffer[50];
 	memset(buffer, '\0', 50);
@@ -127,7 +128,7 @@ double LockFile :: leerDouble(){
 	}
 }
 
-int LockFile :: escribirDouble ( double valor) {
+int LUResource :: escribirDouble ( double valor) {
 	char buffer[50];
 	memset(buffer, '\0', 50);
 	int n=sprintf (buffer, "%f                        ", valor);
@@ -140,7 +141,7 @@ int LockFile :: escribirDouble ( double valor) {
 	}
 }
 
-LockFile :: ~LockFile () {
+LUResource :: ~LUResource () {
 	if (this->fd>0){
 		close ( this->fd );
 	}

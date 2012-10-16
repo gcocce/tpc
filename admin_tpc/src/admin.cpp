@@ -9,7 +9,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include "logger.h"
-#include "LockFile.h"
+#include "LUResource.h"
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
@@ -123,7 +123,7 @@ void mostrarMenu(){
 
 int consultarAutos(){
 	int resultado=0;
-	LockFile lock("../../pruebaLock/Debug/autos.lok");
+	LUResource lock("../../pruebaLock/Debug/autos.lok");
 	if (lock.conectarRecurso()<=0){
 		cout << "El recurso no está disponible en este momento" << endl;
 		return -1;
@@ -140,7 +140,7 @@ int consultarAutos(){
 
 double consultarMonto(){
 	double resultado=0;
-	LockFile lock("../../pruebaLock/Debug/monto.lok");
+	LUResource lock("../../pruebaLock/Debug/monto.lok");
 	if (lock.conectarRecurso()<=0){
 		cout << "El recurso no está disponible en este momento" << endl;
 		return -1;

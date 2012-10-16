@@ -1,5 +1,5 @@
-#ifndef LOCKFILE_H_
-#define LOCKFILE_H_
+#ifndef LURESOURCE_H_
+#define LURESOURCE_H_
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-class LockFile {
+class LUResource {
 private:
 	struct flock fl;
 	int fd;
@@ -19,8 +19,8 @@ private:
 
 public:
 
-	LockFile ( char* nombre );
-	~LockFile();
+	LUResource ( char* nombre );
+	~LUResource();
 
 	int crearRecurso();
 	int conectarRecurso();
@@ -40,4 +40,4 @@ public:
 	double leerDouble();
 };
 
-#endif /* LOCKFILE_H_ */
+#endif /* LURESOURCE_H_ */
