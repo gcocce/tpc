@@ -16,11 +16,9 @@
 #include "SignalHandler.h"
 using namespace std;
 
-#define NOMBRE	"/tmp/log"
-
 extern bool debug;
 
-int manejarAuto(){
+int manejarAuto(char *path){
 	int tiempo_estacionado=0;
 	int ventanilla_entrada=0;
 	int ventanilla_salida=0;
@@ -40,9 +38,9 @@ int manejarAuto(){
 		log.debug(buffer);
 	}
 
-	Semaforo barrera((char*) NOMBRE ,2+10*ventanilla_entrada);
-	BufferSincronizado<message> output((char*) NOMBRE ,3+10*ventanilla_entrada);
-	BufferSincronizado<message> input((char*) NOMBRE ,4+10*ventanilla_entrada);
+	Semaforo barrera(path ,2+10*ventanilla_entrada);
+	BufferSincronizado<message> output((char*) path ,3+10*ventanilla_entrada);
+	BufferSincronizado<message> input((char*) path ,4+10*ventanilla_entrada);
 	if (input.abrir()!=SEM_OK){
 		cout << "Auto: id= " << getpid() << " venanilla entrada " << ventanilla_entrada << " cerrada. Me voy." << endl;
 		exit(0);
@@ -83,8 +81,8 @@ int manejarAuto(){
 	}else{
 		sleep(tiempo_estacionado);
 		cout << "Auto: id= " << getpid() << " lei " << msg.place << endl;
-		Semaforo barreraSalida((char*) NOMBRE ,5+10*ventanilla_entrada);
-		BufferSincronizado<message> outputSalida((char*) NOMBRE ,6+10*ventanilla_entrada);
+		Semaforo barreraSalida(path ,5+10*ventanilla_entrada);
+		BufferSincronizado<message> outputSalida(path ,6+10*ventanilla_entrada);
 		if (barreraSalida.abrir()!=SEM_OK){
 			cout << "Auto: id= " << getpid() << " venanilla salida " << ventanilla_salida << " cerrada. Me voy." << endl;
 			exit(0);

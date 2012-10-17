@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 		}
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
-			generarAutos();
+			generarAutos("/tmp/estacionamiento");
 		}
 		MainSIGINTHandler handler(estacionamientoPID,estacionamientoPID);
 		SignalHandler::getInstance()->registrarHandler( SIGINT,&handler );

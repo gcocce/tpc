@@ -14,7 +14,7 @@
 #include "logger.h"
 
 
-int generarAutos();
+int generarAutos(char * path);
 
 
 #endif /* CARGENERATOR_H_ */

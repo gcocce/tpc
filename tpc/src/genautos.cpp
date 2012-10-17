@@ -24,7 +24,7 @@ using namespace std;
 
 extern bool debug;
 
-int generarAutos(){
+int generarAutos(char *path){
 
 	Logger log(debug);
 
@@ -54,7 +54,7 @@ int generarAutos(){
 		if (auto_id == 0 ) {
 			// Hace falta eliminar el handler heredado en el stack
 			SignalHandler::destruir ();
-			int res = manejarAuto();
+			int res = manejarAuto(path);
 			exit (res);
 		} else {
 			if (debug){

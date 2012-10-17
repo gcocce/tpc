@@ -75,6 +75,7 @@ void VentanillaSalida :: finalizar(){
 		exit(0);
 	}else{
 		this->abierto=false;
+		this->canalEntrada.waitRead();
 	}
 }
 

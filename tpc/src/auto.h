@@ -15,6 +15,6 @@
 #include <sys/wait.h>
 #include "definiciones.h"
 
-int manejarAuto();
+int manejarAuto(char *path);
 
 #endif /* CAR_H_ */
