@@ -74,7 +74,7 @@ int Semaforo :: wait () {
 	operacion.sem_op  = -1;	// restar 1 al Semaforo
 	operacion.sem_flg = SEM_UNDO;
 
-	cout << "Semaforo " << this->path << " wait." << endl;
+	cout << "Semaforo " << this->path  << " - " << (int)this->code << " wait." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
 		cout <<  strerror(errno)  << endl;
@@ -90,7 +90,7 @@ int Semaforo :: signal () {
 	operacion.sem_op  = 1;	// sumar 1 al Semaforo
 	operacion.sem_flg = SEM_UNDO;
 
-	cout << "Semaforo " << this->path << " signal." << endl;
+	cout << "Semaforo " << this->path << " - " << (int)this->code << " signal." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
 		cout <<  strerror(errno)  << endl;
@@ -104,5 +104,5 @@ void Semaforo :: cerrar() {
 
 void Semaforo :: eliminar () {
 	semctl ( this->id,0,IPC_RMID );
-	cout << "Semaforo " << this->path << " eliminado." << endl;
+	cout << "Semaforo " << this->path << " - " << (int)this->code << " eliminado." << endl;
 }

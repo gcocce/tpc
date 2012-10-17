@@ -22,12 +22,12 @@ VentanillaSalida :: ~VentanillaSalida(){
 
 void VentanillaSalida :: crear(){
 	if (this->barrera.crear(0)!=SEM_OK){
-		cout << "Ventanilla " << this->numeroVentanilla + 0x30 << ". Error al crear." <<endl;
+		cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 		exit(1);
 	}
 	if (this->canalEntrada.crear(0,0)!=SEM_OK){
 		this->barrera.eliminar();
-		cout << "Ventanilla " << this->numeroVentanilla + 0x30 << ". Error al crear." <<endl;
+		cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 		exit(1);
 	}
 }
@@ -39,12 +39,12 @@ void VentanillaSalida :: eliminar(){
 
 void VentanillaSalida :: abrir(){
 	if(this->barrera.abrir()==SEM_OK){
-		cout << "Ventanilla " << this->numeroVentanilla + 0x30 << ". Error al abrir." <<endl;
+		cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
 		exit(1);
 	}
 	if(this->canalEntrada.abrir()==SEM_OK){
 		this->barrera.cerrar();
-		cout << "Ventanilla " << this->numeroVentanilla + 0x30 << ". Error al abrir." <<endl;
+		cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
 		exit(1);
 	}
 }

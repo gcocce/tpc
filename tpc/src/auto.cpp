@@ -26,8 +26,8 @@ int manejarAuto(char *path){
 	Logger log(debug);
 
 	tiempo_estacionado = rand() % 24 + 1;
-	ventanilla_entrada = rand() % 3 + 1;
-	ventanilla_salida = rand() % 2 + 1;
+	ventanilla_entrada = rand() % 3;
+	ventanilla_salida = rand() % 2;
 
 	if (debug){
 		char buffer [100];

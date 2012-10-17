@@ -17,7 +17,7 @@ VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *p
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierta=false;
-		cout << "Ventananilla numero: " << numeroVentanilla+0x30 << endl;
+		cout << "Ventananilla numero: " << (int)numeroVentanilla << endl;
 	}
 
 VentanillaEntrada :: ~VentanillaEntrada(){
@@ -27,24 +27,24 @@ VentanillaEntrada :: ~VentanillaEntrada(){
 
 void VentanillaEntrada :: crear(){
 		if (this->barrera.crear(0)!=SEM_OK){
-			cout << "Ventanilla " << this->numeroVentanilla+0x30 << ". Error al crear." <<endl;
+			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 			exit(1);
 		}
 		if (this->canalEntrada.crear(0,0)!=SEM_OK){
 			this->barrera.eliminar();
-			cout << "Ventanilla " << this->numeroVentanilla+0x30 << ". Error al crear." <<endl;
+			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 			exit(1);
 		}
 		if (this->canalSalida.crear(0,0)!=SEM_OK){
 			this->barrera.eliminar();
 			this->canalEntrada.eliminar();
-			cout << "Ventanilla " << this->numeroVentanilla+0x30 << ". Error al crear." <<endl;
+			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 			exit(1);
 		}
 		this->log.debug("Se ha creado la ventanilla.");
 
 		std::ostringstream stringStream;
-		stringStream << "Ventanilla numero: " << this->numeroVentanilla+0x30;
+		stringStream << "Ventanilla numero: " << (int)this->numeroVentanilla;
 		std::string copyOfStr = stringStream.str();
 		this->log.debug(copyOfStr.c_str());
 	}
@@ -57,18 +57,18 @@ void VentanillaEntrada :: eliminar(){
 
 void VentanillaEntrada :: abrir(){
 		if(this->barrera.abrir()==SEM_OK){
-			cout << "Ventanilla " << this->numeroVentanilla+0x30 << ". Error al abrir." <<endl;
+			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
 			exit(1);
 		}
 		if(this->canalEntrada.abrir()==SEM_OK){
 			this->barrera.cerrar();
-			cout << "Ventanilla " << this->numeroVentanilla+0x30 << ". Error al abrir." <<endl;
+			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
 			exit(1);
 		}
 		if(this->canalSalida.abrir()==SEM_OK){
 			this->barrera.cerrar();
 			this->canalEntrada.cerrar();
-			cout << "Ventanilla " << this->numeroVentanilla+0x30 << ". Error al abrir." <<endl;
+			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
 			exit(1);
 		}
 		this->log.debug("Ventanilla: Se ha abierto la barrera.");
@@ -130,7 +130,7 @@ void VentanillaEntrada :: finalizar(){
 int VentanillaEntrada ::  handleSignal ( int signum ) {
 	this->log.debug("Ventanilla: Se llamo al metodo handSignal");
 	if( signum == SIGINT ){
-		cout << "Ventanila " << this->numeroVentanilla+0x30 << " manejando SIGINT" << endl;
+		cout << "Ventanila " << (int)this->numeroVentanilla<< " manejando SIGINT" << endl;
 		this->finalizar();
 	}
 	return 0;

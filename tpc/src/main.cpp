@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 		log.flush("Inicializando Estacionamiento");
 		pid_t estacionamientoPID = fork();
 		if (estacionamientoPID==0){
-			Estacionamiento estacionamiento("estacionamiento.log",espacios,costo);
+			Estacionamiento estacionamiento("estacionamiento.lok",espacios,costo);
 			estacionamiento.iniciar();
 			estacionamiento.~Estacionamiento();
 			exit (0);
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
 		log.flush("Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
-			generarAutos("estacionamiento.log");
+			generarAutos("estacionamiento.lok");
 			/*while(1){
 				sleep(10);
 			}*/
