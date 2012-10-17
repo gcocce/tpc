@@ -25,6 +25,8 @@ private:
 	Semaforo barrera;
 	BufferSincronizado<message> canalEntrada;
 	Estacionamiento *estacionamiento;
+	Logger log;
+
 public:
 	VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla);
 	~VentanillaSalida();
