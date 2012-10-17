@@ -5,6 +5,10 @@
  *      Author: plucadei
  */
 #include "VentanillaSalida.h"
+#include <iostream>
+
+using namespace std;
+
 
 VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,numeroVentanilla*10+5), canalEntrada(path,numeroVentanilla*10+6){
 		this->estacionamiento= estacionamiento;
@@ -16,9 +20,16 @@ VentanillaSalida :: ~VentanillaSalida(){
 	}
 
 void VentanillaSalida :: crear(){
-		this->barrera.crear(0);
-		this->canalEntrada.crear(0,0);
+	if (this->barrera.crear(0)!=SEM_OK){
+		cout << "Ventanilla " << this->numeroVentanilla << ". Error al crear." <<endl;
+		exit(1);
 	}
+	if (this->canalEntrada.crear(0,0)!=SEM_OK){
+		this->barrera.eliminar();
+		cout << "Ventanilla " << this->numeroVentanilla << ". Error al crear." <<endl;
+		exit(1);
+	}
+}
 
 void VentanillaSalida :: eliminar(){
 		this->barrera.eliminar();
@@ -26,9 +37,16 @@ void VentanillaSalida :: eliminar(){
 	}
 
 void VentanillaSalida :: abrir(){
-		this->barrera.abrir();
-		this->canalEntrada.abrir();
+	if(this->barrera.abrir()==SEM_OK){
+		cout << "Ventanilla " << this->numeroVentanilla << ". Error al abrir." <<endl;
+		exit(1);
 	}
+	if(this->canalEntrada.abrir()==SEM_OK){
+		this->barrera.cerrar();
+		cout << "Ventanilla " << this->numeroVentanilla << ". Error al abrir." <<endl;
+		exit(1);
+	}
+}
 
 void VentanillaSalida :: cerrar(){
 		this->barrera.cerrar();

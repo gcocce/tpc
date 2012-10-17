@@ -5,6 +5,9 @@
  *      Author: plucadei
  */
 #include "VentanillaEntrada.h"
+#include <iostream>
+
+using namespace std;
 
 VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,10*numeroVentanilla+2), canalEntrada(path,numeroVentanilla*10+3), canalSalida(path,numeroVentanilla*10+4){
 		this->estacionamiento= estacionamiento;
@@ -17,9 +20,21 @@ VentanillaEntrada :: ~VentanillaEntrada(){
 	}
 
 void VentanillaEntrada :: crear(){
-		this->barrera.crear(0);
-		this->canalEntrada.crear(0,0);
-		this->canalSalida.crear(0,0);
+		if (this->barrera.crear(0)!=SEM_OK){
+			cout << "Ventanilla " << this->numeroVentanilla << ". Error al crear." <<endl;
+			exit(1);
+		}
+		if (this->canalEntrada.crear(0,0)!=SEM_OK){
+			this->barrera.eliminar();
+			cout << "Ventanilla " << this->numeroVentanilla << ". Error al crear." <<endl;
+			exit(1);
+		}
+		if (this->canalSalida.crear(0,0)!=SEM_OK){
+			this->barrera.eliminar();
+			this->canalEntrada.eliminar();
+			cout << "Ventanilla " << this->numeroVentanilla << ". Error al crear." <<endl;
+			exit(1);
+		}
 	}
 
 void VentanillaEntrada :: eliminar(){
@@ -29,9 +44,21 @@ void VentanillaEntrada :: eliminar(){
 	}
 
 void VentanillaEntrada :: abrir(){
-		this->barrera.abrir();
-		this->canalEntrada.abrir();
-		this->canalSalida.abrir();
+		if(this->barrera.abrir()==SEM_OK){
+			cout << "Ventanilla " << this->numeroVentanilla << ". Error al abrir." <<endl;
+			exit(1);
+		}
+		if(this->canalEntrada.abrir()==SEM_OK){
+			this->barrera.cerrar();
+			cout << "Ventanilla " << this->numeroVentanilla << ". Error al abrir." <<endl;
+			exit(1);
+		}
+		if(this->canalSalida.abrir()==SEM_OK){
+			this->barrera.cerrar();
+			this->canalEntrada.cerrar();
+			cout << "Ventanilla " << this->numeroVentanilla << ". Error al abrir." <<endl;
+			exit(1);
+		}
 	}
 
 void VentanillaEntrada :: cerrar(){

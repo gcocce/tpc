@@ -43,9 +43,21 @@ int manejarAuto(){
 	Semaforo barrera((char*) NOMBRE ,2+10*ventanilla_entrada);
 	BufferSincronizado<message> output((char*) NOMBRE ,3+10*ventanilla_entrada);
 	BufferSincronizado<message> input((char*) NOMBRE ,4+10*ventanilla_entrada);
-	input.abrir();
-	output.abrir();
-	barrera.abrir();
+	if (input.abrir()!=SEM_OK){
+		cout << "Auto: id= " << getpid() << " venanilla entrada " << ventanilla_entrada << " cerrada. Me voy." << endl;
+		exit(0);
+	}
+	if (output.abrir()!=SEM_OK){
+		input.cerrar();
+		cout << "Auto: id= " << getpid() << " venanilla entrada " << ventanilla_entrada << " cerrada. Me voy." << endl;
+		exit(0);
+	}
+	if (barrera.abrir()!=SEM_OK){
+		input.cerrar();
+		output.cerrar();
+		cout << "Auto: id= " << getpid() << " venanilla entrada " << ventanilla_entrada << " cerrada. Me voy." << endl;
+		exit(0);
+	}
 
 	message msg;
 	msg.pid=getpid();
@@ -62,6 +74,7 @@ int manejarAuto(){
 	msg= input.leer();
 	input.signalWrite();
 	desbloquearSigint();
+
 	barrera.cerrar();
 	input.cerrar();
 	output.cerrar();
@@ -72,10 +85,22 @@ int manejarAuto(){
 		cout << "Auto: id= " << getpid() << " lei " << msg.place << endl;
 		Semaforo barreraSalida((char*) NOMBRE ,5+10*ventanilla_entrada);
 		BufferSincronizado<message> outputSalida((char*) NOMBRE ,6+10*ventanilla_entrada);
+		if (barreraSalida.abrir()!=SEM_OK){
+			cout << "Auto: id= " << getpid() << " venanilla salida " << ventanilla_salida << " cerrada. Me voy." << endl;
+			exit(0);
+		}
+		if(outputSalida.abrir()!=SEM_OK){
+			barreraSalida.cerrar();
+			cout << "Auto: id= " << getpid() << " venanilla salida " << ventanilla_salida << " cerrada. Me voy." << endl;
+			exit(0);
+		}
 		barreraSalida.wait();
 		outputSalida.waitWrite();
 		outputSalida.escribir(msg);
 		outputSalida.signalRead();
+
+		barreraSalida.cerrar();
+		outputSalida.cerrar();
 	}
 	return 0;
 }
