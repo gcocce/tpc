@@ -90,9 +90,7 @@ int main(int argc, char **argv) {
 		cout << "Costo por hora: " << costo << " $" << endl;
 
 		Logger log(debug);
-		//char stringBuffer[100];
-		//sprintf(stringBuffer,"",)
-		log.debug("Inicializando Estacionamiento");
+		log.flush("Inicializando Estacionamiento");
 		pid_t estacionamientoPID = fork();
 		if (estacionamientoPID==0){
 			Estacionamiento estacionamiento("/tmp/estacionamiento",espacios,costo);
