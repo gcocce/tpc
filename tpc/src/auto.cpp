@@ -76,7 +76,9 @@ int manejarAuto(char *path){
 	barrera.cerrar();
 	input.cerrar();
 	output.cerrar();
-	if(msg.place==0){
+	if(msg.place==-1){
+		cout << "Auto: id= " << getpid() << " estacionamiento cerrado." << endl;
+	}else if (msg.place==0){
 		cout << "Auto: id= " << getpid() << " estacionamiento lleno." << endl;
 	} else if(msg.place==-1){
 		cout << "Auto: id= " << getpid() << " estacionamiento cerrado." << endl;

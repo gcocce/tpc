@@ -101,19 +101,25 @@ char Estacionamiento :: findPlace(){
 	char i=0;
 	this->lugares.tomarLock(i);
 	this->lugares.leer(i,&status);
+
+	std::ostringstream stringStream;
+	stringStream << "Estacionamiento: status: " << (int)status;
+	std::string copyOfStr = stringStream.str();
 	cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
-	while (status==1){
+	this->log.debug(copyOfStr.c_str());
+
+	while (status=='1'){
 		lugares.liberarLock(i);
 		i++;
-		if( i < this->espacios ){
+		if( i >= this->espacios ){
 			break;
 		}
 		this->lugares.tomarLock(i);
 		this->lugares.leer(i,&status);
 		cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	}
-	if(status==0){
-		this->lugares.escribir(i,1);
+	if(status=='0'){
+		this->lugares.escribir(i,'1');
 		this->lugares.liberarLock(i);
 		i=i+1; //Los lugares no comienzan en 0
 		this->espaciosOcupados.tomarLockEscritura();
