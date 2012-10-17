@@ -104,6 +104,7 @@ int main(int argc, char **argv) {
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
 			generarAutos("/tmp/estacionamiento");
+			return 0;
 		}
 		MainSIGINTHandler handler(estacionamientoPID,generadorAutosPid);
 		SignalHandler::getInstance()->registrarHandler( SIGINT,&handler );

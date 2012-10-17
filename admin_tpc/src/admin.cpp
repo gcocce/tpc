@@ -70,7 +70,7 @@ int main() {
 				mostrarMenu();
 				double monto=consultarMonto();
 				if (monto>=0){
-					cout << "Autos estacionados: " << monto << endl << endl;
+					cout << "Monto recaudado: " << monto << endl << endl;
 				}else{
 					cout << "El recurso ya no está disponible" << endl;
 					salir=true;
