@@ -109,8 +109,14 @@ int main(int argc, char **argv) {
 		SignalHandler::getInstance()->registrarHandler( SIGINT,&handler );
 
 		sleep(tiempo);
-		kill(estacionamientoPID,SIGINT);
-		kill(generadorAutosPid,SIGINT);
+
+		cout << "Se inicia la finalización de la simulación." << endl;
+		log.debug("Se inicia la finalización de la simulación.");
+
+		if (handler.gracefulQuit()==0){
+			kill(estacionamientoPID,SIGINT);
+			kill(generadorAutosPid,SIGINT);
+		}
 
 		int status;
 		wait(&status);
