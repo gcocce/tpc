@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
 			while(1){
 				sleep(10);
 			}
-			exit(0);
+			return(0);
 		}
 		MainSIGINTHandler handler(estacionamientoPID,generadorAutosPid);
 		SignalHandler::getInstance()->registrarHandler( SIGINT,&handler );
