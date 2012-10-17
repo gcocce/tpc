@@ -22,6 +22,12 @@ Estacionamiento :: ~Estacionamiento(){
 	this->dineroCobrado.eliminarRecurso();
 };
 
+int Estacionamiento:: getEspaciosOcupados(){
+	this->espaciosOcupados.tomarLockLectura();
+	int aux=this->espaciosOcupados.leerEntero();
+	return aux;
+}
+
 void Estacionamiento :: iniciar(){
 	for(int i=0;i<this->espacios;i++){
 		this->lugares.escribir(i,'0');

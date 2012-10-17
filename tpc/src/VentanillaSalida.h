@@ -19,6 +19,7 @@
 class VentanillaSalida : public EventHandler {
 
 private:
+	bool abierto;
 	char numeroVentanilla;
 	Semaforo barrera;
 	BufferSincronizado<message> canalEntrada;

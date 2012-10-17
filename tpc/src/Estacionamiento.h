@@ -43,12 +43,15 @@ public:
 
 	void freePlace(char ubicacion , char horas);
 
+	int getEspaciosOcupados();
+
 	virtual int handleSignal ( int signum ) {
 		if( signum == SIGINT ){
 			this->finalizar();
 		}
 		return 0;
 	}
+
 };
 
 #endif /* ESTACIONAMIENTO_H_ */

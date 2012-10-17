@@ -13,6 +13,7 @@ using namespace std;
 VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,numeroVentanilla*10+5), canalEntrada(path,numeroVentanilla*10+6){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
+		this->abierto=false;
 	}
 
 VentanillaSalida :: ~VentanillaSalida(){
@@ -55,8 +56,9 @@ void VentanillaSalida :: cerrar(){
 
 void VentanillaSalida :: iniciar(){
 	SignalHandler::getInstance()->registrarHandler( SIGINT,this );
+	this->abierto=true;
 	this->barrera.signal();
-	while(true){
+	while(abierto == true || this->estacionamiento->getEspaciosOcupados() >0){
 		this->canalEntrada.waitRead();
 		bloquearSigint();
 		message msg= this->canalEntrada.leer();
@@ -64,12 +66,16 @@ void VentanillaSalida :: iniciar(){
 		this->estacionamiento->freePlace(msg.place,msg.time);
 		desbloquearSigint();
 	}
+	this->eliminar();
 }
 
 void VentanillaSalida :: finalizar(){
-	// TODO: Ver de esperar a demas autos que salgan.
-	this->eliminar();
-	exit(0);
+	if(this->estacionamiento->getEspaciosOcupados()==0){
+		this->eliminar();
+		exit(0);
+	}else{
+		this->abierto=false;
+	}
 }
 
 int VentanillaSalida ::  handleSignal ( int signum ) {
