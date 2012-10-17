@@ -5,7 +5,6 @@
 extern bool debug;
 
 Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path), espaciosOcupados("autos.lok"), dineroCobrado("monto.lok"), log(debug){
-	this->path= new char[strlen(path)];
 	strcpy(this->path,path);
 	this->espacios=espacios;
 	this->costo=costo;
@@ -34,9 +33,12 @@ int Estacionamiento:: getEspaciosOcupados(){
 }
 
 void Estacionamiento :: iniciar(){
+	std::cout<< "Iniciando estacionamiento. " << this->path << std::endl;
+	log.flush("Iniciando estacionamiento.");
 	for(int i=0;i<this->espacios;i++){
 		this->lugares.escribir(i,'0');
 	}
+	std::cout<< "Iniciando estacionamiento." << this->path << std::endl;
 	for(char i=0;i<3;i++){
 		this->ventanillasEntrada[i]=fork();
 		if (this->ventanillasEntrada[i]==0){

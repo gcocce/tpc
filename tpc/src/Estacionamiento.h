@@ -16,6 +16,8 @@
 #include "MemoriaCompartida.h"
 #include "EventHandler.h"
 #include "logger.h"
+#include <iostream>
+
 
 class Estacionamiento  : public EventHandler {
 
@@ -29,7 +31,7 @@ private:
 	LUResource espaciosOcupados;//("../../pruebaLock/Debug/autos.lok");
 	LUResource dineroCobrado;//("../../pruebaLock/Debug/monto.lok");
 	LockFile lugares;
-	char *path;
+	char path[255];
 	Logger log;
 
 public:
@@ -49,6 +51,7 @@ public:
 
 	virtual int handleSignal ( int signum ) {
 		if( signum == SIGINT ){
+			std::cout << "Estacionamiento manejando SIGINT" << std::endl;
 			this->finalizar();
 		}
 		return 0;

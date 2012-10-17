@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 		log.flush("Inicializando Estacionamiento");
 		pid_t estacionamientoPID = fork();
 		if (estacionamientoPID==0){
-			Estacionamiento estacionamiento("/tmp/estacionamiento",espacios,costo);
+			Estacionamiento estacionamiento("estacionamiento.log",espacios,costo);
 			estacionamiento.iniciar();
 			estacionamiento.~Estacionamiento();
 			exit (0);
@@ -103,7 +103,11 @@ int main(int argc, char **argv) {
 		log.flush("Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
-			generarAutos("/tmp/estacionamiento");
+			//generarAutos("estacionamiento.log");
+			while(1){
+				sleep(10);
+			}
+			exit(0);
 		}
 		MainSIGINTHandler handler(estacionamientoPID,generadorAutosPid);
 		SignalHandler::getInstance()->registrarHandler( SIGINT,&handler );
