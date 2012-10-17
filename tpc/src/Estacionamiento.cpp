@@ -2,13 +2,13 @@
 #include "VentanillaEntrada.h"
 #include "VentanillaSalida.h"
 
-Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path){
+Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path), espaciosOcupados("../../pruebaLock/Debug/autos.lok"), dineroCobrado("../../pruebaLock/Debug/monto.lok"){
 	this->path= new char[strlen(path)];
 	strcpy(this->path,path);
 	this->espacios=espacios;
 	this->costo=costo;
-	this->espaciosOcupados.crear(path,0);
-	this->dineroCobrado.crear(path,1);
+	this->espaciosOcupados.crearRecurso();//crear(path,0);
+	this->dineroCobrado.crearRecurso();//crear(path,1);
 	for(int i=1;i<3;i++){
 		this->ventanillasEntrada[i]=NULL;
 	}
@@ -18,8 +18,8 @@ Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : luga
 };
 
 Estacionamiento :: ~Estacionamiento(){
-	this->espaciosOcupados.liberar();
-	this->dineroCobrado.liberar();
+	this->espaciosOcupados.eliminarRecurso();
+	this->dineroCobrado.eliminarRecurso();
 };
 
 void Estacionamiento :: iniciar(){
@@ -88,14 +88,28 @@ char Estacionamiento :: findPlace(){
 	if(status==0){
 		this->lugares.escribir(i,1);
 		this->lugares.liberarLock(i);
-		this->espaciosOcupados.escribir(this->espaciosOcupados.leer()+1);
+		this->espaciosOcupados.tomarLockEscritura();
+		int aux=this->espaciosOcupados.leerEntero();
+		aux++;
+		this->espaciosOcupados.escribirEntero(aux);
+		this->espaciosOcupados.liberarLock();
 		return i;
 	}
 	return 0;
 }
 
 void Estacionamiento :: freePlace(char ubicacion , char horas){
+	this->lugares.tomarLock(ubicacion);
 	this->lugares.escribir(ubicacion,0);
-	this->dineroCobrado.escribir(this->dineroCobrado.leer()+horas*this->costo);
-	this->espaciosOcupados.escribir(this->espaciosOcupados.leer()-1);
+	this->lugares.liberarLock(ubicacion);
+	this->dineroCobrado.tomarLockEscritura();
+	double aux= this->dineroCobrado.leerDouble();
+	aux+=horas*this->costo;
+	this->dineroCobrado.escribirDouble(aux);
+	this->dineroCobrado.liberarLock();
+	this->espaciosOcupados.tomarLockEscritura();
+	int auxEspacios=this->espaciosOcupados.leerEntero();
+	auxEspacios--;
+	this->espaciosOcupados.escribirEntero(auxEspacios);
+	this->espaciosOcupados.liberarLock();
 }

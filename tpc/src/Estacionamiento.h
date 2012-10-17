@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include "LockFile.h"
+#include "LUResource.h"
 #include "MemoriaCompartida.h"
 #include "EventHandler.h"
 
@@ -22,8 +23,10 @@ private:
 	pid_t ventanillasSalida[2];
 	int espacios;
 	float costo;
-	MemoriaCompartida<int> espaciosOcupados;
-	MemoriaCompartida<float> dineroCobrado;
+//	MemoriaCompartida<int> espaciosOcupados;
+//	MemoriaCompartida<float> dineroCobrado;
+	LUResource espaciosOcupados;//("../../pruebaLock/Debug/autos.lok");
+	LUResource dineroCobrado;//("../../pruebaLock/Debug/monto.lok");
 	LockFile lugares;
 	char *path;
 
