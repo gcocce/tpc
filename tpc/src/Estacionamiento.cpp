@@ -2,7 +2,7 @@
 #include "VentanillaEntrada.h"
 #include "VentanillaSalida.h"
 
-Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path), espaciosOcupados("../../pruebaLock/Debug/autos.lok"), dineroCobrado("../../pruebaLock/Debug/monto.lok"){
+Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path), espaciosOcupados("autos.lok"), dineroCobrado("monto.lok"){
 	this->path= new char[strlen(path)];
 	strcpy(this->path,path);
 	this->espacios=espacios;
