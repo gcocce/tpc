@@ -43,7 +43,7 @@ void Estacionamiento :: iniciar(){
 	std::cout<< "Iniciando estacionamiento. " << this->path << std::endl;
 	log.flush("Iniciando estacionamiento.");
 	for(int i=0;i<this->espacios;i++){
-		this->lugares.escribir(i,'0');
+		this->lugares.escribir(i,0);
 	}
 	std::cout<< "Iniciando estacionamiento." << this->path << std::endl;
 	for(char i=0;i<3;i++){
@@ -56,10 +56,10 @@ void Estacionamiento :: iniciar(){
 			exit(0);
 		}
 	}
-	for(char i=0;i<2;i++){
-		this->ventanillasSalida[i]=fork();
-		if (this->ventanillasSalida[i]==0){
-			VentanillaSalida ventanilla(this,this->path,i);
+	for(char j=0;j<2;j++){
+		this->ventanillasSalida[j]=fork();
+		if (this->ventanillasSalida[j]==0){
+			VentanillaSalida ventanilla(this,this->path,j);
 			ventanilla.crear();
 			ventanilla.iniciar();
 			ventanilla.~VentanillaSalida();
@@ -101,6 +101,7 @@ char Estacionamiento :: findPlace(){
 	char i=0;
 	this->lugares.tomarLock(i);
 	this->lugares.leer(i,&status);
+	cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	while (status==1){
 		lugares.liberarLock(i);
 		i++;
@@ -109,13 +110,15 @@ char Estacionamiento :: findPlace(){
 		}
 		this->lugares.tomarLock(i);
 		this->lugares.leer(i,&status);
+		cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	}
 	if(status==0){
 		this->lugares.escribir(i,1);
 		this->lugares.liberarLock(i);
+		i=i+1; //Los lugares no comienzan en 0
 		this->espaciosOcupados.tomarLockEscritura();
 		int aux=this->espaciosOcupados.leerEntero();
-		aux++;
+		aux=aux+1;
 		this->espaciosOcupados.escribirEntero(aux);
 		this->espaciosOcupados.liberarLock();
 
@@ -133,13 +136,14 @@ char Estacionamiento :: findPlace(){
 
 void Estacionamiento :: freePlace(char ubicacion , char horas){
 	std::ostringstream stringStream;
-	stringStream << "Estacionamiento: Se invoca freeplace ubicacion: " << (int)ubicacion;
+	int i= ubicacion-1;
+	stringStream << "Estacionamiento: Se invoca freeplace ubicacion: " << (int)i;
 	std::string copyOfStr = stringStream.str();
 	this->log.debug(copyOfStr.c_str());
 
-	this->lugares.tomarLock(ubicacion);
-	this->lugares.escribir(ubicacion,0);
-	this->lugares.liberarLock(ubicacion);
+	this->lugares.tomarLock(i);
+	this->lugares.escribir(i,0);
+	this->lugares.liberarLock(i);
 	this->dineroCobrado.tomarLockEscritura();
 	double aux= this->dineroCobrado.leerDouble();
 	aux+=horas*this->costo;
