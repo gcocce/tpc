@@ -21,7 +21,7 @@ VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *p
 	}
 
 VentanillaEntrada :: ~VentanillaEntrada(){
-	this->log.debug("Se llamo al destructor");
+	this->log.debug("Ventanilla: Se llamo al destructor");
 
 	}
 
@@ -71,7 +71,7 @@ void VentanillaEntrada :: abrir(){
 			cout << "Ventanilla " << this->numeroVentanilla << ". Error al abrir." <<endl;
 			exit(1);
 		}
-		this->log.debug("Se ha abierto la barrera.");
+		this->log.debug("Ventanilla: Se ha abierto la barrera.");
 	}
 
 void VentanillaEntrada :: cerrar(){
@@ -86,7 +86,7 @@ void VentanillaEntrada :: iniciar(){
 		this->abierta=true;
 		this->barrera.signal();
 
-		this->log.debug("La ventanilla esta abierta e inicia el proceso de recepción.");
+		this->log.debug("Ventanilla: La ventanilla esta abierta e inicia el proceso de recepción.");
 
 		while(this->abierta==true){
 			this->canalEntrada.waitRead();
@@ -94,7 +94,7 @@ void VentanillaEntrada :: iniciar(){
 			message msg= this->canalEntrada.leer();
 
 			std::ostringstream stringStream;
-			stringStream << "Recibe mensaje, pid: " << msg.pid << " tiempo: " << msg.time;
+			stringStream << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " tiempo: " << msg.time;
 			std::string copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 
@@ -108,7 +108,7 @@ void VentanillaEntrada :: iniciar(){
 			}
 			this->canalSalida.waitWrite();
 
-			stringStream << "Escribe mensaje, pid: " << msg.pid << " tiempo: " << msg.time;
+			stringStream << "Ventanilla: Escribe mensaje, pid: " << msg.pid << " tiempo: " << msg.time;
 			copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 
@@ -119,14 +119,14 @@ void VentanillaEntrada :: iniciar(){
 	}
 
 void VentanillaEntrada :: finalizar(){
-	this->log.debug("Se llamo al metodo finalizar");
+	this->log.debug("Ventanilla: Se llamo al metodo finalizar");
 	this->abierta=false;
 	this->eliminar();
 	exit(0);
 }
 
 int VentanillaEntrada ::  handleSignal ( int signum ) {
-	this->log.debug("Se llamo al metodo handSignal");
+	this->log.debug("Ventanilla: Se llamo al metodo handSignal");
 	if( signum == SIGINT ){
 		this->finalizar();
 	}

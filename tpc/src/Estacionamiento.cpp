@@ -17,11 +17,11 @@ Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : luga
 	for(int i=1;i<2;i++){
 		this->ventanillasSalida[i]=NULL;
 	}
-	this->log.flush("Se creo el objeto estacionamiento.");
+	this->log.flush("Estacionamiento: Se creo el objeto estacionamiento.");
 };
 
 Estacionamiento :: ~Estacionamiento(){
-	this->log.debug("Se llamo al destructor");
+	this->log.debug("Estacionamiento: Se llamo al destructor.");
 	this->espaciosOcupados.eliminarRecurso();
 	this->dineroCobrado.eliminarRecurso();
 };
@@ -55,7 +55,7 @@ void Estacionamiento :: iniciar(){
 			exit(0);
 		}
 	}
-	this->log.debug("Las ventanillas fueron iniciadas, se espera su finalización.");
+	this->log.debug("Estacionamiento: Las ventanillas fueron iniciadas, se espera su finalización.");
 	SignalHandler::getInstance()->registrarHandler( SIGINT,this );
 	int result;
 	wait(&result);
@@ -68,7 +68,7 @@ void Estacionamiento :: iniciar(){
 };
 
 void Estacionamiento :: finalizar(){
-	this->log.flush("Se llamo al metodo finalizar");
+	this->log.flush("Estacionamiento: Se llamo al metodo finalizar.");
 	for(int i=0;i<3;i++){
 		kill(this->ventanillasEntrada[i],SIGINT);
 	}

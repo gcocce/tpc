@@ -31,10 +31,10 @@ int manejarAuto(char *path){
 
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "El auto selecciona la ventanilla de entrada numero %d", ventanilla_entrada);
+		sprintf (buffer, "Auto: El auto selecciona la ventanilla de entrada numero %d", ventanilla_entrada);
 		log.debug(buffer);
 
-		sprintf (buffer, "Tiempo estacionado %d", tiempo_estacionado);
+		sprintf (buffer, "Auto: Tiempo estacionado %d", tiempo_estacionado);
 		log.debug(buffer);
 	}
 
@@ -101,6 +101,6 @@ int manejarAuto(char *path){
 		outputSalida.cerrar();
 	}
 
-	log.debug("Finaliza el proceso.");
+	log.debug("Auto: Finaliza el proceso.");
 	return 0;
 }
