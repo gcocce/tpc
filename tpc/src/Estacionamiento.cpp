@@ -7,8 +7,8 @@ Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : luga
 	strcpy(this->path,path);
 	this->espacios=espacios;
 	this->costo=costo;
-	this->espaciosOcupados.crearRecurso();//crear(path,0);
-	this->dineroCobrado.crearRecurso();//crear(path,1);
+	this->espaciosOcupados.crearRecurso();
+	this->dineroCobrado.crearRecurso();
 	for(int i=1;i<3;i++){
 		this->ventanillasEntrada[i]=NULL;
 	}

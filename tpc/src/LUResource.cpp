@@ -13,6 +13,9 @@ int LUResource :: crearRecurso() {
 	this->fl.l_len = 0;
 	this->fl.l_pid = getpid ();
 	this->fd = open ( this->nombre,O_CREAT|O_RDWR,0777 );
+	if (this->fd>0){
+		this->escribirEntero(0);
+	}
 	return this->fd;
 }
 

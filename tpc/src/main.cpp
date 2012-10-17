@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
 		cout << "Se inicia la finalización de la simulación." << endl;
 		log.debug("Se inicia la finalización de la simulación.");
 
-		if (handler.gracefulQuit()==0){
+		if (handler.getGracefulQuit()==0){
 			kill(estacionamientoPID,SIGINT);
 			kill(generadorAutosPid,SIGINT);
 		}
