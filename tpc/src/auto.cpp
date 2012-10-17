@@ -38,7 +38,7 @@ int manejarAuto(char *path){
 		log.debug(buffer);
 	}
 
-	Semaforo barrera(path ,2+10*ventanilla_entrada);
+	Semaforo barrera(path ,1+10*ventanilla_entrada);
 	BufferSincronizado<message> output((char*) path ,2+10*ventanilla_entrada);
 	BufferSincronizado<message> input((char*) path ,4+10*ventanilla_entrada);
 	if (input.abrir()!=SEM_OK){
