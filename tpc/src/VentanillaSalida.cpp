@@ -14,13 +14,13 @@ using namespace std;
 extern bool debug;
 
 VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,numeroVentanilla*10+5), canalEntrada(path,numeroVentanilla*10+6), log(debug){
-
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierto=false;
 	}
 
 VentanillaSalida :: ~VentanillaSalida(){
+	this->log.debug("Ventanilla de salida: se llama al destructor");
 
 	}
 

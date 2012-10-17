@@ -110,6 +110,7 @@ void VentanillaEntrada :: iniciar(){
 				this->log.debug("Ventanilla: hace estacionamiento->findplate()");
 				msg.place= this->estacionamiento->findPlace();
 			}else{
+				this->log.debug("Ventanilla: el estacionamiento está cerado.");
 				msg.place= -1;
 			}
 			this->log.debug("Ventanilla: hace canalSalida.waitWrite()");

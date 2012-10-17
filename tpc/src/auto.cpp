@@ -59,7 +59,7 @@ int manejarAuto(char *path){
 
 	message msg;
 	msg.pid=getpid();
-	msg.place=0;
+	msg.place='0';
 	msg.time=tiempo_estacionado;
 	cout << "Auto: id= " << getpid() << " tiempo estacionado: " << tiempo_estacionado << endl;
 	cout << "Auto: id= " << getpid() << " venanilla " << ventanilla_entrada << endl;
