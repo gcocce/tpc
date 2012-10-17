@@ -17,6 +17,7 @@ VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *p
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierta=false;
+		cout << "Ventananilla numero: " << numeroVentanilla << endl;
 	}
 
 VentanillaEntrada :: ~VentanillaEntrada(){

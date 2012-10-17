@@ -2,7 +2,9 @@
 #include "VentanillaEntrada.h"
 #include "VentanillaSalida.h"
 
-Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path), espaciosOcupados("autos.lok"), dineroCobrado("monto.lok"){
+extern bool debug;
+
+Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path), espaciosOcupados("autos.lok"), dineroCobrado("monto.lok"), log(debug){
 	this->path= new char[strlen(path)];
 	strcpy(this->path,path);
 	this->espacios=espacios;
@@ -15,9 +17,11 @@ Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : luga
 	for(int i=1;i<2;i++){
 		this->ventanillasSalida[i]=NULL;
 	}
+	this->log.flush("Se creo el objeto estacionamiento.");
 };
 
 Estacionamiento :: ~Estacionamiento(){
+	this->log.debug("Se llamo al destructor");
 	this->espaciosOcupados.eliminarRecurso();
 	this->dineroCobrado.eliminarRecurso();
 };
@@ -25,6 +29,7 @@ Estacionamiento :: ~Estacionamiento(){
 int Estacionamiento:: getEspaciosOcupados(){
 	this->espaciosOcupados.tomarLockLectura();
 	int aux=this->espaciosOcupados.leerEntero();
+	this->espaciosOcupados.liberarLock();
 	return aux;
 }
 
@@ -50,6 +55,7 @@ void Estacionamiento :: iniciar(){
 			exit(0);
 		}
 	}
+	this->log.debug("Las ventanillas fueron iniciadas, se espera su finalización.");
 	SignalHandler::getInstance()->registrarHandler( SIGINT,this );
 	int result;
 	wait(&result);
@@ -62,6 +68,7 @@ void Estacionamiento :: iniciar(){
 };
 
 void Estacionamiento :: finalizar(){
+	this->log.flush("Se llamo al metodo finalizar");
 	for(int i=0;i<3;i++){
 		kill(this->ventanillasEntrada[i],SIGINT);
 	}

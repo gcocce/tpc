@@ -100,5 +100,7 @@ int manejarAuto(char *path){
 		barreraSalida.cerrar();
 		outputSalida.cerrar();
 	}
+
+	log.debug("Finaliza el proceso.");
 	return 0;
 }

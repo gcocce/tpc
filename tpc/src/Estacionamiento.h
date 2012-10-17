@@ -15,6 +15,7 @@
 #include "LUResource.h"
 #include "MemoriaCompartida.h"
 #include "EventHandler.h"
+#include "logger.h"
 
 class Estacionamiento  : public EventHandler {
 
@@ -29,6 +30,7 @@ private:
 	LUResource dineroCobrado;//("../../pruebaLock/Debug/monto.lok");
 	LockFile lugares;
 	char *path;
+	Logger log;
 
 public:
 	Estacionamiento(char* path, int espacios, float costo);
