@@ -13,7 +13,7 @@ using namespace std;
 
 extern bool debug;
 
-VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,10*numeroVentanilla+2), canalEntrada(path,numeroVentanilla*10+3), canalSalida(path,numeroVentanilla*10+4), log(debug){
+VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,10*numeroVentanilla+1), canalEntrada(path,numeroVentanilla*10+2), canalSalida(path,numeroVentanilla*10+4), log(debug){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierta=false;
@@ -30,12 +30,12 @@ void VentanillaEntrada :: crear(){
 			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 			exit(1);
 		}
-		if (this->canalEntrada.crear(0,0)!=SEM_OK){
+		if (this->canalEntrada.crear(0,1)!=SEM_OK){
 			this->barrera.eliminar();
 			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 			exit(1);
 		}
-		if (this->canalSalida.crear(0,0)!=SEM_OK){
+		if (this->canalSalida.crear(0,1)!=SEM_OK){
 			this->barrera.eliminar();
 			this->canalEntrada.eliminar();
 			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
@@ -87,9 +87,11 @@ void VentanillaEntrada :: iniciar(){
 		this->barrera.signal();
 
 		this->log.debug("Ventanilla: La ventanilla esta abierta e inicia el proceso de recepción.");
+		std::cout << "Ventanilla " << (int) this->numeroVentanilla << " La ventanilla esta abierta e inicia el proceso de recepción." << std::endl;
 
 		while(this->abierta==true){
 			this->canalEntrada.waitRead();
+			std::cout << "Ventanilla " << (int) this->numeroVentanilla << " Mensaje recibido." << std::endl;
 			bloquearSigint();
 			message msg= this->canalEntrada.leer();
 
@@ -98,10 +100,10 @@ void VentanillaEntrada :: iniciar(){
 			std::string copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 
-
 			this->canalEntrada.signalWrite();
 			msg.pid= getpid();
 			if(this->abierta==true){
+				std::cout << "Ventanilla " << (int) this->numeroVentanilla << " Calculado lugar." << std::endl;
 				msg.place= this->estacionamiento->findPlace();
 			}else{
 				msg.place= 0;
@@ -109,6 +111,7 @@ void VentanillaEntrada :: iniciar(){
 			this->canalSalida.waitWrite();
 
 			stringStream << "Ventanilla: Escribe mensaje, pid: " << msg.pid << " tiempo: " << msg.time;
+			std::cout << "Ventanilla " << (int) this->numeroVentanilla << " Dando ubicacion." << (int)msg.place << std::endl;
 			copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 

@@ -10,7 +10,7 @@
 using namespace std;
 
 
-VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,numeroVentanilla*10+5), canalEntrada(path,numeroVentanilla*10+6){
+VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,numeroVentanilla*10+6), canalEntrada(path,numeroVentanilla*10+8){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierto=false;
@@ -25,7 +25,7 @@ void VentanillaSalida :: crear(){
 		cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 		exit(1);
 	}
-	if (this->canalEntrada.crear(0,0)!=SEM_OK){
+	if (this->canalEntrada.crear(0,1)!=SEM_OK){
 		this->barrera.eliminar();
 		cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
 		exit(1);

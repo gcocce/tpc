@@ -35,6 +35,7 @@ int Semaforo :: crear(int valorInicial ) {
 				cout <<  strerror(errno)  << endl;
 				return ERROR_SEMCTL;
 			}
+			cout << "Semaforo " << this->path  << " - " << (int)this->code << " creado con valor" << valorInicial << endl;
 			return SEM_OK;
 		}
 	}
