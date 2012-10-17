@@ -97,7 +97,8 @@ int main(int argc, char **argv) {
 		if (estacionamientoPID==0){
 			Estacionamiento estacionamiento("/tmp/estacionamiento",espacios,costo);
 			estacionamiento.iniciar();
-			exit(0);
+			estacionamiento.~Estacionamiento();
+			exit (0);
 		}
 		log.flush("Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
@@ -115,6 +116,6 @@ int main(int argc, char **argv) {
 		wait(&status);
 		wait(&status);
 		log.debug("Finaliza la simulación.");
-		exit(0);
+		return 0;
 	}
 }

@@ -57,7 +57,7 @@ void Estacionamiento :: iniciar(){
 	wait(&result);
 	wait(&result);
 	wait(&result);
-	exit(0);
+	//exit(0);
 
 };
 
@@ -74,7 +74,7 @@ void Estacionamiento :: finalizar(){
 	wait(&result);
 	wait(&result);
 	wait(&result);
-	exit(0);
+	//exit(0);
 }
 
 char Estacionamiento :: findPlace(){
