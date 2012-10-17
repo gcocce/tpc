@@ -103,7 +103,6 @@ int main(int argc, char **argv) {
 		log.flush("Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
-			sleep(5);
 			generarAutos("estacionamiento.lok");
 			/*while(1){
 				sleep(10);

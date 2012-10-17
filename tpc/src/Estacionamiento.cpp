@@ -88,10 +88,15 @@ void Estacionamiento :: finalizar(){
 	}
 	int result;
 	wait(&result);
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 4." << endl;
 	wait(&result);
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 3." << endl;
 	wait(&result);
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 2." << endl;
 	wait(&result);
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 1." << endl;
 	wait(&result);
+	cout << "Estacionamiento: Cerrado." << endl;
 	//exit(0);
 }
 
@@ -108,7 +113,7 @@ char Estacionamiento :: findPlace(){
 	cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	this->log.debug(copyOfStr.c_str());
 
-	while (status=='1'){
+	while (status==1){
 		lugares.liberarLock(i);
 		i++;
 		if( i >= this->espacios ){
@@ -118,13 +123,14 @@ char Estacionamiento :: findPlace(){
 		this->lugares.leer(i,&status);
 		cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	}
-	if(status=='0'){
-		this->lugares.escribir(i,'1');
+	if(status==0){
+		this->lugares.escribir(i,1);
 		this->lugares.liberarLock(i);
 		i=i+1; //Los lugares no comienzan en 0
 		this->espaciosOcupados.tomarLockEscritura();
 		int aux=this->espaciosOcupados.leerEntero();
 		aux=aux+1;
+		cout << "Estacionamiento: lugares ocupados "<< aux << endl;
 		this->espaciosOcupados.escribirEntero(aux);
 		this->espaciosOcupados.liberarLock();
 

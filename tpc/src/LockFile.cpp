@@ -35,7 +35,7 @@ int LockFile :: liberarLock (int pos) {
 
 int LockFile :: escribir (int pos, char value ) {
 	lseek ( this->fd,pos * sizeof(char),SEEK_SET );
-	cout << getpid() << " LockFile " << this->nombre << " escribiendo pos " << pos  << " el valor " << value << endl;
+	cout << getpid() << " LockFile " << this->nombre << " escribiendo pos " << pos  << " el valor " << (int)value << endl;
 	int resultado = write ( this->fd,&value,1);
 	return resultado;
 }

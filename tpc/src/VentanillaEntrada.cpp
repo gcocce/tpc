@@ -100,6 +100,7 @@ void VentanillaEntrada :: iniciar(){
 
 			std::ostringstream stringStream;
 			stringStream << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << msg.time;
+			cout << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << msg.time << endl;
 			std::string copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 
