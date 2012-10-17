@@ -122,7 +122,7 @@ void VentanillaEntrada :: finalizar(){
 	this->log.debug("Ventanilla: Se llamo al metodo finalizar");
 	this->abierta=false;
 	this->eliminar();
-	exit(0);
+	//exit(0);
 }
 
 int VentanillaEntrada ::  handleSignal ( int signum ) {
