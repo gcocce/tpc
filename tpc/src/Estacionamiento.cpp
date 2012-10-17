@@ -2,7 +2,13 @@
 #include "VentanillaEntrada.h"
 #include "VentanillaSalida.h"
 
+#include <iostream>
+#include <sstream>
+#include <string>
+
 extern bool debug;
+
+using namespace std;
 
 Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : lugares(path), espaciosOcupados("autos.lok"), dineroCobrado("monto.lok"), log(debug){
 	strcpy(this->path,path);
@@ -26,6 +32,7 @@ Estacionamiento :: ~Estacionamiento(){
 };
 
 int Estacionamiento:: getEspaciosOcupados(){
+	this->log.debug("Estacionamiento: Se consulta los espacios ocupados.");
 	this->espaciosOcupados.tomarLockLectura();
 	int aux=this->espaciosOcupados.leerEntero();
 	this->espaciosOcupados.liberarLock();
@@ -89,6 +96,7 @@ void Estacionamiento :: finalizar(){
 }
 
 char Estacionamiento :: findPlace(){
+	this->log.debug("Estacionamiento: Se invoca findPlace.");
 	char status;
 	char i=0;
 	this->lugares.tomarLock(i);
@@ -110,12 +118,25 @@ char Estacionamiento :: findPlace(){
 		aux++;
 		this->espaciosOcupados.escribirEntero(aux);
 		this->espaciosOcupados.liberarLock();
+
+		std::ostringstream stringStream;
+		stringStream << "Estacionamiento: Se encuentra un lugar disponible: " << (int)i;
+		std::string copyOfStr = stringStream.str();
+		this->log.debug(copyOfStr.c_str());
+
 		return i;
+	}else{
+		this->log.debug("Estacionamiento: No hay lugar disponible.");
 	}
 	return 0;
 }
 
 void Estacionamiento :: freePlace(char ubicacion , char horas){
+	std::ostringstream stringStream;
+	stringStream << "Estacionamiento: Se invoca freeplace ubicacion: " << (int)ubicacion;
+	std::string copyOfStr = stringStream.str();
+	this->log.debug(copyOfStr.c_str());
+
 	this->lugares.tomarLock(ubicacion);
 	this->lugares.escribir(ubicacion,0);
 	this->lugares.liberarLock(ubicacion);
