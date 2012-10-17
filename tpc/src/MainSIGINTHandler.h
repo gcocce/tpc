@@ -25,10 +25,10 @@ class MainSIGINTHandler : public EventHandler {
 			assert ( signum == SIGINT );
 			kill(p1,SIGINT);
 			kill(p2,SIGINT);
-//			int status;
-//			wait(&status);
-//			wait(&status);
-			exit(0);
+			//int status;
+			//wait(&status);
+			//wait(&status);
+			//exit(0);
 		}
 };
 #endif /* SIGINT_HANDLER_H_ */

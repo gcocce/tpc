@@ -8,6 +8,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+
 #include "MainSIGINTHandler.h"
 #include "SignalHandler.h"
 #include "logger.h"
@@ -97,15 +99,22 @@ int main(int argc, char **argv) {
 			estacionamiento.iniciar();
 			exit(0);
 		}
+		log.flush("Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
 			generarAutos("/tmp/estacionamiento");
 		}
-		MainSIGINTHandler handler(estacionamientoPID,estacionamientoPID);
+		MainSIGINTHandler handler(estacionamientoPID,generadorAutosPid);
 		SignalHandler::getInstance()->registrarHandler( SIGINT,&handler );
+
+		sleep(tiempo);
+		kill(estacionamientoPID,SIGINT);
+		kill(generadorAutosPid,SIGINT);
+
 		int status;
 		wait(&status);
 		wait(&status);
+		log.debug("Finaliza la simulación.");
 		exit(0);
 	}
 }
