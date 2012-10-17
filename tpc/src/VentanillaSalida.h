@@ -5,8 +5,8 @@
  *      Author: plucadei
  */
 
-#ifndef VENTANILLAENTRADA_H_
-#define VENTANILLAENTRADA_H_
+#ifndef VENTANILLASALIDA_H_
+#define VENTANILLASALIDA_H_
 
 #include "Semaforo.h"
 #include "BufferSincronizado.h"
@@ -16,20 +16,16 @@
 
 //class Estacionamiento;
 
-class VentanillaEntrada : public EventHandler {
+class VentanillaSalida : public EventHandler {
 
 private:
-	bool abierta;
 	char numeroVentanilla;
 	Semaforo barrera;
 	BufferSincronizado<message> canalEntrada;
-	BufferSincronizado<message> canalSalida;
 	Estacionamiento *estacionamiento;
 public:
-	VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla);
-
-	~VentanillaEntrada();
-
+	VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla);
+	~VentanillaSalida();
 	void crear();
 	void eliminar();
 	void abrir();
@@ -39,4 +35,4 @@ public:
 	virtual int handleSignal ( int signum );
 };
 
-#endif /* VENTANILLAENTRADA_H_ */
+#endif /* VENTANILLASALIDA_H_ */

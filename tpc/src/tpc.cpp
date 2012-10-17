@@ -3,7 +3,7 @@
 // Version     :
 // Description : Proceso principal
 //============================================================================
-
+#ifdef pp
 #include <iostream>
 #include <ctype.h>
 #include <string.h>
@@ -259,3 +259,4 @@ int main(int argc, char* argv[]){
 	}
 }
 
+#endif

@@ -4,7 +4,7 @@
  *  Created on: Oct 15, 2012
  *      Author: plucadei
  */
-#ifdef pablo
+
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
@@ -99,4 +99,3 @@ int main(int argc, char **argv) {
 		}
 	}
 }
-#endif
