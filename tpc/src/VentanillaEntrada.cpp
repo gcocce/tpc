@@ -20,6 +20,7 @@ VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *p
 	}
 
 VentanillaEntrada :: ~VentanillaEntrada(){
+	this->log.debug("Se llamo al destructor");
 
 	}
 
@@ -117,12 +118,14 @@ void VentanillaEntrada :: iniciar(){
 	}
 
 void VentanillaEntrada :: finalizar(){
+	this->log.debug("Se llamo al metodo finalizar");
 	this->abierta=false;
 	this->eliminar();
 	exit(0);
 }
 
 int VentanillaEntrada ::  handleSignal ( int signum ) {
+	this->log.debug("Se llamo al metodo handSignal");
 	if( signum == SIGINT ){
 		this->finalizar();
 	}
