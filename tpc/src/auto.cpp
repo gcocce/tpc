@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "Message.h"
 #include "auto.h"
 #include "logger.h"
 #include "BufferSincronizado.h"
@@ -19,15 +20,16 @@ using namespace std;
 
 extern bool debug;
 
-int manejarAuto(pid_t vent[6]){
+int manejarAuto(){
 	int tiempo_estacionado=0;
 	int ventanilla_entrada=0;
+	int ventanilla_salida=0;
 
 	Logger log(debug);
 
-
 	tiempo_estacionado = rand() % 24 + 1;
 	ventanilla_entrada = rand() % 3 + 1;
+	ventanilla_salida = rand() % 2 + 1;
 
 	if (debug){
 		char buffer [100];
@@ -38,29 +40,42 @@ int manejarAuto(pid_t vent[6]){
 		log.debug(buffer);
 	}
 
-	BufferSincronizado<int> output((char*) NOMBRE ,0+30*ventanilla_entrada);
-	BufferSincronizado<int> input((char*) NOMBRE ,10+30*ventanilla_entrada);
-	Semaforo barrera((char*) NOMBRE ,20+30*ventanilla_entrada);
+	Semaforo barrera((char*) NOMBRE ,2+10*ventanilla_entrada);
+	BufferSincronizado<message> output((char*) NOMBRE ,3+10*ventanilla_entrada);
+	BufferSincronizado<message> input((char*) NOMBRE ,4+10*ventanilla_entrada);
 	input.abrir();
 	output.abrir();
 	barrera.abrir();
 
+	message msg;
+	msg.pid=getpid();
+	msg.place=0;
+	msg.time=tiempo_estacionado;
 	cout << "Auto: id= " << getpid() << " tiempo estacionado: " << tiempo_estacionado << endl;
-
-	cout << "Auto: id= " << getpid() << " venanilla " << ventanilla_entrada << " pid= " << vent[ventanilla_entrada] << endl;
+	cout << "Auto: id= " << getpid() << " venanilla " << ventanilla_entrada << endl;
 	bloquearSigint();
 	barrera.wait();
 	output.waitWrite();
-	output.escribir(12);
+	output.escribir(msg);
 	output.signalRead();
 	input.waitRead();
-	int valor= input.leer();
+	msg= input.leer();
 	input.signalWrite();
 	desbloquearSigint();
-	sleep(tiempo_estacionado);
-	cout << "Auto: id= " << getpid() << " lei " << valor << endl;
+	barrera.cerrar();
 	input.cerrar();
 	output.cerrar();
-	barrera.cerrar();
+	if(msg.place==0){
+		cout << "Auto: id= " << getpid() << " estacionamiento lleno." << endl;
+	}else{
+		sleep(tiempo_estacionado);
+		cout << "Auto: id= " << getpid() << " lei " << msg.place << endl;
+		Semaforo barreraSalida((char*) NOMBRE ,5+10*ventanilla_entrada);
+		BufferSincronizado<message> outputSalida((char*) NOMBRE ,6+10*ventanilla_entrada);
+		barreraSalida.wait();
+		outputSalida.waitWrite();
+		outputSalida.escribir(msg);
+		outputSalida.signalRead();
+	}
 	return 0;
 }

@@ -14,7 +14,7 @@
 #include "logger.h"
 
 
-int generarAutos(pid_t vent[]);
+int generarAutos();
 
 
 #endif /* CARGENERATOR_H_ */

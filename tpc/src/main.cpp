@@ -8,8 +8,11 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include "MainSIGINTHandler.h"
+#include "SignalHandler.h"
 #include "logger.h"
 #include "Estacionamiento.h"
+#include "genautos.h"
 using namespace std;
 
 bool debug=false;
@@ -94,8 +97,17 @@ int main(int argc, char **argv) {
 		if (estacionamientoPID==0){
 			Estacionamiento estacionamiento("/tmp/estacionamiento",espacios,costo);
 			estacionamiento.iniciar();
-		}else{
-
+			exit(0);
 		}
+		pid_t generadorAutosPid= fork();
+		if(generadorAutosPid==0){
+			generarAutos();
+		}
+		MainSIGINTHandler handler(estacionamientoPID,estacionamientoPID);
+		SignalHandler::getInstance()->registrarHandler( SIGINT,&handler );
+		int status;
+		wait(&status);
+		wait(&status);
+		exit(0);
 	}
 }

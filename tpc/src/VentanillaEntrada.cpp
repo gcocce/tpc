@@ -6,7 +6,7 @@
  */
 #include "VentanillaEntrada.h"
 
-VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,2), canalEntrada(path,numeroVentanilla*10+3), canalSalida(path,numeroVentanilla*10+4){
+VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,10*numeroVentanilla+2), canalEntrada(path,numeroVentanilla*10+3), canalSalida(path,numeroVentanilla*10+4){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierta=false;
@@ -41,6 +41,7 @@ void VentanillaEntrada :: cerrar(){
 	}
 
 void VentanillaEntrada :: iniciar(){
+		SignalHandler::getInstance()->registrarHandler( SIGINT,this );
 		this->abierta=true;
 		this->barrera.signal();
 		while(this->abierta==true){

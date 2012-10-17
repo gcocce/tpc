@@ -44,6 +44,15 @@ void Estacionamiento :: iniciar(){
 			exit(0);
 		}
 	}
+	SignalHandler::getInstance()->registrarHandler( SIGINT,this );
+	int result;
+	wait(&result);
+	wait(&result);
+	wait(&result);
+	wait(&result);
+	wait(&result);
+	exit(0);
+
 };
 
 void Estacionamiento :: finalizar(){

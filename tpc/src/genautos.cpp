@@ -24,7 +24,7 @@ using namespace std;
 
 extern bool debug;
 
-int generarAutos(pid_t vent[6]){
+int generarAutos(){
 
 	Logger log(debug);
 
@@ -54,7 +54,7 @@ int generarAutos(pid_t vent[6]){
 		if (auto_id == 0 ) {
 			// Hace falta eliminar el handler heredado en el stack
 			SignalHandler::destruir ();
-			int res = manejarAuto(vent);
+			int res = manejarAuto();
 			exit (res);
 		} else {
 			if (debug){

@@ -15,6 +15,6 @@
 #include <sys/wait.h>
 #include "definiciones.h"
 
-int manejarAuto(pid_t vent[]);
+int manejarAuto();
 
 #endif /* CAR_H_ */

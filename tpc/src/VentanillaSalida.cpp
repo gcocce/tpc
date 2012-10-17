@@ -6,7 +6,7 @@
  */
 #include "VentanillaSalida.h"
 
-VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,5), canalEntrada(path,numeroVentanilla*10+6){
+VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,numeroVentanilla*10+5), canalEntrada(path,numeroVentanilla*10+6){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 	}
@@ -36,18 +36,20 @@ void VentanillaSalida :: cerrar(){
 	}
 
 void VentanillaSalida :: iniciar(){
-		this->barrera.signal();
-		while(true){
-			this->canalEntrada.waitRead();
-			bloquearSigint();
-			message msg= this->canalEntrada.leer();
-			this->canalEntrada.signalWrite();
-			this->estacionamiento->freePlace(msg.place,msg.time);
-			desbloquearSigint();
-		}
+	SignalHandler::getInstance()->registrarHandler( SIGINT,this );
+	this->barrera.signal();
+	while(true){
+		this->canalEntrada.waitRead();
+		bloquearSigint();
+		message msg= this->canalEntrada.leer();
+		this->canalEntrada.signalWrite();
+		this->estacionamiento->freePlace(msg.place,msg.time);
+		desbloquearSigint();
 	}
+}
 
 void VentanillaSalida :: finalizar(){
+	// TODO: Ver de esperar a demas autos que salgan.
 	this->eliminar();
 	exit(0);
 }
