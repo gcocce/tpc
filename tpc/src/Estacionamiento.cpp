@@ -45,6 +45,7 @@ void Estacionamiento :: iniciar(){
 			VentanillaEntrada ventanilla(this,this->path,i);
 			ventanilla.crear();
 			ventanilla.iniciar();
+			ventanilla.~VentanillaEntrada();
 			exit(0);
 		}
 	}
@@ -54,6 +55,7 @@ void Estacionamiento :: iniciar(){
 			VentanillaSalida ventanilla(this,this->path,i);
 			ventanilla.crear();
 			ventanilla.iniciar();
+			ventanilla.~VentanillaSalida();
 			exit(0);
 		}
 	}

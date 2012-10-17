@@ -124,6 +124,7 @@ void VentanillaEntrada :: finalizar(){
 	this->eliminar();
 	this->~VentanillaEntrada();
 	exit(0);
+	//exit(0);
 }
 
 int VentanillaEntrada ::  handleSignal ( int signum ) {
