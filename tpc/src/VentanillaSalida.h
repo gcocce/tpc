@@ -13,6 +13,7 @@
 #include "Estacionamiento.h"
 #include "SignalHandler.h"
 #include "Message.h"
+#include "logger.h"
 
 //class Estacionamiento;
 

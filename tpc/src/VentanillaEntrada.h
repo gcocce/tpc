@@ -13,6 +13,7 @@
 #include "Estacionamiento.h"
 #include "SignalHandler.h"
 #include "Message.h"
+#include "logger.h"
 
 //class Estacionamiento;
 
@@ -25,6 +26,8 @@ private:
 	BufferSincronizado<message> canalEntrada;
 	BufferSincronizado<message> canalSalida;
 	Estacionamiento *estacionamiento;
+	Logger log;
+
 public:
 	VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla);
 

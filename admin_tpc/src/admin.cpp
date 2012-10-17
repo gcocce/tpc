@@ -123,7 +123,7 @@ void mostrarMenu(){
 
 int consultarAutos(){
 	int resultado=0;
-	LUResource lock("../../pruebaLock/Debug/autos.lok");
+	LUResource lock("autos.lok");
 	if (lock.conectarRecurso()<=0){
 		cout << "El recurso no está disponible en este momento" << endl;
 		return -1;
@@ -140,7 +140,7 @@ int consultarAutos(){
 
 double consultarMonto(){
 	double resultado=0;
-	LUResource lock("../../pruebaLock/Debug/monto.lok");
+	LUResource lock("monto.lok");
 	if (lock.conectarRecurso()<=0){
 		cout << "El recurso no está disponible en este momento" << endl;
 		return -1;

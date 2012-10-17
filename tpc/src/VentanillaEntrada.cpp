@@ -6,10 +6,14 @@
  */
 #include "VentanillaEntrada.h"
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
-VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,10*numeroVentanilla+2), canalEntrada(path,numeroVentanilla*10+3), canalSalida(path,numeroVentanilla*10+4){
+extern bool debug;
+
+VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,10*numeroVentanilla+2), canalEntrada(path,numeroVentanilla*10+3), canalSalida(path,numeroVentanilla*10+4), log(debug){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierta=false;
@@ -35,6 +39,12 @@ void VentanillaEntrada :: crear(){
 			cout << "Ventanilla " << this->numeroVentanilla << ". Error al crear." <<endl;
 			exit(1);
 		}
+		this->log.debug("Se ha creado la ventanilla.");
+
+		std::ostringstream stringStream;
+		stringStream << "Ventanilla numero: " << this->numeroVentanilla;
+		std::string copyOfStr = stringStream.str();
+		this->log.debug(copyOfStr.c_str());
 	}
 
 void VentanillaEntrada :: eliminar(){
@@ -59,6 +69,7 @@ void VentanillaEntrada :: abrir(){
 			cout << "Ventanilla " << this->numeroVentanilla << ". Error al abrir." <<endl;
 			exit(1);
 		}
+		this->log.debug("Se ha abierto la barrera.");
 	}
 
 void VentanillaEntrada :: cerrar(){
@@ -69,12 +80,23 @@ void VentanillaEntrada :: cerrar(){
 
 void VentanillaEntrada :: iniciar(){
 		SignalHandler::getInstance()->registrarHandler( SIGINT,this );
+
 		this->abierta=true;
 		this->barrera.signal();
+
+		this->log.debug("La ventanilla esta abierta e inicia el proceso de recepción.");
+
 		while(this->abierta==true){
 			this->canalEntrada.waitRead();
 			bloquearSigint();
 			message msg= this->canalEntrada.leer();
+
+			std::ostringstream stringStream;
+			stringStream << "Recibe mensaje, pid: " << msg.pid << " tiempo: " << msg.time;
+			std::string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
+
+
 			this->canalEntrada.signalWrite();
 			msg.pid= getpid();
 			if(this->abierta==true){
@@ -83,6 +105,11 @@ void VentanillaEntrada :: iniciar(){
 				msg.place= 0;
 			}
 			this->canalSalida.waitWrite();
+
+			stringStream << "Escribe mensaje, pid: " << msg.pid << " tiempo: " << msg.time;
+			copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
+
 			this->canalSalida.escribir(msg);
 			this->canalSalida.signalRead();
 			desbloquearSigint();
