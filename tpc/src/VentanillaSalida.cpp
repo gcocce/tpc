@@ -17,11 +17,8 @@ VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *pat
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierto=false;
-<<<<<<< HEAD
 		this->interumpido=false;
 		this->log.flush("Ventanilla de salida: se llama al constructor");
-=======
->>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
 		cout << "Ventanilla Salida " << (int)this->numeroVentanilla << " creada." <<endl;
 	}
 
@@ -49,11 +46,7 @@ void VentanillaSalida :: crear(){
 }
 
 void VentanillaSalida :: eliminar(){
-<<<<<<< HEAD
 		this->log.flush("Ventanilla de salida: se llamo al metodo eliminar");
-=======
-		this->log.debug("Ventanilla de salida: se llamo al metodo eliminar");
->>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
 		cout << "Ventanilla Salida" << (int)this->numeroVentanilla << " Salio." <<endl;
 		this->barrera.eliminar();
 		this->canalEntrada.eliminar();
@@ -95,11 +88,7 @@ void VentanillaSalida :: iniciar(){
 		bloquearSigint();
 		this->log.debug("Ventanilla de salida: hace canalEntrada.leer()");
 		message msg= this->canalEntrada.leer();
-<<<<<<< HEAD
 		cout << "Ventanilla de salida: recibio mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
-=======
-		cout << "Ventanilla de salida: recibio mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << msg.time;
->>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
 		std::ostringstream stringStream;
 		stringStream << "Ventanilla de salida: recibio mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
 		std::string copyOfStr = stringStream.str();

@@ -99,13 +99,10 @@ void VentanillaEntrada :: iniciar(){
 			message msg= this->canalEntrada.leer();
 
 			std::ostringstream stringStream;
-<<<<<<< HEAD
+
 			stringStream << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
 			cout << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time << endl;
-=======
-			stringStream << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << msg.time;
-			cout << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << msg.time << endl;
->>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
+
 			std::string copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 

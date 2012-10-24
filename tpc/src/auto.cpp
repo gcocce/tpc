@@ -41,17 +41,14 @@ int manejarAuto(char *path){
 	Semaforo barrera(path ,1+10*ventanilla_entrada);
 	BufferSincronizado<message> output((char*) path ,2+10*ventanilla_entrada);
 	BufferSincronizado<message> input((char*) path ,4+10*ventanilla_entrada);
-<<<<<<< HEAD
+
 	Semaforo barreraSalida(path ,+6+10*ventanilla_salida);
 	BufferSincronizado<message> outputSalida(path ,7+10*ventanilla_salida);
-=======
+
 	Semaforo barreraSalida(path ,+6+10*ventanilla_entrada);
 	BufferSincronizado<message> outputSalida(path ,7+10*ventanilla_entrada);
->>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
 
 	if (input.abrir()!=SEM_OK){
-		char buffer[256];
-		sprintf(buffer,"Auto: id= " << getpid() << " venanilla entrada " << ventanilla_entrada << " cerrada. Me voy.",getpid(),)
 		cout << "Auto: id= " << getpid() << " venanilla entrada " << ventanilla_entrada << " cerrada. Me voy." << endl;
 		exit(0);
 	}
@@ -104,13 +101,10 @@ int manejarAuto(char *path){
 	}else{
 		cout << "Auto: id= " << getpid() << " estacionado." << endl;
 		sleep(tiempo_estacionado);
-<<<<<<< HEAD
 		char buffer [100];
-				sprintf (buffer, "Auto: El auto pasa por salida %d",ventanilla_salida);
-				log.debug(buffer);
-=======
+		sprintf (buffer, "Auto: El auto pasa por salida %d",ventanilla_salida);
+		log.debug(buffer);
 
->>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
 		cout << "Auto: id= " << getpid() << " saliendo ventanilla" << ventanilla_salida << endl;
 		barreraSalida.wait();
 		outputSalida.waitWrite();

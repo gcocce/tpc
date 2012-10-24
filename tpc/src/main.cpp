@@ -104,13 +104,8 @@ int main(int argc, char **argv) {
 		log.flush("Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
-<<<<<<< HEAD
-				//sleep(2);
-=======
->>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
+			//sleep(2);
 			generarAutos("estacionamiento.lok");
-			/*while(1){
-			}*/
 			return(0);
 		}
 		MainSIGINTHandler handler(estacionamientoPID,generadorAutosPid);
