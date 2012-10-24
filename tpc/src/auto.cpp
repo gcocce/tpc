@@ -45,9 +45,6 @@ int manejarAuto(char *path){
 	Semaforo barreraSalida(path ,+6+10*ventanilla_salida);
 	BufferSincronizado<message> outputSalida(path ,7+10*ventanilla_salida);
 
-	Semaforo barreraSalida(path ,+6+10*ventanilla_entrada);
-	BufferSincronizado<message> outputSalida(path ,7+10*ventanilla_entrada);
-
 	if (input.abrir()!=SEM_OK){
 		cout << "Auto: id= " << getpid() << " venanilla entrada " << ventanilla_entrada << " cerrada. Me voy." << endl;
 		exit(0);
