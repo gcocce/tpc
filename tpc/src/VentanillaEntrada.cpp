@@ -13,7 +13,7 @@ using namespace std;
 
 extern bool debug;
 
-VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,10*numeroVentanilla+1), canalEntrada(path,numeroVentanilla*10+2), canalSalida(path,numeroVentanilla*10+4), log(debug){
+VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path, 10 * numeroVentanilla + 1), canalEntrada(path, numeroVentanilla * 10 + 2), canalSalida(path, numeroVentanilla * 10 + 4), log(debug){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierta=false;
@@ -147,7 +147,7 @@ void VentanillaEntrada :: iniciar(){
 			}
 
 			this->canalEntrada.signalWrite();
-			msg.pid= getpid();
+			msg.pid = getpid();
 			if(this->abierta==true){
 				{
 				std::stringstream stringStream;
@@ -156,7 +156,14 @@ void VentanillaEntrada :: iniciar(){
 				this->log.debug(copyOfStr.c_str());
 				}
 
-				msg.place= this->estacionamiento->findPlace();
+				msg.place = this->estacionamiento->findPlace();
+
+				{
+				std::stringstream stringStream;
+				stringStream << "Vent Ent num " << (int)numeroVentanilla << ": resultado findplace: " << (int)msg.place ;
+				string copyOfStr = stringStream.str();
+				this->log.debug(copyOfStr.c_str());
+				}
 			}else{
 				{
 				std::stringstream stringStream;

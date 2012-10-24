@@ -26,11 +26,11 @@ Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : luga
 };
 
 Estacionamiento :: ~Estacionamiento(){
-
+	this->log.debug("Est: Se llamo al destructor.");
 };
 
 void Estacionamiento :: eliminarRecursos(){
-	this->log.debug("Est: Se llamo al destructor.");
+	this->log.debug("Est: Se llamo a eliminar recursos.");
 		this->espaciosOcupados.eliminarRecurso();
 		this->dineroCobrado.eliminarRecurso();
 }
@@ -103,6 +103,7 @@ void Estacionamiento :: finalizar(){
 
 	// No cerrar ventanillas salida mientras queden autos.
 	// Cambiar por semaforo que despierta al llegar a 0.
+
 	while(this->getEspaciosOcupados()>0){
 		sleep(1);
 	}
@@ -125,35 +126,41 @@ char Estacionamiento :: findPlace(){
 	this->log.debug("Est: Se invoca findPlace.");
 	char status;
 	char i=0;
-	this->lugares.tomarLock(i);
-	this->lugares.leer(i,&status);
+	this->lugares.tomarLock((int)i);
+	this->lugares.leer((int)i,&status);
 
+	{
 	std::ostringstream stringStream;
-	stringStream << "Est: status: " << (int)status;
+	stringStream << "Est: pocicion " << (int)i << " estado " << (int)status;
 	std::string copyOfStr = stringStream.str();
-	//cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	this->log.debug(copyOfStr.c_str());
+	}
 
 	while (status==1){
-		lugares.liberarLock(i);
+		lugares.liberarLock((int)i);
 		i++;
-		if( i >= this->espacios ){
+		if( (int)i >= this->espacios ){
+			{
+				std::ostringstream stringStream;
+				stringStream << "Est: Se recorrio el estacionamiento, todo ocupado. " << (int)i;
+				std::string copyOfStr = stringStream.str();
+				this->log.debug(copyOfStr.c_str());
+			}
 			break;
 		}
-		this->lugares.tomarLock(i);
-		this->lugares.leer(i,&status);
-		//cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
+		this->lugares.tomarLock((int)i);
+		this->lugares.leer((int)i,&status);
 	}
 	if(status==0){
 		// Si ingresa por aquí es que se asigna un auto a un lugar
-		this->lugares.escribir(i,1);
-		this->lugares.liberarLock(i);
+		this->lugares.escribir((int)i,1);
+		this->lugares.liberarLock((int)i);
 		i=i+1; //Los lugares no comienzan en 0
 		this->espaciosOcupados.tomarLockEscritura();
 		int aux=this->espaciosOcupados.leerEntero();
 		aux=aux+1;
 
-		cout << "Est: ingresa un auto, se asigna cochera: "<< aux << endl;
+		cout << "Est: ingresa un auto, se asigna cochera: "<< (int)i << endl;
 
 		this->espaciosOcupados.escribirEntero(aux);
 		this->espaciosOcupados.liberarLock();
@@ -172,19 +179,30 @@ char Estacionamiento :: findPlace(){
 
 void Estacionamiento :: freePlace(char ubicacion , char horas){
 	std::ostringstream stringStream;
-	int i= ubicacion-1;
+	int i= ((int)ubicacion)-1;
+
+	{
 	stringStream << "Est: Se invoca freeplace ubicacion: " << (int)i;
 	std::string copyOfStr = stringStream.str();
-	this->log.debug(copyOfStr.c_str());
+	this->log.flush(copyOfStr.c_str());
+	}
 
 	this->lugares.tomarLock(i);
 	this->lugares.escribir(i,0);
 	this->lugares.liberarLock(i);
+
+	{
+	stringStream << "Est: ubicación liberada con freePlace: " << (int)i;
+	std::string copyOfStr = stringStream.str();
+	this->log.flush(copyOfStr.c_str());
+	}
+
 	this->dineroCobrado.tomarLockEscritura();
 	double aux= this->dineroCobrado.leerDouble();
-	aux+=horas*this->costo;
+	aux+= horas * this->costo;
 	this->dineroCobrado.escribirDouble(aux);
 	this->dineroCobrado.liberarLock();
+
 	this->espaciosOcupados.tomarLockEscritura();
 	int auxEspacios=this->espaciosOcupados.leerEntero();
 	auxEspacios--;

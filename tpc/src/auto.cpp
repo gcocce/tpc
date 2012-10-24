@@ -42,12 +42,12 @@ int manejarAuto(char *path){
 		log.debug(buffer);
 	}
 
-	Semaforo barrera(path ,1+10*ventanilla_entrada);
-	BufferSincronizado<message> output((char*) path ,2+10*ventanilla_entrada);
-	BufferSincronizado<message> input((char*) path ,4+10*ventanilla_entrada);
+	Semaforo barrera(path ,1 + 10 * ventanilla_entrada);
+	BufferSincronizado<message> output((char*) path ,2 + 10 * ventanilla_entrada);
+	BufferSincronizado<message> input((char*) path ,4 + 10 * ventanilla_entrada);
 
-	Semaforo barreraSalida(path ,+6+10*ventanilla_salida);
-	BufferSincronizado<message> outputSalida(path ,7+10*ventanilla_salida);
+	Semaforo barreraSalida(path , 6 + 10 * ventanilla_salida);
+	BufferSincronizado<message> outputSalida(path ,7 + 10 * ventanilla_salida);
 
 	if (input.abrir()!=SEM_OK){
 		{
@@ -117,6 +117,14 @@ int manejarAuto(char *path){
 	bloquearSigint();
 	barrera.wait();
 	output.waitWrite();
+
+	{
+	std::stringstream stringStream;
+	stringStream << "Auto:  escribe pid " << (int)msg.pid << " lugar " << (int)msg.place << " tiempo " << (int)msg.time;
+	std::string copyOfStr = stringStream.str();
+	log.debug(copyOfStr.c_str());
+	}
+
 	output.escribir(msg);
 	output.signalRead();
 	input.waitRead();
@@ -130,7 +138,7 @@ int manejarAuto(char *path){
 
 	{
 	std::stringstream stringStream;
-	stringStream << "Auto:  lei lugar " << (int)msg.place;
+	stringStream << "Auto:  lei pid " << (int)msg.pid << " lugar " << (int)msg.place << " tiempo " << (int)msg.time;
 	std::string copyOfStr = stringStream.str();
 	log.debug(copyOfStr.c_str());
 	}
@@ -175,6 +183,15 @@ int manejarAuto(char *path){
 
 		barreraSalida.wait();
 		outputSalida.waitWrite();
+
+		{
+		std::stringstream stringStream;
+		msg.pid=getpid();
+		stringStream << "Auto:  escribe pid " << (int)msg.pid << " lugar " << (int)msg.place << " tiempo " << (int)msg.time;
+		std::string copyOfStr = stringStream.str();
+		log.debug(copyOfStr.c_str());
+		}
+
 		outputSalida.escribir(msg);
 		outputSalida.signalRead();
 		barreraSalida.cerrar();
