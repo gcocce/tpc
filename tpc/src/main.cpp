@@ -86,13 +86,18 @@ int main(int argc, char **argv) {
 	float costo=0;
 
 	if (parsearParametros(argc, argv, tiempo,espacios,costo)){
+		Logger log(debug);
+		log.flush("Main: Se inicia la simulación.");
+		char buffer [200];
+		sprintf (buffer, "Tiempo: %d, Cocheras: %d, Costo: %f", tiempo, espacios, costo);
+		log.flush(buffer);
+
 		cout << "Iniciando simulacion del estacionamiento..." << endl;
 		cout << "Tiempo simulacion: " << tiempo << " hs" << endl;
 		cout << "Capacidad estacionamiento: " << espacios << " lugares" << endl;
 		cout << "Costo por hora: " << costo << " $" << endl;
 
-		Logger log(debug);
-		log.flush("Main: Inicializando Estacionamiento.");
+		log.flush("Main: Se crea el proceso del Estacionamiento.");
 		pid_t estacionamientoPID = fork();
 		if (estacionamientoPID==0){
 			Estacionamiento estacionamiento("estacionamiento.lok",espacios,costo);

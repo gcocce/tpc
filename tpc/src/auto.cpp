@@ -35,10 +35,10 @@ int manejarAuto(char *path){
 
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "Auto: El auto selecciona la ventanilla de entrada numero %d, salida %d", ventanilla_entrada,ventanilla_salida);
+		sprintf (buffer, "Auto: Selecciona la ventanilla de entrada numero %d, salida %d", ventanilla_entrada,ventanilla_salida);
 		log.debug(buffer);
 
-		sprintf (buffer, "Auto: Tiempo estacionado %d", tiempo_estacionado);
+		sprintf (buffer, "Auto: Decide tiempo estacionado: %d", tiempo_estacionado);
 		log.debug(buffer);
 	}
 
@@ -56,7 +56,8 @@ int manejarAuto(char *path){
 		string copyOfStr = stringStream.str();
 		log.debug(copyOfStr.c_str());
 		}
-		exit(-1);
+		log.debug("Auto: Finaliza el proceso.");
+		exit(23);
 	}
 
 	if (output.abrir()!=SEM_OK){
@@ -68,8 +69,8 @@ int manejarAuto(char *path){
 		string copyOfStr = stringStream.str();
 		log.debug(copyOfStr.c_str());
 		}
-
-		exit(-1);
+		log.debug("Auto: Finaliza el proceso.");
+		exit(24);
 	}
 	if (barrera.abrir()!=SEM_OK){
 		input.cerrar();
@@ -81,7 +82,8 @@ int manejarAuto(char *path){
 		string copyOfStr = stringStream.str();
 		log.debug(copyOfStr.c_str());
 		}
-		exit(-1);
+		log.debug("Auto: Finaliza el proceso.");
+		exit(25);
 	}
 
 	if (barreraSalida.abrir()!=SEM_OK){
@@ -91,7 +93,8 @@ int manejarAuto(char *path){
 		string copyOfStr = stringStream.str();
 		log.debug(copyOfStr.c_str());
 		}
-		exit(-1);
+		log.debug("Auto: Finaliza el proceso.");
+		exit(26);
 	}
 
 	if(outputSalida.abrir()!=SEM_OK){
@@ -101,7 +104,8 @@ int manejarAuto(char *path){
 		string copyOfStr = stringStream.str();
 		log.debug(copyOfStr.c_str());
 		}
-		exit(-1);
+		log.debug("Auto: Finaliza el proceso.");
+		exit(27);
 	}
 
 	message msg;
