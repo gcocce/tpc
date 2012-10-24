@@ -97,16 +97,16 @@ int main(int argc, char **argv) {
 		if (estacionamientoPID==0){
 			Estacionamiento estacionamiento("estacionamiento.lok",espacios,costo);
 			estacionamiento.iniciar();
+			estacionamiento.eliminarRecursos();
 			estacionamiento.~Estacionamiento();
 			exit (0);
 		}
 		log.flush("Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
-			sleep(5);
+				//sleep(2);
 			generarAutos("estacionamiento.lok");
 			/*while(1){
-				sleep(10);
 			}*/
 			return(0);
 		}

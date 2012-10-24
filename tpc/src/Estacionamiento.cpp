@@ -26,26 +26,33 @@ Estacionamiento :: Estacionamiento(char* path, int espacios, float costo) : luga
 };
 
 Estacionamiento :: ~Estacionamiento(){
-	this->log.debug("Estacionamiento: Se llamo al destructor.");
-	this->espaciosOcupados.eliminarRecurso();
-	this->dineroCobrado.eliminarRecurso();
+
 };
 
+void Estacionamiento :: eliminarRecursos(){
+	this->log.debug("Estacionamiento: Se llamo al destructor.");
+		this->espaciosOcupados.eliminarRecurso();
+		this->dineroCobrado.eliminarRecurso();
+}
+
 int Estacionamiento:: getEspaciosOcupados(){
-	this->log.debug("Estacionamiento: Se consulta los espacios ocupados.");
 	this->espaciosOcupados.tomarLockLectura();
 	int aux=this->espaciosOcupados.leerEntero();
 	this->espaciosOcupados.liberarLock();
+	std::ostringstream stringStream;
+	stringStream << "Estacionamiento: Se consulta los espacios ocupados." << aux;
+	std::string copyOfStr = stringStream.str();
+	this->log.debug(copyOfStr.c_str());
 	return aux;
 }
 
 void Estacionamiento :: iniciar(){
-	std::cout<< "Iniciando estacionamiento. " << this->path << std::endl;
+	//std::cout<< "Iniciando estacionamiento. " << this->path << std::endl;
 	log.flush("Iniciando estacionamiento.");
 	for(int i=0;i<this->espacios;i++){
 		this->lugares.escribir(i,0);
 	}
-	std::cout<< "Iniciando estacionamiento." << this->path << std::endl;
+	//std::cout<< "Iniciando estacionamiento." << this->path << std::endl;
 	for(char i=0;i<3;i++){
 		this->ventanillasEntrada[i]=fork();
 		if (this->ventanillasEntrada[i]==0){
@@ -83,15 +90,33 @@ void Estacionamiento :: finalizar(){
 	for(int i=0;i<3;i++){
 		kill(this->ventanillasEntrada[i],SIGINT);
 	}
+//	for(int i=0;i<2;i++){
+//		kill(this->ventanillasSalida[i],SIGINT);
+//	}
+	int result;
+	wait(&result);
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 4." << endl;
+	wait(&result);
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 3." << endl;
+	wait(&result);
+
+	// No cerrar ventanillas salida mientras queden autos.
+	// Cambiar por semaforo que despierta al llegar a 0.
+	while(this->getEspaciosOcupados()>0){
+		sleep(1);
+	}
+
 	for(int i=0;i<2;i++){
 		kill(this->ventanillasSalida[i],SIGINT);
 	}
-	int result;
+	for(int i=0;i<2;i++){
+			kill(this->ventanillasSalida[i],SIGINT);
+	}
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 2." << endl;
 	wait(&result);
+	cout << "Estacionamiento: Ventanilla cerrada, quedan 1." << endl;
 	wait(&result);
-	wait(&result);
-	wait(&result);
-	wait(&result);
+	cout << "Estacionamiento: Cerrado." << endl;
 	//exit(0);
 }
 
@@ -105,10 +130,10 @@ char Estacionamiento :: findPlace(){
 	std::ostringstream stringStream;
 	stringStream << "Estacionamiento: status: " << (int)status;
 	std::string copyOfStr = stringStream.str();
-	cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
+	//cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	this->log.debug(copyOfStr.c_str());
 
-	while (status=='1'){
+	while (status==1){
 		lugares.liberarLock(i);
 		i++;
 		if( i >= this->espacios ){
@@ -116,15 +141,16 @@ char Estacionamiento :: findPlace(){
 		}
 		this->lugares.tomarLock(i);
 		this->lugares.leer(i,&status);
-		cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
+		//cout << "Estacionamiento pocicion " << (int)i << "estado" << (int)status << endl;
 	}
-	if(status=='0'){
-		this->lugares.escribir(i,'1');
+	if(status==0){
+		this->lugares.escribir(i,1);
 		this->lugares.liberarLock(i);
 		i=i+1; //Los lugares no comienzan en 0
 		this->espaciosOcupados.tomarLockEscritura();
 		int aux=this->espaciosOcupados.leerEntero();
 		aux=aux+1;
+		//cout << "Estacionamiento: lugares ocupados "<< aux << endl;
 		this->espaciosOcupados.escribirEntero(aux);
 		this->espaciosOcupados.liberarLock();
 

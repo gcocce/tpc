@@ -99,7 +99,8 @@ void VentanillaEntrada :: iniciar(){
 			message msg= this->canalEntrada.leer();
 
 			std::ostringstream stringStream;
-			stringStream << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << msg.time;
+			stringStream << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
+			cout << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time << endl;
 			std::string copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 
@@ -110,14 +111,14 @@ void VentanillaEntrada :: iniciar(){
 				this->log.debug("Ventanilla: hace estacionamiento->findplate()");
 				msg.place= this->estacionamiento->findPlace();
 			}else{
-				this->log.debug("Ventanilla: el estacionamiento está cerado.");
+				this->log.debug("Ventanilla: el estacionamiento está cerrado.");
 				msg.place= -1;
 			}
 			this->log.debug("Ventanilla: hace canalSalida.waitWrite()");
 			this->canalSalida.waitWrite();
 
 			std::cout << "Ventanilla " << (int) this->numeroVentanilla << " Dando ubicacion." << (int)msg.place << std::endl;
-			stringStream << "Ventanilla: Escribe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << msg.time;
+			stringStream << "Ventanilla: Escribe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
 			copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
 
@@ -125,6 +126,7 @@ void VentanillaEntrada :: iniciar(){
 			this->log.debug("Ventanilla: hace canalEntrada.signalRead()");
 			this->canalSalida.signalRead();
 			desbloquearSigint();
+			this->barrera.signal();
 		}
 	}
 

@@ -49,6 +49,8 @@ public:
 
 	int getEspaciosOcupados();
 
+	void eliminarRecursos();
+
 	virtual int handleSignal ( int signum ) {
 		if( signum == SIGINT ){
 			std::cout << "Estacionamiento manejando SIGINT" << std::endl;

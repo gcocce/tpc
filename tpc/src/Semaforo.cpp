@@ -20,22 +20,22 @@ int Semaforo :: crear(int valorInicial ) {
 
 	key_t clave = ftok ( this->path,this->code );
 	if(clave == -1){
-		cout << strerror(errno) << endl;
+		//cout << strerror(errno) << endl;
 		return ERROR_FTOK;
 	}else{
 		this->id = semget ( clave, 1, 0666 | IPC_CREAT);
 		if(this->id == -1){
-			cout <<  strerror(errno)  << endl;
+			//cout <<  strerror(errno)  << endl;
 			return ERROR_SEMGET;
 		}else{
 			semnum init;
 			init.val = valorInicial;
 			int resultado = semctl( this->id,0,SETVAL,init );
 			if(resultado == -1){
-				cout <<  strerror(errno)  << endl;
+				//cout <<  strerror(errno)  << endl;
 				return ERROR_SEMCTL;
 			}
-			cout << "Semaforo " << this->path  << " - " << (int)this->code << " creado con valor" << valorInicial << endl;
+			//cout << "Semaforo " << this->path  << " - " << (int)this->code << " creado con valor" << valorInicial << endl;
 			return SEM_OK;
 		}
 	}
@@ -50,12 +50,12 @@ int Semaforo :: abrir() {
 
 	key_t clave = ftok ( this->path,this->code );
 	if(clave == -1){
-		cout << strerror(errno) << endl;
+		//cout << strerror(errno) << endl;
 		return ERROR_FTOK;
 	}else{
 		this->id = semget ( clave,1,0666);
 		if(this->id == -1){
-			cout <<  strerror(errno)  << endl;
+			//cout <<  strerror(errno)  << endl;
 			return ERROR_SEMGET;
 		}else{
 			return SEM_OK;
@@ -75,10 +75,10 @@ int Semaforo :: wait () {
 	operacion.sem_op  = -1;	// restar 1 al Semaforo
 	operacion.sem_flg = SEM_UNDO;
 
-	cout << "Semaforo " << this->path  << " - " << (int)this->code << " wait." << endl;
+	//cout << "Semaforo " << this->path  << " - " << (int)this->code << " wait." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
-		cout <<  strerror(errno)  << endl;
+		//cout <<  strerror(errno)  << endl;
 	}
 	return resultado;
 }
@@ -91,10 +91,10 @@ int Semaforo :: signal () {
 	operacion.sem_op  = 1;	// sumar 1 al Semaforo
 	operacion.sem_flg = SEM_UNDO;
 
-	cout << "Semaforo " << this->path << " - " << (int)this->code << " signal." << endl;
+	//cout << "Semaforo " << this->path << " - " << (int)this->code << " signal." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
-		cout <<  strerror(errno)  << endl;
+		//cout <<  strerror(errno)  << endl;
 	}
 	return resultado;
 }
@@ -105,5 +105,5 @@ void Semaforo :: cerrar() {
 
 void Semaforo :: eliminar () {
 	semctl ( this->id,0,IPC_RMID );
-	cout << "Semaforo " << this->path << " - " << (int)this->code << " eliminado." << endl;
+	//cout << "Semaforo " << this->path << " - " << (int)this->code << " eliminado." << endl;
 }

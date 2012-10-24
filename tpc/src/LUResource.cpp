@@ -69,7 +69,7 @@ int LUResource :: leer ( char* buffer, int buffsize){
 	int resultado = read (this->fd, buffer, buffsize);
 	if (resultado == -1) {
 			int myerr = errno;
-			printf("ERROR: read errno(%d): %s\n", errno,strerror(myerr));
+			//printf("ERROR: read errno(%d): %s\n", errno,strerror(myerr));
 	}
 	return resultado;
 }
@@ -79,7 +79,7 @@ int LUResource :: escribir ( char* buffer,int buffsize ) {
 	int resultado = write ( this->fd, buffer,buffsize );
 	if (resultado == -1) {
 			int myerr = errno;
-			printf("ERROR: read errno(%d): %s\n", errno,strerror(myerr));
+			//printf("ERROR: read errno(%d): %s\n", errno,strerror(myerr));
 	}
 	return resultado;
 }

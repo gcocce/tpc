@@ -14,13 +14,13 @@ LockFile :: LockFile ( char* nombre ) {
 	this->fl.l_len = sizeof(char);
 	this->fl.l_pid = getpid ();
 	this->fd = open ( this->nombre,O_CREAT|O_RDWR,0777 );
-	cout << getpid() << " LockFile " << this->nombre << " created" << endl;
+	//cout << getpid() << " LockFile " << this->nombre << " created" << endl;
 }
 
 int LockFile :: tomarLock (int pos) {
 	this->fl.l_type = F_WRLCK;
 	this->fl.l_start = pos * sizeof(char);
-	cout << getpid() << " LockFile " << this->nombre << " tomando lock pos " << pos << endl;
+	//cout << getpid() << " LockFile " << this->nombre << " tomando lock pos " << pos << endl;
 	int resultado = fcntl ( this->fd,F_SETLKW,&(this->fl) );
 	return resultado;
 }
@@ -28,14 +28,14 @@ int LockFile :: tomarLock (int pos) {
 int LockFile :: liberarLock (int pos) {
 	this->fl.l_type = F_UNLCK;
 	this->fl.l_start = pos * sizeof(char);
-	cout << getpid() << " LockFile " << this->nombre << " liberandoo lock pos " << pos << endl;
+	//cout << getpid() << " LockFile " << this->nombre << " liberandoo lock pos " << pos << endl;
 	int resultado = fcntl ( this->fd,F_SETLK,&(this->fl) );
 	return resultado;
 }
 
 int LockFile :: escribir (int pos, char value ) {
 	lseek ( this->fd,pos * sizeof(char),SEEK_SET );
-	cout << getpid() << " LockFile " << this->nombre << " escribiendo pos " << pos  << " el valor " << value << endl;
+	//cout << getpid() << " LockFile " << this->nombre << " escribiendo pos " << pos  << " el valor " << (int)value << endl;
 	int resultado = write ( this->fd,&value,1);
 	return resultado;
 }
@@ -44,13 +44,17 @@ int LockFile :: leer (int pos, char *value ) {
 	lseek ( this->fd,pos * sizeof(char),SEEK_SET );
 	int resultado = read( this->fd,value,sizeof(char));
 	if(resultado==-1){
-		cout <<  strerror(errno)  << endl;
+		//cout <<  strerror(errno)  << endl;
 	}
-	cout << getpid() << " LockFile " << this->nombre << " leyendo pos " << pos << " valor " << value << endl;
+	//cout << getpid() << " LockFile " << this->nombre << " leyendo pos " << pos << " valor " << value << endl;
 	return resultado;
 }
 
 LockFile :: ~LockFile () {
-	cout << getpid() << " LockFile " << this->nombre << " eliminado" << endl;
 	close ( this->fd );
+	if (unlink(this->nombre) == -1) {
+		cout << getpid() << " LockFile " << this->nombre << " fallo eliminado" << endl;
+	}else{
+		cout << getpid() << " LockFile " << this->nombre << " eliminado" << endl;
+	}
 }
