@@ -99,6 +99,7 @@ void Estacionamiento :: finalizar(){
 	wait(&result);
 	cout << "Estacionamiento: Ventanilla cerrada, quedan 3." << endl;
 	wait(&result);
+<<<<<<< HEAD
 
 	// No cerrar ventanillas salida mientras queden autos.
 	// Cambiar por semaforo que despierta al llegar a 0.
@@ -112,6 +113,8 @@ void Estacionamiento :: finalizar(){
 	for(int i=0;i<2;i++){
 			kill(this->ventanillasSalida[i],SIGINT);
 	}
+=======
+>>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
 	cout << "Estacionamiento: Ventanilla cerrada, quedan 2." << endl;
 	wait(&result);
 	cout << "Estacionamiento: Ventanilla cerrada, quedan 1." << endl;
@@ -150,7 +153,11 @@ char Estacionamiento :: findPlace(){
 		this->espaciosOcupados.tomarLockEscritura();
 		int aux=this->espaciosOcupados.leerEntero();
 		aux=aux+1;
+<<<<<<< HEAD
 		//cout << "Estacionamiento: lugares ocupados "<< aux << endl;
+=======
+		cout << "Estacionamiento: lugares ocupados "<< aux << endl;
+>>>>>>> 34180b7b62f62971c1aabbf9666c69541d41d15c
 		this->espaciosOcupados.escribirEntero(aux);
 		this->espaciosOcupados.liberarLock();
 
