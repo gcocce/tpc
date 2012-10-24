@@ -130,7 +130,7 @@ int manejarAuto(char *path){
 
 	{
 	std::stringstream stringStream;
-	stringStream << "Auto:  lei lugar " << (int)msg.place;
+	stringStream << "Auto:  lei lugar " << (int)msg.place << " pid " << msg.pid;
 	std::string copyOfStr = stringStream.str();
 	log.debug(copyOfStr.c_str());
 	}

@@ -166,6 +166,7 @@ char Estacionamiento :: findPlace(){
 		return i;
 	}else{
 		this->log.debug("Est: No hay lugar disponible.");
+		cout << "Est: no hay lugares disponibles." << endl;
 	}
 	return 0;
 }
@@ -190,4 +191,5 @@ void Estacionamiento :: freePlace(char ubicacion , char horas){
 	auxEspacios--;
 	this->espaciosOcupados.escribirEntero(auxEspacios);
 	this->espaciosOcupados.liberarLock();
+	cout << "Est: egresa un auto, se libera cochera: "<< (int)ubicacion << endl;
 }

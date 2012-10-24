@@ -147,7 +147,6 @@ void VentanillaEntrada :: iniciar(){
 			}
 
 			this->canalEntrada.signalWrite();
-			msg.pid= getpid();
 			if(this->abierta==true){
 				{
 				std::stringstream stringStream;
