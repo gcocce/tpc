@@ -53,7 +53,6 @@ public:
 
 	virtual int handleSignal ( int signum ) {
 		if( signum == SIGINT ){
-			std::cout << "Estacionamiento manejando SIGINT" << std::endl;
 			this->finalizar();
 		}
 		return 0;

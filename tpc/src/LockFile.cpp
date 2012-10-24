@@ -54,7 +54,5 @@ LockFile :: ~LockFile () {
 	close ( this->fd );
 	if (unlink(this->nombre) == -1) {
 		cout << getpid() << " LockFile " << this->nombre << " fallo eliminado" << endl;
-	}else{
-		cout << getpid() << " LockFile " << this->nombre << " eliminado" << endl;
 	}
 }

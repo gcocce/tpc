@@ -17,35 +17,48 @@ VentanillaEntrada :: VentanillaEntrada(Estacionamiento *estacionamiento, char *p
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierta=false;
-		cout << "Ventananilla numero: " << (int)numeroVentanilla << endl;
-		this->log.debug("Ventanilla: Se llamo al constructor");
+
+		std::ostringstream stringStream;
+		stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Se llamo al constructor.";
+		std::string copyOfStr = stringStream.str();
+		this->log.debug(copyOfStr.c_str());
 	}
 
 VentanillaEntrada :: ~VentanillaEntrada(){
-	this->log.debug("Ventanilla: Se llamo al destructor");
-
+	std::ostringstream stringStream;
+	stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Se llamo al destructor.";
+	std::string copyOfStr = stringStream.str();
+	this->log.debug(copyOfStr.c_str());
 	}
 
 void VentanillaEntrada :: crear(){
 		if (this->barrera.crear(0)!=SEM_OK){
-			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
+			std::ostringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Error al crear barrera.";
+			std::string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
 			exit(1);
 		}
 		if (this->canalEntrada.crear(0,1)!=SEM_OK){
 			this->barrera.eliminar();
-			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
+			std::ostringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Error al crear canalEntrada.";
+			std::string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
 			exit(1);
 		}
 		if (this->canalSalida.crear(0,1)!=SEM_OK){
 			this->barrera.eliminar();
 			this->canalEntrada.eliminar();
-			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al crear." <<endl;
+			std::ostringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Error al crear canalSalida.";
+			std::string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
 			exit(1);
 		}
-		this->log.debug("Se ha creado la ventanilla.");
 
 		std::ostringstream stringStream;
-		stringStream << "Ventanilla numero: " << (int)this->numeroVentanilla;
+		stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Ventanilla Creada.";
 		std::string copyOfStr = stringStream.str();
 		this->log.debug(copyOfStr.c_str());
 	}
@@ -58,21 +71,33 @@ void VentanillaEntrada :: eliminar(){
 
 void VentanillaEntrada :: abrir(){
 		if(this->barrera.abrir()==SEM_OK){
-			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
+			std::ostringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Error al abrir barrera.";
+			std::string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
 			exit(1);
 		}
 		if(this->canalEntrada.abrir()==SEM_OK){
 			this->barrera.cerrar();
-			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
+			std::ostringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Error al abrir canalEntrada.";
+			std::string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
 			exit(1);
 		}
 		if(this->canalSalida.abrir()==SEM_OK){
 			this->barrera.cerrar();
 			this->canalEntrada.cerrar();
-			cout << "Ventanilla " << (int)this->numeroVentanilla << ". Error al abrir." <<endl;
+			std::ostringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Error al abrir canalSalida.";
+			std::string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
 			exit(1);
 		}
-		this->log.debug("Ventanilla: Se ha abierto la barrera.");
+		std::ostringstream stringStream;
+		stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Se ha abierto la barrera.";
+		std::string copyOfStr = stringStream.str();
+		this->log.debug(copyOfStr.c_str());
 	}
 
 void VentanillaEntrada :: cerrar(){
@@ -87,45 +112,88 @@ void VentanillaEntrada :: iniciar(){
 		this->abierta=true;
 		this->barrera.signal();
 
-		this->log.debug("Ventanilla: La ventanilla esta abierta e inicia el proceso de recepción.");
-		std::cout << "Ventanilla " << (int) this->numeroVentanilla << " La ventanilla esta abierta e inicia el proceso de recepción." << std::endl;
+		{
+		stringstream stringStream;
+		stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Ventanilla abierta, esperando autos.";
+		string copyOfStr = stringStream.str();
+		this->log.debug(copyOfStr.c_str());
+		}
 
 		while(this->abierta==true){
-			this->log.debug("Ventanilla: hace canalEntrada.waitRead()");
+			{
+			stringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": canalEntrada.waitRead().";
+			string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
+			}
+
 			this->canalEntrada.waitRead();
-			std::cout << "Ventanilla " << (int) this->numeroVentanilla << " Mensaje recibido." << std::endl;
 			bloquearSigint();
-			this->log.debug("Ventanilla: hace canalEntrada.leer()");
+
+			{
+			std::stringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": mensaje recibido, canalEntrada.leer().";
+			string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
+			}
+
 			message msg= this->canalEntrada.leer();
 
-			std::ostringstream stringStream;
-
-			stringStream << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
-			cout << "Ventanilla: Recibe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time << endl;
-
-			std::string copyOfStr = stringStream.str();
+			{
+			std::stringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
+			string copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
+			}
 
 			this->canalEntrada.signalWrite();
 			msg.pid= getpid();
 			if(this->abierta==true){
-				std::cout << "Ventanilla " << (int) this->numeroVentanilla << " Calculado lugar." << std::endl;
-				this->log.debug("Ventanilla: hace estacionamiento->findplate()");
+				{
+				std::stringstream stringStream;
+				stringStream << "Vent Ent num " << (int)numeroVentanilla << ": estacionamiento->findplace()";
+				string copyOfStr = stringStream.str();
+				this->log.debug(copyOfStr.c_str());
+				}
+
 				msg.place= this->estacionamiento->findPlace();
 			}else{
-				this->log.debug("Ventanilla: el estacionamiento está cerrado.");
+				{
+				std::stringstream stringStream;
+				stringStream << "Vent Ent num " << (int)numeroVentanilla << ": el estacionamiento está cerrado.";
+				string copyOfStr = stringStream.str();
+				this->log.debug(copyOfStr.c_str());
+				}
+
 				msg.place= -1;
 			}
-			this->log.debug("Ventanilla: hace canalSalida.waitWrite()");
+
+
+			{
+			std::stringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": canalSalida.waitWrite().";
+			string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
+			}
+
 			this->canalSalida.waitWrite();
 
-			std::cout << "Ventanilla " << (int) this->numeroVentanilla << " Dando ubicacion." << (int)msg.place << std::endl;
-			stringStream << "Ventanilla: Escribe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
-			copyOfStr = stringStream.str();
+			{
+			std::stringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Escribe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
+			string copyOfStr = stringStream.str();
 			this->log.debug(copyOfStr.c_str());
+			}
 
 			this->canalSalida.escribir(msg);
-			this->log.debug("Ventanilla: hace canalEntrada.signalRead()");
+
+			{
+			std::stringstream stringStream;
+			stringStream << "Vent Ent num " << (int)numeroVentanilla << ": canalEntrada.signalRead().";
+			string copyOfStr = stringStream.str();
+			this->log.debug(copyOfStr.c_str());
+			}
+
 			this->canalSalida.signalRead();
 			desbloquearSigint();
 			this->barrera.signal();
@@ -133,7 +201,11 @@ void VentanillaEntrada :: iniciar(){
 	}
 
 void VentanillaEntrada :: finalizar(){
-	this->log.debug("Ventanilla: Se llamo al metodo finalizar");
+	std::ostringstream stringStream;
+	stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Se llamo al metodo finalizar.";
+	std::string copyOfStr = stringStream.str();
+	this->log.debug(copyOfStr.c_str());
+
 	this->abierta=false;
 	this->eliminar();
 	this->~VentanillaEntrada();
@@ -142,9 +214,12 @@ void VentanillaEntrada :: finalizar(){
 }
 
 int VentanillaEntrada ::  handleSignal ( int signum ) {
-	this->log.debug("Ventanilla: Se llamo al metodo handSignal");
+	std::ostringstream stringStream;
+	stringStream << "Vent Ent num " << (int)numeroVentanilla << ": Se llamo al metodo handSignal.";
+	std::string copyOfStr = stringStream.str();
+	this->log.debug(copyOfStr.c_str());
+
 	if( signum == SIGINT ){
-		cout << "Ventanila " << (int)this->numeroVentanilla<< " manejando SIGINT" << endl;
 		this->finalizar();
 	}
 	return 0;

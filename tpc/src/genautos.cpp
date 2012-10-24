@@ -28,7 +28,7 @@ int generarAutos(char *path){
 
 	Logger log(debug);
 
-	log.flush("Inicia el generador de autos.");
+	log.flush("Gen: Inicia el generador de autos.");
 
 	// event handler para la senial SIGINT (2)
 	SIGINT_Handler sigint_handler;
@@ -59,7 +59,7 @@ int generarAutos(char *path){
 		} else {
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "Se crea un auto con proces id %d", auto_id);
+				sprintf (buffer, "Gen: Se crea un auto con proces id %d", auto_id);
 				log.flush(buffer);
 			}
 
@@ -69,7 +69,7 @@ int generarAutos(char *path){
 			dormir = rand() % RANGO_TIEMPO; // devuelve un valor entre 0 y RANGO_TIEMPO
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "El proceso duerme por %d segundos.", dormir);
+				sprintf (buffer, "Gen: El proceso duerme por %d segundos.", dormir);
 				log.flush(buffer);
 			}
 			sleep(dormir);
@@ -80,7 +80,7 @@ int generarAutos(char *path){
 			if (auto_pid>0){
 				if (debug){
 					char buffer [100];
-					sprintf (buffer, "Se borra el registro del auto con pid %d con estado %d.", auto_pid,status);
+					sprintf (buffer, "Gen: Se borra el registro del auto con pid %d con estado %d.", auto_pid,status);
 					log.flush(buffer);
 				}
 
@@ -98,16 +98,19 @@ int generarAutos(char *path){
 	SignalHandler::getInstance()->removerHandler ( SIGINT);
 	SignalHandler::destruir ();
 
-	log.debug("Inicia la finalización del proceso");
+	log.debug("Gen: Inicia la finalización del proceso");
 
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "Autos creados %d, autos liberados %d.", autos, autos_liberados);
+		sprintf (buffer, "Gen: Autos creados %d, autos liberados %d.", autos, autos_liberados);
 		log.debug(buffer);
 	}
 
+	cout << "Autos creados: "<< autos << endl;
+	cout << "Autos pendientes " << autos - autos_liberados << endl;
+
 	if(autos_liberados < autos){
-		log.debug("Se espera que finalicen los procesos de los autos que faltan.");
+		log.debug("Gen: Se espera que finalicen los procesos de los autos que faltan.");
 	}
 
 	// Se espera a que finalice el resto de los hijos
@@ -123,7 +126,7 @@ int generarAutos(char *path){
 
 			if (debug){
 				char buffer [100];
-				sprintf (buffer, "Se borra el registro del auto con pid %d con estado %d.", auto_pid,status);
+				sprintf (buffer, "Gen: Se borra el registro del auto con pid %d con estado %d.", auto_pid,status);
 				log.debug(buffer);
 			}
 		}
@@ -131,11 +134,13 @@ int generarAutos(char *path){
 
 	if (debug){
 		char buffer [100];
-		sprintf (buffer, "Finalizaron correctamente %d, incorrectamente %d", finalizados_bien, finalizados_mal);
+		sprintf (buffer, "Gen: Finalizaron correctamente %d, incorrectamente %d", finalizados_bien, finalizados_mal);
 		log.debug(buffer);
 	}
 
-	log.debug("Finaliza el generador de autos.");
+	cout << "Autos finalizados correctamente: "<< finalizados_bien << endl;
+
+	log.debug("Gen: Finaliza el generador de autos.");
 
 	return 0;
 }

@@ -17,13 +17,12 @@ Logger::Logger(bool debug){
 		sprintf(filename,"%u.log",this->pid);
 		this->fplog=fopen(filename,"at");
 
-		if (this->fplog) {
-			//fprintf(this->fplog,"%d, %s\n",time(NULL),"Inicia el proceso de loggeo...");
+/*		if (this->fplog) {
 			timeval tp;
 			gettimeofday(&tp,NULL);
-			fprintf(this->fplog,"%d%06d pid:%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, this->pid,"Inicia el proceso de loggeo...");
-
+			fprintf(this->fplog,"%d %06d pid:%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, this->pid,"Inicia el proceso de loggeo...");
 		}
+*/
 	}
 }
 
@@ -45,10 +44,9 @@ void Logger::debug(const char* msg){
 		}
 
 		if (this->fplog){
-			//fprintf(this->fplog,"%d, %s\n",time(NULL),msg);
 			timeval tp;
 			gettimeofday(&tp,NULL);
-			fprintf(this->fplog,"%d%06d pid:%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, this->pid, msg);
+			fprintf(this->fplog,"%d %06d pid:%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, (int)getpid(), msg);
 		}
 	}
 }
@@ -66,7 +64,7 @@ void Logger::flush(const char* msg){
 			//fprintf(this->fplog,"%d, %s\n",time(NULL),msg);
 			timeval tp;
 			gettimeofday(&tp,NULL);
-			fprintf(this->fplog,"%d%06d pid:%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, this->pid, msg);
+			fprintf(this->fplog,"%d %06d pid:%d %s\n", (long)tp.tv_sec, (long)tp.tv_usec, (int)getpid(), msg);
 			fclose(this->fplog);
 			this->fplog=NULL;
 		}

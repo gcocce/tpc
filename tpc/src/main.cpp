@@ -86,13 +86,13 @@ int main(int argc, char **argv) {
 	float costo=0;
 
 	if (parsearParametros(argc, argv, tiempo,espacios,costo)){
-		cout << "Iniciando simulacion estacionamiento..." << endl;
+		cout << "Iniciando simulacion del estacionamiento..." << endl;
 		cout << "Tiempo simulacion: " << tiempo << " hs" << endl;
 		cout << "Capacidad estacionamiento: " << espacios << " lugares" << endl;
 		cout << "Costo por hora: " << costo << " $" << endl;
 
 		Logger log(debug);
-		log.flush("Inicializando Estacionamiento");
+		log.flush("Main: Inicializando Estacionamiento.");
 		pid_t estacionamientoPID = fork();
 		if (estacionamientoPID==0){
 			Estacionamiento estacionamiento("estacionamiento.lok",espacios,costo);
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 			estacionamiento.~Estacionamiento();
 			exit (0);
 		}
-		log.flush("Inicializando Generador de Autos");
+		log.flush("Main: Inicializando Generador de Autos");
 		pid_t generadorAutosPid= fork();
 		if(generadorAutosPid==0){
 			//sleep(2);
@@ -113,8 +113,8 @@ int main(int argc, char **argv) {
 
 		sleep(tiempo);
 
-		cout << "Se inicia la finalización de la simulación." << endl;
-		log.debug("Se inicia la finalización de la simulación.");
+		cout << "Se termino el tiempo de la simulacion." << endl;
+		log.debug("Main: Se termino el tiempo de la simulacion.");
 
 		if (handler.getGracefulQuit()==0){
 			kill(estacionamientoPID,SIGINT);
@@ -124,7 +124,8 @@ int main(int argc, char **argv) {
 		int status;
 		wait(&status);
 		wait(&status);
-		log.debug("Finaliza la simulación.");
+		log.debug("Main: Finaliza la simulación.");
+		cout << "Finaliza la simulación" << endl;
 		return 0;
 	}
 }
