@@ -1,62 +1,46 @@
-/*
- * Estacionamiento.h
- *
- *  Created on: Oct 15, 2012
- *      Author: plucadei
- */
-
 #ifndef ESTACIONAMIENTO_H_
 #define ESTACIONAMIENTO_H_
 
+#include <iostream>
+#include <sstream>
+#include <string.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <list>
+#include <vector>
 #include <sys/wait.h>
-//#include "LockFile.h"
-//#include "LUResource.h"
-#include "MemoriaCompartida.h"
-#include "EventHandler.h"
+
 #include "logger.h"
-#include <iostream>
 
+using namespace std;
 
-class Estacionamiento  : public EventHandler {
-
+class Estacionamiento {
 private:
 	pid_t ventanillasEntrada[3];
 	pid_t ventanillasSalida[2];
 	int espacios;
+	int espaciosOcupados;
 	float costo;
-//	MemoriaCompartida<int> espaciosOcupados;
-//	MemoriaCompartida<float> dineroCobrado;
-	//LUResource espaciosOcupados;//("../../pruebaLock/Debug/autos.lok");
-	//LUResource dineroCobrado;//("../../pruebaLock/Debug/monto.lok");
-	//LockFile lugares;
-	char path[255];
-	Logger log;
+	float recaudacion;
+
+	vector<int> vCocheras;
+
+	int id;
+	int fd;
+	char path[32];
+
+	Logger* log;
 
 public:
-	Estacionamiento(char* path, int espacios, float costo);
-
+	Estacionamiento(int id, int espacios, float costo, Logger* log);
 	virtual ~Estacionamiento();
 
-	void iniciar();
-
+	int iniciar();
 	void finalizar();
 
-	char findPlace();
-
-	void freePlace(char ubicacion , char horas);
-
 	int getEspaciosOcupados();
-
-	void eliminarRecursos();
-
-	virtual int handleSignal ( int signum ) {
-		if( signum == SIGINT ){
-			//this->finalizar();
-		}
-		return 0;
-	}
+	int obtenerEspacio();
+	int liberarEspacio(int espacio);
 
 };
 

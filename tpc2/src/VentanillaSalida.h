@@ -25,14 +25,14 @@ private:
 	char numeroVentanilla;
 	Semaforo barrera;
 	BufferSincronizado<message> canalEntrada;
-	Estacionamiento *estacionamiento;
-	Logger log;
+
+	Logger* log;
 
 public:
-	VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla);
+	VentanillaSalida(Logger* log, char *path, char numeroVentanilla);
 	~VentanillaSalida();
 
-	/*
+
 	void crear();
 	void eliminar();
 	void abrir();
@@ -40,7 +40,7 @@ public:
 	void iniciar();
 	void finalizar();
 	virtual int handleSignal ( int signum );
-	*/
+
 };
 
 #endif /* VENTANILLASALIDA_H_ */

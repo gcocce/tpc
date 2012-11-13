@@ -8,13 +8,18 @@
 #ifndef ADMINGRAL_H_
 #define ADMINGRAL_H_
 
+#include <list>
+#include <vector>
+#include "Estacionamiento.h"
 #include "proceso.h"
 #include "logger.h"
+
+using namespace std;
 
 class AdminGral:public Proceso {
 
 public:
-	AdminGral(Logger* log, int estacionamientos);
+	AdminGral(Logger* log, int estacionamientos, Semaforo* semCrear, int espacios, float costo);
 	~AdminGral();
 	void run();
 
@@ -28,7 +33,14 @@ private:
 	float montoTotal();
 
 	int estado;
+	int estacionamientos;
+	int espacios;
+	float costo;
+
 	Logger* log;
+	Semaforo* semInicio;
+
+	vector<Estacionamiento> vEstacionamientos;
 };
 
 

@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
 	if (parsearParametros(argc, argv, tiempo,espacios, estacionamientos, costo, debug)){
 		Logger log(debug);
 		log.debug("Main: Se inicia la simulación.");
+		int fd=open("simulacion.dat", O_CREAT | O_RDWR, 0700);
 
 		{// Log
 		std::stringstream stringStream;
@@ -115,15 +116,25 @@ int main(int argc, char **argv) {
 		cout << "Numero de estacionamientos: " << estacionamientos << endl;
 		cout << "Costo por hora: $ " << costo << endl;
 
+		// Semaforo para coordinar los estacionamientos con el genrado de autos
+		Semaforo semCrear("simulacion.dat",'z');
+		if(semCrear.crear(0)!=0){
+			cout << "Error al inicar semaforo." << endl;
+			semCrear.eliminar();
+			return 1;
+		}
 
 		// Creamos el administrador general
 		pid_t pid_admin=fork();
 		if (pid_admin==0){
-			AdminGral pAdmin(&log, estacionamientos);
+			AdminGral pAdmin(&log, estacionamientos, &semCrear, espacios, costo);
 			pAdmin.iniciar();
 			pAdmin.run();
 			pAdmin.terminar();
 		}
+
+		// Esperamos a que estén creadas abiertos los estacionamientos
+		semCrear.wait();
 
 		// Creamos el generador de autos.
 		pid_t pid_g=fork();
@@ -133,6 +144,7 @@ int main(int argc, char **argv) {
 			g.run();
 			g.terminar();
 		}
+
 
 		// El proceso principal espera el tiempo indicado
 		sleep(tiempo);
@@ -157,6 +169,10 @@ int main(int argc, char **argv) {
 		log.debug(copyOfStr.c_str());
 		}
 		log.eliminarSemaforo();
+
+		semCrear.eliminar();
+		close(fd);
+		unlink("simulacion.dat");
 	}
 
 	return 0;

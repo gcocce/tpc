@@ -39,7 +39,7 @@ void Auto::run(){
 	int ventanilla_salida=0;
 	int estacionamiento=0;
 
-	estacionamiento = rand() % this->estacionamientos + 1;
+	estacionamiento = rand() % this->estacionamientos;
 	tiempo_estacionado = rand() % 24 + 1;
 	ventanilla_entrada = rand() % 3;
 	ventanilla_salida = rand() % 2;
