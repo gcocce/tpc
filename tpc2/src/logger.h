@@ -26,6 +26,7 @@ private:
     bool estado;
     int	ppid;
     Semaforo* sem;
+    char filename[20];
 
 };
 

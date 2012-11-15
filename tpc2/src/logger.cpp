@@ -26,7 +26,6 @@ Logger::Logger(bool debug){
 	this->sem=NULL;
 
 	if (this->log){
-		char filename[20];
 		sprintf(filename,"%u.log",(int)getpid());
 		this->fd=open(filename, O_CREAT | O_RDWR, 0700);
 
@@ -72,6 +71,8 @@ void Logger::debug(const char* msg){
 
 			sprintf(buffer,"%02dhs %02dm %02ds %06dus pid:%d %s\n\0", (int)timeinfo->tm_hour,(int)timeinfo->tm_min,(int)timeinfo->tm_sec, (long)tp.tv_usec, (int)getpid(), msg);
 			write(this->fd,buffer,strlen(buffer));
+			close(this->fd);
+			this->fd=open(filename, O_APPEND | O_RDWR, 0700);
 		}
 		this->sem->signal();
 	}

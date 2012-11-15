@@ -60,7 +60,7 @@ template <class T> int MemoriaCompartida<T> :: crear ( char *archivo,char letra 
 			if ( ptrTemporal == (void *) -1 ) {
 				return ERROR_SHMAT;
 			} else {
-				//std::cout << "Creando memoria " << archivo << " " << (int)letra << " mId " << (int)this->shmId << std::endl;
+				std::cout << "Creando memoria " << archivo << " " << (int)letra << " mId " << (int)this->shmId << std::endl;
 				this->ptrDatos = (T *) ptrTemporal;
 				return SHM_OK;
 			}

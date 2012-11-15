@@ -1,10 +1,3 @@
-/*
- * AdminGral.cpp
- *
- *  Created on: 10/11/2012
- *      Author: gk
- */
-
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -16,6 +9,7 @@
 #include "AdminGral.h"
 #include "ConcPipe.h"
 #include "MsgF.h"
+#include "BufferSincronizado.h"
 
 using namespace std;
 
@@ -35,7 +29,7 @@ AdminGral::~AdminGral(){
 }
 
 void AdminGral::run(){
-	log->debug("Admin: se inicia el metodo run.");
+	log->debug("AdminGral: se inicia el metodo run.");
 
 	// Iniciar estructuras
 	int fd=open("AdminGral.dat", O_CREAT | O_RDWR, 0700);
@@ -49,57 +43,135 @@ void AdminGral::run(){
 
 	// Crear Estacinamientos ,Ventanillas, y administradores de estacionamientos
 	for (int i=0;i<this->estacionamientos; i++){
-		Estacionamiento est(i,this->espacios,this->costo,this->log);
+		{
+			stringstream stringStream;
+			stringStream << "AdminGral: se crea el estacionamiento " << i;
+			string copyOfStr = stringStream.str();
+			log->debug(copyOfStr.c_str());
+		}
+		Estacionamiento* est=new Estacionamiento(i,this->espacios,this->costo,this->log,&cpipe);
+		log->debug("AdminGral: estacionamiento creado.");
+		int res=est->iniciar();
+		{
+			stringstream stringStream;
+			stringStream << "AdminGral: estacionamiento iniciado, estdo: " << res;
+			string copyOfStr = stringStream.str();
+			log->debug(copyOfStr.c_str());
+		}
+		if (res!=0){
+			this->estado=1;
+		}
 		vEstacionamientos.push_back(est);
-
+		log->debug("AdminGral: estacionamiento agregado al vector.");
 		//TODO: Crear admin de estacionamientos
 	}
 
 
 	cpipe.iniciar(LECTURA);
 
+	sleep(5);
 	// Avisar al proceso principal
+	log->debug("AdminGral: se avisa al proceso principal que puede crear el generador.");
 	this->semInicio->signal();
-	char buffer[MsgF::DATASIZE];
+	char buffer[MsgF::DATASIZE]="";
 
 	while(!this->getFinalizar() && this->estado==0){
 		if(cpipe.leer(buffer,MsgF::DATASIZE)!=MsgF::DATASIZE){
-			printf("error en el main al leer\n");
-			this->estado=1;
+			if(!this->getFinalizar()){
+				log->debug("AdminGral: error al leer pipe.");
+				this->estado=1;
+			}
 		}else{
+			bloquearSigint();
 			// Usar el mensaje recibido para resolver la funcionalidad de los estacionamientos
-			this->log->debug(buffer);
-			printf(buffer);
-			string consulta=string(buffer);
+			string consulta="";
+			consulta=string(buffer);
 			MsgF msg(consulta);
+			{
+				stringstream stringStream;
+				stringStream << "AdminGral: se recibe mensaje de consulta: " << consulta;
+				string copyOfStr = stringStream.str();
+				log->debug(copyOfStr.c_str());
+			}
+
 			switch (msg.getConsulta()){
 			  case MsgF::obtenerLugar:
 			  {
+				  log->debug("AdminGral: consulta obtenerLugar.");
 				  int est=msg.getEstacionamiento();
 				  int vent=msg.getVentanilla();
 
 				  // Obtener un lugar si lo hay
-				  int lugar=0;
+				  Estacionamiento* estacion=vEstacionamientos[est];
+
+				  int lugar=estacion->obtenerEspacio();
 				  msg.setLugar(lugar);
 
+					{
+						stringstream stringStream;
+						stringStream << "AdminGral: se asigna lugar: " << lugar;
+						string copyOfStr = stringStream.str();
+						log->debug(copyOfStr.c_str());
+					}
+					MsgFString mensajeE;
+					strcpy (mensajeE.dato,msg.toString().c_str());
+
 				  // Enviar respuesta a la ventanilla correspondiente
-
-
+					cout << "AdminGral: getBufferEntrada para ventanilla: " << vent << endl;
+					BufferSincronizado<MsgFString>* buff=estacion->getBufferEntrada(vent);
+					cout << "buff->waitWrite()"<< endl;
+					buff->waitWrite();
+					buff->escribir(mensajeE);
+					cout << "buff->signalRead()"<< endl;
+					buff->signalRead();
+					{
+						stringstream stringStream;
+						stringStream << "AdminGral: mensaje enviado: " << msg.toString();
+						string copyOfStr = stringStream.str();
+						log->debug(copyOfStr.c_str());
+					}
 			  }
 			    break;
 			  case MsgF::liberarLugar:
 		  	  {
+				  log->debug("AdminGral: consulta libearLugar.");
+				  int est=msg.getEstacionamiento();
+				  int vent=msg.getVentanilla();
+				  int lugar=msg.getLugar();
 
+				  // Liberar lugar
+				  Estacionamiento* estacion=vEstacionamientos[est];
 
+				  estacion->liberarEspacio(lugar);
+
+				  msg.setLugar(0);
+
+					{
+						stringstream stringStream;
+						stringStream << "AdminGral: se libera lugar " << lugar;
+						string copyOfStr = stringStream.str();
+						log->debug(copyOfStr.c_str());
+					}
+				// Enviar respuesta
+				MsgFString mensajeE;
+				strcpy (mensajeE.dato,msg.toString().c_str());
+				BufferSincronizado<MsgFString>* buff=estacion->getBufferSalida(vent);
+				buff->waitWrite();
+				buff->escribir(mensajeE);
+				buff->signalRead();
+				log->debug((char*)msg.toString().c_str());
 		  	  }
 			    break;
 			  case MsgF::lugaresOcupados:
 			  {
+				  log->debug("AdminGral: consulta lugaresOcupados.");
+
 
 			  }
 			    break;
 			  case MsgF::montoRecaudado:
 			  {
+				  log->debug("AdminGral: consulta montoRecaudado.");
 
 
 			  }
@@ -108,7 +180,29 @@ void AdminGral::run(){
 			    this->estado=1;
 			    break;
 			}
+			desbloquearSigint();
 		}
+	}
+
+	log->debug("AdminGral: se inicia la finalización del Administrador Genral.");
+
+	// Finalizar Estacinamientos ,Ventanillas, y administradores de estacionamientos
+	for (int i=0;i<this->estacionamientos; i++){
+		{
+			stringstream stringStream;
+			stringStream << "AdminGral: se finaliza el estacionamiento " << i;
+			string copyOfStr = stringStream.str();
+			log->debug(copyOfStr.c_str());
+		}
+		Estacionamiento* estacion=vEstacionamientos[i];
+		while (estacion->getEspaciosOcupados()>0){
+			cout << "AdminGral: espacios ocupados: " << estacion->getEspaciosOcupados() << endl;
+			sleep(1);
+		}
+		estacion->finalizar();
+		log->debug("AdminGral: estacionamiento finalizado.");
+		delete(estacion);
+		//TODO: Cerrar admin de estacionamientos
 	}
 
 

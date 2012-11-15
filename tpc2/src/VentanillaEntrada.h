@@ -1,10 +1,3 @@
-/*
- * VentanillaEntrada.h
- *
- *  Created on: Oct 16, 2012
- *      Author: plucadei
- */
-
 #ifndef VENTANILLAENTRADA_H_
 #define VENTANILLAENTRADA_H_
 
@@ -14,22 +7,25 @@
 #include "SignalHandler.h"
 #include "Message.h"
 #include "logger.h"
-
-//class Estacionamiento;
+#include "ConcPipe.h"
 
 class VentanillaEntrada : public EventHandler {
 
 private:
 	bool abierta;
+	int estacionamiento;
 	char numeroVentanilla;
 	Semaforo barrera;
 	BufferSincronizado<message> canalEntrada;
 	BufferSincronizado<message> canalSalida;
 
+	BufferSincronizado<MsgFString> canalEAdmin;
+
 	Logger* log;
+	ConcPipe* cpipe;
 
 public:
-	VentanillaEntrada(Logger* log, char *path, char numeroVentanilla);
+	VentanillaEntrada(Logger* log, char *path, int est, char numeroVentanilla, ConcPipe* cp);
 
 	~VentanillaEntrada();
 

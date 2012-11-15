@@ -54,5 +54,8 @@ private:
 
 };
 
+struct MsgFString{
+	char	dato[MsgF::DATASIZE];
+};
 
 #endif /* MSGF_H_ */

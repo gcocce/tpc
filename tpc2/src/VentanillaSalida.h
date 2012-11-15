@@ -14,6 +14,7 @@
 #include "SignalHandler.h"
 #include "Message.h"
 #include "logger.h"
+#include "ConcPipe.h"
 
 //class Estacionamiento;
 
@@ -23,13 +24,17 @@ private:
 	bool abierto;
 	bool interumpido;
 	char numeroVentanilla;
+	int estacionamiento;
 	Semaforo barrera;
 	BufferSincronizado<message> canalEntrada;
 
+	BufferSincronizado<MsgFString> canalEAdmin;
+
 	Logger* log;
+	ConcPipe* cpipe;
 
 public:
-	VentanillaSalida(Logger* log, char *path, char numeroVentanilla);
+	VentanillaSalida(Logger* log, char *path, int est, char numeroVentanilla, ConcPipe* cp);
 	~VentanillaSalida();
 
 

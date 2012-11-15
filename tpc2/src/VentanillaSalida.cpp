@@ -8,10 +8,13 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "MsgF.h"
 
 using namespace std;
 
-VentanillaSalida :: VentanillaSalida(Logger* log, char *path, char numeroVentanilla) : barrera(path, numeroVentanilla * 10 + 6), canalEntrada(path, numeroVentanilla * 10 + 7){
+VentanillaSalida :: VentanillaSalida(Logger* log, char *path, int est, char numeroVentanilla, ConcPipe* cp) : barrera(path, numeroVentanilla * 10 + 6), canalEntrada(path, numeroVentanilla * 10 + 7),canalEAdmin(path, 110 + numeroVentanilla * 2){
+		this->estacionamiento=est;
+		this->cpipe=cp;
 		this->log= log;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierto=false;
@@ -62,17 +65,18 @@ void VentanillaSalida :: eliminar(){
 
 		this->barrera.eliminar();
 		this->canalEntrada.eliminar();
+		this->canalEAdmin.eliminar();
 	}
 
 void VentanillaSalida :: abrir(){
-	if(this->barrera.abrir()==SEM_OK){
+	if(this->barrera.abrir()!=SEM_OK){
 		std::ostringstream stringStream;
 		stringStream << "Vent Sal num " << (int)this->numeroVentanilla << ": Error al abrir barrera.";
 		std::string copyOfStr = stringStream.str();
 		this->log->debug(copyOfStr.c_str());
 		exit(1);
 	}
-	if(this->canalEntrada.abrir()==SEM_OK){
+	if(this->canalEntrada.abrir()!=SEM_OK){
 		//this->barrera.cerrar();
 
 		std::ostringstream stringStream;
@@ -82,6 +86,16 @@ void VentanillaSalida :: abrir(){
 
 		exit(1);
 	}
+
+	if(this->canalEAdmin.abrir()!=SEM_OK){
+		std::ostringstream stringStream;
+		stringStream << "Vent SAl num " << (int)numeroVentanilla << ": Error al abrir canalEAdmin.";
+		std::string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+		exit(1);
+	}
+
+	this->cpipe->iniciar(ESCRITURA);
 
 	std::ostringstream stringStream;
 	stringStream << "Vent Sal num " << (int)this->numeroVentanilla << ": Ventanilla abierta.";
@@ -144,12 +158,48 @@ void VentanillaSalida :: iniciar(){
 
 		{
 		std::stringstream stringStream;
-		stringStream << "Vent Sal num " << (int)this->numeroVentanilla << ": estacionamiento.frePlace()";
+		stringStream << "Vent Sal num " << (int)this->numeroVentanilla << ": consultar AdminGral.";
 		string copyOfStr = stringStream.str();
 		this->log->debug(copyOfStr.c_str());
 		}
 
 		//this->estacionamiento->freePlace(msg.place,msg.time);
+		MsgF msgf;
+		msgf.setConsulta(MsgF::liberarLugar);
+		msgf.setEstacionamiento(this->estacionamiento);
+		msgf.setVentanilla(this->numeroVentanilla);
+		msgf.setLugar((int)msg.place);
+
+		string str=msgf.toString();
+		{
+		std::stringstream stringStream;
+		stringStream << "Vent Sal num " << (int)this->numeroVentanilla << ": consulta enviada:" << str;
+		string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+		}
+		this->cpipe->escribir((char*)str.c_str(),MsgF::DATASIZE);
+
+		// Se espera la respuesta
+		MsgFString mensajeE;
+		this->canalEAdmin.waitRead();
+		mensajeE=this->canalEAdmin.leer();
+		this->canalEAdmin.signalWrite();
+		{
+		std::stringstream stringStream;
+		stringStream << "Vent Sal num " << (int)this->numeroVentanilla << ": respueta recibida:" << mensajeE.dato;
+		string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+		}
+
+		MsgF msgr(string(mensajeE.dato));
+
+		{
+		std::stringstream stringStream;
+		stringStream << "Vent Sal num " << (int)numeroVentanilla << ": resultado : " << msgr.getLugar();
+		string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+		}
+
 		desbloquearSigint();
 		barrera.signal();
 	}
@@ -170,11 +220,12 @@ void VentanillaSalida :: finalizar(){
 	std::string copyOfStr = stringStream.str();
 	this->log->debug(copyOfStr.c_str());
 
+	this->abierto=false;
 	this->interumpido=true;
 	//if(this->estacionamiento->getEspaciosOcupados()==0){
-		this->eliminar();
-		this->~VentanillaSalida();
-		exit(0);
+	this->eliminar();
+	this->~VentanillaSalida();
+	exit(0);
 	//}else{
 	//	this->abierto=false;
 	//	this->canalEntrada.waitRead();

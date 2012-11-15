@@ -1,10 +1,3 @@
-/*
- * AdminGral.h
- *
- *  Created on: 10/11/2012
- *      Author: gk
- */
-
 #ifndef ADMINGRAL_H_
 #define ADMINGRAL_H_
 
@@ -12,6 +5,7 @@
 #include <vector>
 #include "Estacionamiento.h"
 #include "proceso.h"
+#include "SignalHandler.h"
 #include "logger.h"
 
 using namespace std;
@@ -24,13 +18,13 @@ public:
 	void run();
 
 private:
+/*
 	int obtenerLugar(int estacionamiento);
 	int liberarLugar(int estacionamiento, int pos);
-
 	int lugaresOcupados(int estacionamiento);
-
 	float montoEstacionamiento(int estacionamiento);
 	float montoTotal();
+*/
 
 	int estado;
 	int estacionamientos;
@@ -40,7 +34,7 @@ private:
 	Logger* log;
 	Semaforo* semInicio;
 
-	vector<Estacionamiento> vEstacionamientos;
+	vector<Estacionamiento*> vEstacionamientos;
 };
 
 

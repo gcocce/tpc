@@ -14,12 +14,12 @@ class Semaforo {
 
 private:
 	int id;
-	//char* path;
 	char path[30];
 	int code;
 
 public:
 	Semaforo (char* path, int code);
+	Semaforo(Semaforo &sem);
 	virtual ~Semaforo();
 
 	int crear(int valorInicial );
