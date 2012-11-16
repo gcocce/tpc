@@ -16,7 +16,7 @@
  * donde t tiene una distribucion uniforme de probabilidad
  * entre 0 y RANGO_TIEMPO
 */
-#define 	RANGO_TIEMPO 	10
+#define 	RANGO_TIEMPO 	3
 
 using namespace std;
 
@@ -98,7 +98,7 @@ void GenAutos::run(){
 	//SignalHandler::getInstance()->removerHandler ( SIGINT);
 	//SignalHandler::destruir ();
 
-	log->debug("Gen: Inicia la finalización del proceso");
+	log->debug("Gen: Inicia la finalizacion del proceso");
 
 	if (log->getEstado()){
 		char buffer [100];

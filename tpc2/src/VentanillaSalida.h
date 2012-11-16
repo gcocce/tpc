@@ -22,7 +22,6 @@ class VentanillaSalida : public EventHandler {
 
 private:
 	bool abierto;
-	bool interumpido;
 	char numeroVentanilla;
 	int estacionamiento;
 	Semaforo barrera;

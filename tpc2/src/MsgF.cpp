@@ -10,6 +10,7 @@ MsgF::MsgF(){
 	this->estacionamiento=0;
 	this->lugar=0;
 	this->monto=0;
+	this->tiempo=0;
 }
 
 MsgF::MsgF(string std){
@@ -20,6 +21,7 @@ MsgF::MsgF(string std){
 	this->estacionamiento=0;
 	this->lugar=0;
 	this->monto=0;
+	this->tiempo=0;
 
 	istringstream iss(std);
 	{
@@ -37,6 +39,8 @@ MsgF::MsgF(string std){
 	  	    iss >> sub;
 	  	    this->ventanilla=atoi(sub.c_str());
 	  	    iss >> sub;
+	  	    this->tiempo=atoi(sub.c_str());
+	  	    iss >> sub;
 	  	    this->lugar=atoi(sub.c_str());
 	  	  }
 		    break;
@@ -47,6 +51,8 @@ MsgF::MsgF(string std){
 	  	    this->estacionamiento=atoi(sub.c_str());
 	  	    iss >> sub;
 	  	    this->ventanilla=atoi(sub.c_str());
+	  	    iss >> sub;
+	  	    this->tiempo=atoi(sub.c_str());
 	  	    iss >> sub;
 	  	    this->lugar=atoi(sub.c_str());
 	  }
@@ -126,8 +132,16 @@ void MsgF::setMonto(float monto){
 	this->monto=monto;
 }
 
+void MsgF::setTiempo(int tiempo){
+	this->tiempo=tiempo;
+}
+
+int MsgF::getTiempo(){
+	return this->tiempo;
+}
+
 string MsgF::completarString(string str){
-	while(str.size()<DATASIZE){
+	while((int)str.size()<DATASIZE){
 		str+=" ";
 	}
 	return str;
@@ -137,31 +151,32 @@ string MsgF::toString(){
 	string copyOfStr;
 	this->estado=0;
 
+	char buffer[DATASIZE];
+	for (int i=0;i<DATASIZE;i++){
+		buffer[i]=0;
+	}
+
 	switch ( this->consulta ) {
 	  case liberarLugar:
   	  {
-			char buffer[DATASIZE];
-			sprintf(buffer, "%02d %02d %02d %d",this->consulta,this->estacionamiento,this->ventanilla,this->lugar);
+			sprintf(buffer, "%02d %02d %02d %02d %d",this->consulta,this->estacionamiento,this->ventanilla,this->tiempo, this->lugar);
 			copyOfStr = string(buffer);
   	  }
 	    break;
 	  case obtenerLugar:
 	  {
-			char buffer[DATASIZE];
-			sprintf(buffer, "%02d %02d %02d %d",this->consulta,this->estacionamiento,this->ventanilla,this->lugar);
+			sprintf(buffer, "%02d %02d %02d %02d %d",this->consulta,this->estacionamiento,this->ventanilla,this->tiempo, this->lugar);
 			copyOfStr = string(buffer);
 	  }
 	    break;
 	  case lugaresOcupados:
 	  {
-			char buffer[DATASIZE];
 			sprintf(buffer, "%02d %02d %02d %d",this->consulta,this->estacionamiento,this->ventanilla,this->lugar);
 			copyOfStr = string(buffer);
 	  }
 	    break;
 	  case montoRecaudado:
 	  {
-			char buffer[DATASIZE];
 			sprintf(buffer, "%02d %02d %02d %.2f",this->consulta,this->estacionamiento,this->ventanilla,this->monto);
 			copyOfStr = string(buffer);
 	  }

@@ -23,6 +23,7 @@ public:
 	~ConcPipe();
 
 	void iniciar(int Modo);
+	void eliminar();
 
 	int leer(char* buffer,int datoSize);
 	int escribir(char* dato,int datoSize);

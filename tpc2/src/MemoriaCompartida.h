@@ -6,12 +6,14 @@
 #define ERROR_SHMGET	-2
 #define	ERROR_SHMAT		-3
 
+#include 	<iostream>
+#include 	<errno.h>
 #include	<unistd.h>
-#include	<iostream>
 #include	<sys/types.h>
 #include	<sys/ipc.h>
 #include	<sys/shm.h>
 
+using namespace std;
 
 template <class T> class MemoriaCompartida {
 
@@ -49,7 +51,7 @@ template <class T> int MemoriaCompartida<T> :: crear ( char *archivo,char letra 
 		return ERROR_FTOK;
 	else {
 		// creacion de la memoria compartida
-		this->shmId = shmget ( clave,sizeof(T),0644|IPC_CREAT );
+		this->shmId = shmget ( clave,sizeof(T),0666|IPC_CREAT );
 
 		if ( this->shmId == -1 )
 			return ERROR_SHMGET;
@@ -60,7 +62,7 @@ template <class T> int MemoriaCompartida<T> :: crear ( char *archivo,char letra 
 			if ( ptrTemporal == (void *) -1 ) {
 				return ERROR_SHMAT;
 			} else {
-				std::cout << "Creando memoria " << archivo << " " << (int)letra << " mId " << (int)this->shmId << std::endl;
+				//std::cout << "Creando memoria " << archivo << " " << (int)letra << " mId " << (int)this->shmId << std::endl;
 				this->ptrDatos = (T *) ptrTemporal;
 				return SHM_OK;
 			}
@@ -71,12 +73,23 @@ template <class T> int MemoriaCompartida<T> :: crear ( char *archivo,char letra 
 
 template <class T> void MemoriaCompartida<T> :: liberar () {
 	// detach del bloque de memoria
-	shmdt ( (void *) this->ptrDatos );
+	int res=0;
+
+	//cout << "El proceso: " << getpid() << " intenta liberar memoria de id: " << (int)this->shmId << endl;
+
+	res=shmdt((void *)this->ptrDatos );
+	if(res==-1){
+		cout <<  "Error shmdt: "<< errno << endl;
+	}
 
 	int procAdosados = this->cantidadProcesosAdosados ();
+	//cout << "Procesos adosados: " << procAdosados << endl;
 
-	if ( procAdosados == 0 ) {
-		shmctl ( this->shmId,IPC_RMID,NULL );
+	if ( procAdosados <= 0 ) {
+		res=shmctl ( this->shmId,IPC_RMID,NULL );
+		if (res==-1){
+			cout <<  "Error shmctl: " << errno  << endl;
+		}
 	}
 }
 

@@ -35,6 +35,7 @@ private:
 	int fd;
 	char path[32];
 
+	//Semaforo* semEstAbiertos;
 	ConcPipe* cPipe;
 	Logger* log;
 
@@ -43,13 +44,15 @@ public:
 	virtual ~Estacionamiento();
 
 	int iniciar();
+	int abrirMemorias();
+
 	void finalizar();
 
 	int getEspaciosOcupados();
 	BufferSincronizado<MsgFString>* getBufferEntrada(int ventanilla);
 	BufferSincronizado<MsgFString>* getBufferSalida(int ventanilla);
 	int obtenerEspacio();
-	void liberarEspacio(int espacio);
+	void liberarEspacio(int espacio, int tiempo);
 
 };
 

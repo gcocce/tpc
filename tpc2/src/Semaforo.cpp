@@ -2,6 +2,7 @@
 #include <iostream>
 #include <errno.h>
 #include <string.h>
+
 using namespace std;
 
 Semaforo :: Semaforo ( char* path, int code ) {
@@ -23,31 +24,28 @@ int Semaforo :: crear(int valorInicial ) {
 		ushort* array;
 	};
 
-	cout << "Semaforo.crear() path: " << this->path  << " - " << (int)this->code << endl;
+	//cout << "Semaforo.crear() path: " << this->path  << " - " << (int)this->code << endl;
 
 	key_t clave = ftok ( this->path,this->code );
 	if(clave == -1){
-		cout << strerror(errno) << endl;
+		cout << "Error ftok: " << strerror(errno) << endl;
 		return ERROR_FTOK;
 	}else{
 		this->id = semget ( clave, 1, 0666 | IPC_CREAT);
 		if(this->id == -1){
-			cout <<  strerror(errno)  << endl;
+			cout <<  "Error semget: " << strerror(errno)  << endl;
 			return ERROR_SEMGET;
 		}else{
-			if(this->id == 0){
-				cout << "Error en id semaforo!!!!!!! id=0" << endl;
-			}
 			semnum init;
 			init.buf=NULL;
 			init.array=NULL;
 			init.val = valorInicial;
 			int resultado = semctl( this->id,0,SETVAL,init );
 			if(resultado == -1){
-				cout <<  strerror(errno)  << endl;
+				cout <<  "Error semctl: "<< strerror(errno)  << endl;
 				return ERROR_SEMCTL;
 			}
-			cout << "Semaforo " << this->path  << " - " << (int)this->code << " clave: " << clave << " id= "<< this->id << " creado con valor: " << valorInicial << endl;
+			//cout << "Semaforo " << this->path  << " - " << (int)this->code << " clave: " << clave << " id= "<< this->id << " creado con valor: " << valorInicial << endl;
 			return SEM_OK;
 		}
 	}
@@ -90,7 +88,7 @@ int Semaforo :: wait () {
 	//cout << "Semaforo " << this->path  << " - " << this->id << "-" << (int)this->code << " wait." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
-		cout <<  strerror(errno)  << endl;
+		cout <<  "Error semop: " << strerror(errno)  << endl;
 	}
 	return resultado;
 }
@@ -107,7 +105,7 @@ int Semaforo :: signal () {
 	//cout << "Semaforo " << this->path << " - " << this->id << "-" << (int)this->code << " signal." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
-		cout <<  strerror(errno)  << endl;
+		cout << "Error semop: " << strerror(errno)  << endl;
 	}
 	return resultado;
 }

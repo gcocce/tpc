@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 
 	if (parsearParametros(argc, argv, tiempo,espacios, estacionamientos, costo, debug)){
 		Logger log(debug);
-		log.debug("Main: Se inicia la simulación.");
+		log.debug("Main: Se inicia la simulacion.");
 		int fd=open("simulacion.dat", O_CREAT | O_RDWR, 0700);
 
 		{// Log
@@ -160,11 +160,11 @@ int main(int argc, char **argv) {
 		kill(pid_admin,SIGINT);
 		wait(&status);
 		cout << "Finaliza el Administrador General con estado: "<< status << endl;
-		cout << "Finaliza la simulación." << endl;
+		cout << "Finaliza la simulacion." << endl;
 
 		{// Log
 		std::stringstream stringStream;
-		stringStream << "Finaliza la simulación.";
+		stringStream << "Main: Finaliza la simulacion.";
 		string copyOfStr = stringStream.str();
 		log.debug(copyOfStr.c_str());
 		}

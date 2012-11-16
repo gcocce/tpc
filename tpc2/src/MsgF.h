@@ -29,10 +29,12 @@ public:
 	void setVentanilla(int vent);
 	void setLugar(int lugar);
 	void setMonto(float monto);
+	void setTiempo(int tiempo);
 
 	int getConsulta();
 	int getLugar();
 	float getMonto();
+	int getTiempo();
 	int getEstacionamiento();
 	int getVentanilla();
 
@@ -49,6 +51,7 @@ private:
 
 	//int espacios;
 	float monto;
+	int tiempo;
 
 	string completarString(string str);
 

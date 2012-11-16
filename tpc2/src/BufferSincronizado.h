@@ -32,7 +32,7 @@ template <class T> BufferSincronizado<T> :: BufferSincronizado (char* path, int 
 }
 
 template <class T> BufferSincronizado<T> :: ~BufferSincronizado (){
-	mem.liberar();
+	//mem.liberar();
 }
 
 template <class T> int BufferSincronizado<T> :: crear(int valorRead, int valorWrite ) {
@@ -97,6 +97,7 @@ template <class T> void BufferSincronizado<T> :: cerrar (){
 template <class T> void BufferSincronizado<T> :: eliminar (){
 	this->semRead.eliminar();
 	this->semWrite.eliminar();
+	this->mem.liberar();
 }
 
 

@@ -6,36 +6,27 @@ Estacionamiento::Estacionamiento(int id, int espacios, float costo, Logger* log,
 	this->cPipe=cp;
 	this->log=log;
 	this->id=id;
-	log->debug("Est: constructor de la clase estacionamiento.");
 	sprintf(this->path,"estacionamiento_%02d.dat",id);
 	this->fd=open(this->path, O_CREAT | O_RDWR, 0700);
 	if(this->fd<0){
-		log->debug("Est: error al abrir el archivo");
+		log->debug("Est: error al abrir el archivo en constructor.");
 	}
+	close(this->fd);
 	this->espacios=espacios;
 	this->espaciosOcupados=0;
 	this->costo=costo;
 	this->recaudacion=0;
 	this->autosTotales=0;
-	for(int i=1;i<3;i++){
+	for(int i=0;i<3;i++){
 		this->ventanillasEntrada[i]=NULL;
 	}
-	for(int i=1;i<2;i++){
+	for(int i=0;i<2;i++){
 		this->ventanillasSalida[i]=NULL;
-	}
-
-	for (int i=1; i <= this->espacios; i++){
-		int val=0;
-		this->vCocheras.push_back(val);
 	}
 };
 
 Estacionamiento :: ~Estacionamiento(){
-	this->log->debug("Est: destructor del estacionamiento.");
-	//this->log->~Logger();
-	//this->cPipe->~ConcPipe();
-	close(this->fd);
-	unlink(this->path);
+	//this->log->debug("Est: destructor del estacionamiento.");
 };
 
 BufferSincronizado<MsgFString>* Estacionamiento::getBufferEntrada(int ventanilla){
@@ -48,34 +39,28 @@ BufferSincronizado<MsgFString>* Estacionamiento:: getBufferSalida(int ventanilla
 
 int Estacionamiento:: iniciar(){
 	int res=0;
-	log->debug("Est: metodo iniciar");
+
+	{
+		std::ostringstream stringStream;
+		stringStream << "Est: " << this->id << ". Metodo iniciar. Se crean las ventanillas.";
+		std::string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+	}
+
+	// Semaforo para asegurar la completa creacion de las ventanillas.
+	Semaforo* semContinuar=new Semaforo(this->path,'C');
+	semContinuar->crear(1);
+
 	for(int i=0;i<3;i++){
-		BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,90+i*2);
-
-		if (buff->crear(0,1)!=SEM_OK){
-			buff->eliminar();
-			std::ostringstream stringStream;
-			stringStream << "Est num" << this->id << ": Error al crear buffzinc para ventanilla entrada: "<< i;
-			std::string copyOfStr = stringStream.str();
-			this->log->debug(copyOfStr.c_str());
-			return 1;
-		}
-
-		if(buff->abrir()!=SEM_OK){
-			std::ostringstream stringStream;
-			stringStream << "Est num " << this->id << ": Error al abrir barrera.";
-			std::string copyOfStr = stringStream.str();
-			this->log->debug(copyOfStr.c_str());
-			return 1;
-		}
-
-		this->vBuffersE.push_back(buff);
-
+		semContinuar->wait();
 		this->ventanillasEntrada[i]=fork();
 		if (this->ventanillasEntrada[i]==0){
 			VentanillaEntrada ventanilla(this->log,this->path,this->id, i,this->cPipe);
 			ventanilla.crear();
 			ventanilla.abrir();
+			semContinuar->signal();
+			delete(semContinuar);
+			delete(this);
 			ventanilla.iniciar();
 			ventanilla.~VentanillaEntrada();
 			exit(0);
@@ -83,48 +68,82 @@ int Estacionamiento:: iniciar(){
 	}
 
 	for(int i=0;i<2;i++){
-		BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,110+i*2);
-
-		if (buff->crear(0,1)!=SEM_OK){
-			buff->eliminar();
-			std::ostringstream stringStream;
-			stringStream << "Est num" << this->id << ": Error al crear buffzinc para ventanilla salida: "<< i;
-			std::string copyOfStr = stringStream.str();
-			this->log->debug(copyOfStr.c_str());
-			return 1;
-		}
-
-		if(buff->abrir()!=SEM_OK){
-			std::ostringstream stringStream;
-			stringStream << "Est num " << this->id << ": Error al abrir barrera.";
-			std::string copyOfStr = stringStream.str();
-			this->log->debug(copyOfStr.c_str());
-			return 1;
-		}
-
-		this->vBuffersS.push_back(buff);
-
+		semContinuar->wait();
 		this->ventanillasSalida[i]=fork();
 		if (this->ventanillasSalida[i]==0){
 			VentanillaSalida ventanilla(this->log,this->path, this->id, i,this->cPipe);
 			ventanilla.crear();
 			ventanilla.abrir();
+			semContinuar->signal();
+			delete(semContinuar);
+			delete(this);
 			ventanilla.iniciar();
 			ventanilla.~VentanillaSalida();
 			exit(0);
 		}
 	}
 
+	// Para continuar tienen que esta completamente creadas las ventanillas
+	semContinuar->wait();
+	semContinuar->eliminar();
+	delete (semContinuar);
+
+	return res;
+}
+
+int Estacionamiento::abrirMemorias(){
+	int res=0;
+
+	{
+		std::ostringstream stringStream;
+		stringStream << "Est: " << this->id << ": Se abren los BufferSincronizados.";
+		std::string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+
+	}
+
+	// BufferSincronizado de las ventanillas de entrada
+	for(int i=0;i<3;i++){
+		BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,90+i*2);
+
+		if(buff->abrir()!=SEM_OK){
+			std::ostringstream stringStream;
+			stringStream << "Est: " << this->id << ": Error al abrir BufferSincronizado de la ventanilla de entrada: " << i;
+			std::string copyOfStr = stringStream.str();
+			this->log->debug(copyOfStr.c_str());
+			return 1;
+		}
+
+		this->vBuffersE.push_back(buff);
+	}
+
+	// BufferSincronizado de las ventanillas de salida
+	for(int i=0;i<2;i++){
+		BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,110+i*2);
+
+		if(buff->abrir()!=SEM_OK){
+			std::ostringstream stringStream;
+			stringStream << "Est: " << this->id << ": Error al abrir BufferSincronizado de la ventanilla de salida: " << i;
+			std::string copyOfStr = stringStream.str();
+			this->log->debug(copyOfStr.c_str());
+			return 1;
+		}
+
+		this->vBuffersS.push_back(buff);
+	}
+
+	for (int i=1; i <= this->espacios; i++){
+		int val=0;
+		this->vCocheras.push_back(val);
+	}
+
 	return res;
 }
 
 void Estacionamiento::finalizar(){
-
-	log->debug("Estac: metodo finalizar.");
-
 	{
 	std::ostringstream stringStream;
-	stringStream << "Est num " << this->id << " Autos: " << this->autosTotales << " Recaudacion: " << this->recaudacion;
+	stringStream << "Est num: " << this->id << " Autos Totales: " << this->autosTotales << " Recaudacion: " << this->recaudacion;
 	std::string copyOfStr = stringStream.str();
 	this->log->debug(copyOfStr.c_str());
 	}
@@ -135,13 +154,13 @@ void Estacionamiento::finalizar(){
 
 	int result=0;
 
-	cout << "Est: Se cierran ventanillas." << endl;
+	//cout << "Est: Se cierran ventanillas." << endl;
 
 	wait(&result);
-	cout << "Est: Ventanilla cerrada, quedan 4." << endl;
+	//cout << "Est: Ventanilla cerrada, quedan 4." << endl;
 
 	wait(&result);
-	cout << "Est: Ventanilla cerrada, quedan 3." << endl;
+	//cout << "Est: Ventanilla cerrada, quedan 3." << endl;
 
 	wait(&result);
 
@@ -149,6 +168,10 @@ void Estacionamiento::finalizar(){
 		BufferSincronizado<MsgFString>* buff=this->vBuffersE[i];
 		buff->eliminar();
 		delete (buff);
+	}
+
+	while(!this->vBuffersE.empty()){
+		this->vBuffersE.pop_back();
 	}
 
 	// No cerrar ventanillas salida mientras queden autos.
@@ -162,10 +185,10 @@ void Estacionamiento::finalizar(){
 		kill(this->ventanillasSalida[i],SIGINT);
 	}
 
-	cout << "Est: Ventanilla cerrada, quedan 2." << endl;
+	//cout << "Est: Ventanilla cerrada, quedan 2." << endl;
 
 	wait(&result);
-	cout << "Est: Ventanilla cerrada, quedan 1." << endl;
+	//cout << "Est: Ventanilla cerrada, quedan 1." << endl;
 
 	wait(&result);
 
@@ -175,9 +198,24 @@ void Estacionamiento::finalizar(){
 		delete (buff);
 	}
 
-	log->debug("Estac: Cerrado");
+	while(!this->vBuffersS.empty()){
+		this->vBuffersS.pop_back();
+	}
 
-	cout << "Est: Cerrado." << endl;
+	while(!this->vCocheras.empty()){
+		this->vCocheras.pop_back();
+	}
+
+	{
+	std::ostringstream stringStream;
+	stringStream << "Est: " << this->id << " cerrado.";
+	std::string copyOfStr = stringStream.str();
+	this->log->debug(copyOfStr.c_str());
+	}
+
+	unlink(this->path);
+
+	cout << "Est: " << this->id << " cerrado." << endl;
 }
 
 int Estacionamiento:: obtenerEspacio(){
@@ -193,7 +231,6 @@ int Estacionamiento:: obtenerEspacio(){
 			res=i+1;
 			this->vCocheras[i]=1;
 			this->espaciosOcupados++;
-			this->recaudacion+=this->costo;
 			this->autosTotales++;
 		}else{
 			i++;
@@ -207,9 +244,10 @@ int Estacionamiento:: obtenerEspacio(){
 	return res;
 }
 
-void Estacionamiento:: liberarEspacio(int espacio){
+void Estacionamiento:: liberarEspacio(int espacio,int tiempo){
 	this->vCocheras[espacio-1]=0;
 	this->espaciosOcupados--;
+	this->recaudacion+= tiempo * this->costo;
 }
 
 int Estacionamiento:: getEspaciosOcupados(){

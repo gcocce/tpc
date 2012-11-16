@@ -12,7 +12,7 @@
 using namespace std;
 
 Proceso::Proceso(){
-	cout << "constructor proceso " << getpid() << endl;
+	//cout << "constructor proceso " << getpid() << endl;
 	this->pid=getpid();
 	this->ppid=getppid();
 	this->gpid=getpgrp();
@@ -21,7 +21,7 @@ Proceso::Proceso(){
 }
 
 int Proceso::iniciar(){
-	cout << "iniciar proceso " << getpid() << endl;
+	//cout << "iniciar proceso " << getpid() << endl;
 	int res=0;
 	this->regSignal(SIGINT);
 
@@ -38,7 +38,7 @@ sig_atomic_t Proceso::getFinalizar(){
 }
 
 void Proceso::setTerminar(sig_atomic_t value){
-	cout << "setTerminar " << getpid() << endl;
+	//cout << "setTerminar " << getpid() << endl;
 	this->fin = value;
 }
 

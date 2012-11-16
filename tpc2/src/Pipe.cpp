@@ -35,6 +35,10 @@ int Pipe :: leer ( char* buffer,int buffSize ) {
 		this->escritura = false;
 	}
 
+	for (int i=0;i<buffSize;i++){
+		buffer[i]=0;
+	}
+
 	int resultado = read ( this->descriptores[0],buffer,buffSize );
 	return resultado;
 }

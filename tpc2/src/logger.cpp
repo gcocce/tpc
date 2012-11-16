@@ -63,13 +63,17 @@ void Logger::debug(const char* msg){
 		this->sem->wait();
 		if (this->fd!=-1){
 			char buffer[128];
+			for (int i=0;i<128;i++){
+				buffer[i]='0';
+			}
+
 			timeval tp;
 			gettimeofday(&tp,NULL);
 
 			struct tm * timeinfo;
 			timeinfo = localtime ( &tp.tv_sec );
 
-			sprintf(buffer,"%02dhs %02dm %02ds %06dus pid:%d %s\n\0", (int)timeinfo->tm_hour,(int)timeinfo->tm_min,(int)timeinfo->tm_sec, (long)tp.tv_usec, (int)getpid(), msg);
+			sprintf(buffer,"%02dhs %02dm %02ds %06dus pid:%d %s\n", (int)timeinfo->tm_hour,(int)timeinfo->tm_min,(int)timeinfo->tm_sec, (int)tp.tv_usec, (int)getpid(), msg);
 			write(this->fd,buffer,strlen(buffer));
 			close(this->fd);
 			this->fd=open(filename, O_APPEND | O_RDWR, 0700);

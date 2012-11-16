@@ -26,9 +26,22 @@ ConcPipe::ConcPipe(char * nombre){
 }
 
 ConcPipe::~ConcPipe(){
-	this->semAcceso->eliminar();
-	this->semItemListos->eliminar();
+	if(this->semAcceso!=NULL){
+		delete(this->semAcceso);
+	}
+	if(this->semItemListos!=NULL){
+		delete(this->semItemListos);
+	}
 	this->tuberia.cerrar();
+}
+
+void ConcPipe::eliminar(){
+	if(this->semAcceso!=NULL){
+		this->semAcceso->eliminar();
+	}
+	if(this->semItemListos!=NULL){
+		this->semItemListos->eliminar();
+	}
 }
 
 void ConcPipe::iniciar(int Modo){
@@ -72,6 +85,10 @@ int ConcPipe::leer( char* buffer,int datoSize ){
 	int leido=0;
 
 	//printf("tuberia leer %d\n",getpid());
+
+	for (int i=0;i<datoSize;i++){
+		buffer[i]=0;
+	}
 
 	res=this->semItemListos->wait();
 	if (res!=0){
