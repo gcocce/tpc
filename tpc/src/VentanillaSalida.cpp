@@ -13,7 +13,7 @@ using namespace std;
 
 extern bool debug;
 
-VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path,numeroVentanilla*10+6), canalEntrada(path,numeroVentanilla*10+7), log(debug){
+VentanillaSalida :: VentanillaSalida(Estacionamiento *estacionamiento, char *path, char numeroVentanilla) : barrera(path, numeroVentanilla * 10 + 6), canalEntrada(path, numeroVentanilla * 10 + 7), log(debug){
 		this->estacionamiento= estacionamiento;
 		this->numeroVentanilla= numeroVentanilla;
 		this->abierto=false;
