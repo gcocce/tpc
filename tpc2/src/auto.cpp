@@ -12,34 +12,48 @@
 #include <sstream>
 #include <string>
 #include "Message.h"
-#include "auto.h"
 #include "logger.h"
 #include "BufferSincronizado.h"
 #include "Semaforo.h"
 #include "SignalHandler.h"
+#include "auto.h"
 
 using namespace std;
 
-extern bool debug;
+Auto::Auto(Logger* log,int est){
+	log->debug("Auto: se crea el generador.");
+	this->log=log;
+	this->estado=0;
+	this->estacionamientos=est;
+}
 
-int manejarAuto(char *path){
+Auto::~Auto(){
+	this->log->~Logger();
+	exit(this->estado);
+}
+
+void Auto::run(){
+	char path[30];
 	int tiempo_estacionado=0;
 	int ventanilla_entrada=0;
 	int ventanilla_salida=0;
+	int estacionamiento=0;
 
-	Logger log(debug);
-
+	estacionamiento = rand() % this->estacionamientos;
 	tiempo_estacionado = rand() % 24 + 1;
 	ventanilla_entrada = rand() % 3;
 	ventanilla_salida = rand() % 2;
 
-	if (debug){
+	//Definimos el archivo utilizado por el estacionamiento elegido.
+	sprintf(path,"estacionamiento_%02d.dat",estacionamiento);
+
+	if (log->getEstado()){
 		char buffer [100];
-		sprintf (buffer, "Auto: Selecciona la ventanilla de entrada numero %d, salida %d", ventanilla_entrada,ventanilla_salida);
-		log.debug(buffer);
+		sprintf (buffer, "Auto: Selecciona estacionamiento %02d, ventanilla de entrada numero %d, salida %d", estacionamiento, ventanilla_entrada,ventanilla_salida);
+		log->debug(buffer);
 
 		sprintf (buffer, "Auto: Decide tiempo estacionado: %d", tiempo_estacionado);
-		log.debug(buffer);
+		log->debug(buffer);
 	}
 
 	Semaforo barrera(path ,1 + 10 * ventanilla_entrada);
@@ -54,9 +68,11 @@ int manejarAuto(char *path){
 		stringstream stringStream;
 		stringStream << "Auto: venanilla entrada " << ventanilla_entrada << " cerrada. Me voy.";
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
-		log.debug("Auto: Finaliza el proceso.");
+		log->debug("Auto: Finaliza el proceso.");
+		this->terminar();
+		this->log->~Logger();
 		exit(23);
 	}
 
@@ -67,9 +83,11 @@ int manejarAuto(char *path){
 		std::stringstream stringStream;
 		stringStream << "Auto: venanilla entrada " << ventanilla_entrada << " cerrada. Me voy.";
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
-		log.debug("Auto: Finaliza el proceso.");
+		log->debug("Auto: Finaliza el proceso.");
+		this->terminar();
+		this->log->~Logger();
 		exit(24);
 	}
 	if (barrera.abrir()!=SEM_OK){
@@ -80,9 +98,11 @@ int manejarAuto(char *path){
 		stringstream stringStream;
 		stringStream << "Auto: venanilla entrada " << ventanilla_entrada << " cerrada. Me voy.";
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
-		log.debug("Auto: Finaliza el proceso.");
+		log->debug("Auto: Finaliza el proceso.");
+		this->terminar();
+		this->log->~Logger();
 		exit(25);
 	}
 
@@ -91,9 +111,11 @@ int manejarAuto(char *path){
 		stringstream stringStream;
 		stringStream << "Auto: venanilla salida " << ventanilla_salida << " cerrada. Me voy.";
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
-		log.debug("Auto: Finaliza el proceso.");
+		log->debug("Auto: Finaliza el proceso.");
+		this->terminar();
+		this->log->~Logger();
 		exit(26);
 	}
 
@@ -102,9 +124,11 @@ int manejarAuto(char *path){
 		stringstream stringStream;
 		stringStream << "Auto: venanilla salida " << ventanilla_salida << " cerrada. Me voy.";
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
-		log.debug("Auto: Finaliza el proceso.");
+		log->debug("Auto: Finaliza el proceso.");
+		this->terminar();
+		this->log->~Logger();
 		exit(27);
 	}
 
@@ -112,8 +136,6 @@ int manejarAuto(char *path){
 	msg.pid=getpid();
 	msg.place=0;
 	msg.time=tiempo_estacionado;
-	//cout << "Auto: id= " << getpid() << " tiempo estacionado: " << tiempo_estacionado << endl;
-	//cout << "Auto: id= " << getpid() << " entrando venanilla " << ventanilla_entrada << endl;
 	bloquearSigint();
 	barrera.wait();
 	output.waitWrite();
@@ -122,7 +144,7 @@ int manejarAuto(char *path){
 	std::stringstream stringStream;
 	stringStream << "Auto:  escribe pid " << (int)msg.pid << " lugar " << (int)msg.place << " tiempo " << (int)msg.time;
 	std::string copyOfStr = stringStream.str();
-	log.debug(copyOfStr.c_str());
+	log->debug(copyOfStr.c_str());
 	}
 
 	output.escribir(msg);
@@ -132,7 +154,7 @@ int manejarAuto(char *path){
 	input.signalWrite();
 	desbloquearSigint();
 
-	barrera.cerrar();
+	//barrera.cerrar();
 	input.cerrar();
 	output.cerrar();
 
@@ -140,7 +162,7 @@ int manejarAuto(char *path){
 	std::stringstream stringStream;
 	stringStream << "Auto:  lei pid " << (int)msg.pid << " lugar " << (int)msg.place << " tiempo " << (int)msg.time;
 	std::string copyOfStr = stringStream.str();
-	log.debug(copyOfStr.c_str());
+	log->debug(copyOfStr.c_str());
 	}
 
 	if (msg.place==0){
@@ -148,21 +170,21 @@ int manejarAuto(char *path){
 		std::stringstream stringStream;
 		stringStream << "Auto: estacionamiento lleno.";
 		std::string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
 	} else if(msg.place==-1){
 		{
 		std::stringstream stringStream;
 		stringStream << "Auto: estacionamiento cerrado.";
 		std::string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
 	}else{
 		{
 		std::stringstream stringStream;
 		stringStream << "Auto: estacionado.";
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
 
 		sleep(tiempo_estacionado);
@@ -171,14 +193,14 @@ int manejarAuto(char *path){
 		std::stringstream stringStream;
 		stringStream << "Auto: El auto pasa por la salida " << ventanilla_salida;
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
 
 		{
 		std::stringstream stringStream;
 		stringStream << "Auto: saliendo ventanilla " << ventanilla_salida;
 		string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
 
 		barreraSalida.wait();
@@ -189,15 +211,14 @@ int manejarAuto(char *path){
 		msg.pid=getpid();
 		stringStream << "Auto:  escribe pid " << (int)msg.pid << " lugar " << (int)msg.place << " tiempo " << (int)msg.time;
 		std::string copyOfStr = stringStream.str();
-		log.debug(copyOfStr.c_str());
+		log->debug(copyOfStr.c_str());
 		}
 
 		outputSalida.escribir(msg);
 		outputSalida.signalRead();
-		barreraSalida.cerrar();
+		//barreraSalida.cerrar();
 		outputSalida.cerrar();
 	}
 
-	log.debug("Auto: Finaliza el proceso.");
-	return 0;
+	log->debug("Auto: Finaliza el proceso.");
 }
