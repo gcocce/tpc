@@ -41,7 +41,7 @@ int Semaforo :: crear(int valorInicial ) {
 			std::ostringstream stringStream;
 			stringStream << "Semaforo " << this->id << ": creado con valor " << valorInicial;
 			std::string copyOfStr = stringStream.str();
-			this->log.flush(copyOfStr.c_str());
+			//this->log.flush(copyOfStr.c_str());
 			return SEM_OK;
 		}
 	}
@@ -89,14 +89,14 @@ int Semaforo :: wait () {
 			std::ostringstream stringStream;
 			stringStream << "Semaforo " << this->id << ": wait fail.";
 			std::string copyOfStr = stringStream.str();
-			this->log.flush(copyOfStr.c_str());
+			//this->log.flush(copyOfStr.c_str());
 		}
 	}else{
 		{
 			std::ostringstream stringStream;
 			stringStream << "Semaforo " << this->id << ": wait.";
 			std::string copyOfStr = stringStream.str();
-			this->log.flush(copyOfStr.c_str());
+			//this->log.flush(copyOfStr.c_str());
 		}
 	}
 	return resultado;
@@ -118,14 +118,14 @@ int Semaforo :: signal () {
 			std::ostringstream stringStream;
 			stringStream << "Semaforo " << this->id << ": signal fail.";
 			std::string copyOfStr = stringStream.str();
-			this->log.flush(copyOfStr.c_str());
+			//this->log.flush(copyOfStr.c_str());
 		}
 	}else{
 		{
 			std::ostringstream stringStream;
 			stringStream << "Semaforo " << this->id << ": signal.";
 			std::string copyOfStr = stringStream.str();
-			this->log.flush(copyOfStr.c_str());
+			//this->log.flush(copyOfStr.c_str());
 		}
 	}
 	return resultado;
