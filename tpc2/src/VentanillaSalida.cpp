@@ -12,7 +12,7 @@
 
 using namespace std;
 
-VentanillaSalida :: VentanillaSalida(Logger* log, char *path, int est, char numeroVentanilla, ConcPipe* cp) : barrera(path, numeroVentanilla * 10 + 4), canalEntrada(path, numeroVentanilla * 10 + 5),canalEAdmin(path, 7 + numeroVentanilla * 10){
+VentanillaSalida :: VentanillaSalida(Logger* log, char *path, int est, char numeroVentanilla, ConcPipe* cp) : barrera(path, numeroVentanilla * 10 + 4), canalEntrada(path, numeroVentanilla * 10 + 5),canalEAdmin(path, 7 + numeroVentanilla * 10), salidaACK(path,8 + numeroVentanilla * 10){
 		this->estacionamiento=est;
 		this->cpipe=cp;
 		this->log= log;
@@ -63,6 +63,17 @@ void VentanillaSalida :: crear(){
 		this->log->debug(copyOfStr.c_str());
 		exit (1);
 	}
+	if (this->salidaACK.crear(0)!=SEM_OK){
+			this->barrera.eliminar();
+			this->canalEntrada.eliminar();
+			this->canalEAdmin.eliminar();
+			std::ostringstream stringStream;
+			stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Error al crear salidaACK.";
+			std::string copyOfStr = stringStream.str();
+			this->log->debug(copyOfStr.c_str());
+			exit (1);
+		}
+
 
 	std::ostringstream stringStream;
 	stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Ventanilla creada.";
@@ -79,6 +90,8 @@ void VentanillaSalida :: eliminar(){
 		this->barrera.eliminar();
 		this->canalEntrada.eliminar();
 		this->canalEAdmin.eliminar();
+		this->salidaACK.eliminar();
+
 	}
 
 void VentanillaSalida :: abrir(){
@@ -108,7 +121,15 @@ void VentanillaSalida :: abrir(){
 		exit(1);
 	}
 
+	if(this->salidaACK.abrir()!=SEM_OK){
+			std::ostringstream stringStream;
+			stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Error al abrir salidaACK.";
+			std::string copyOfStr = stringStream.str();
+			this->log->debug(copyOfStr.c_str());
+			exit(1);
+	}
 	this->cpipe->iniciar(ESCRITURA);
+
 
 	std::ostringstream stringStream;
 	stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Ventanilla abierta.";
@@ -219,7 +240,7 @@ void VentanillaSalida :: iniciar(){
 		string copyOfStr = stringStream.str();
 		this->log->debug(copyOfStr.c_str());
 		}
-
+		salidaACK.signal();
 		desbloquearSigint();
 		barrera.signal();
 	}

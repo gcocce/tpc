@@ -26,6 +26,7 @@ private:
 	char numeroVentanilla;
 	int estacionamiento;
 	Semaforo barrera;
+	Semaforo salidaACK;
 	BufferSincronizado<message> canalEntrada;
 
 	//BufferSincronizado<MsgFString> canalEAdmin;
