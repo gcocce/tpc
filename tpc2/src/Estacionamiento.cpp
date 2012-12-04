@@ -105,7 +105,7 @@ int Estacionamiento::abrirMemorias(){
 	// BufferSincronizado de las ventanillas de entrada
 	for(int i=0;i<3;i++){
 		//BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,90+i*2);
-		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,90+i*2);
+		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,6+i*10);
 
 
 		if(buff->abrir()!=SEM_OK){
@@ -122,7 +122,7 @@ int Estacionamiento::abrirMemorias(){
 	// BufferSincronizado de las ventanillas de salida
 	for(int i=0;i<2;i++){
 		//BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,110+i*2);
-		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,110+i*2);
+		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,7+i*10);
 
 		if(buff->abrir()!=SEM_OK){
 			std::ostringstream stringStream;

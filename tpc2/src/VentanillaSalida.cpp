@@ -12,7 +12,7 @@
 
 using namespace std;
 
-VentanillaSalida :: VentanillaSalida(Logger* log, char *path, int est, char numeroVentanilla, ConcPipe* cp) : barrera(path, numeroVentanilla * 10 + 6), canalEntrada(path, numeroVentanilla * 10 + 7),canalEAdmin(path, 110 + numeroVentanilla * 2){
+VentanillaSalida :: VentanillaSalida(Logger* log, char *path, int est, char numeroVentanilla, ConcPipe* cp) : barrera(path, numeroVentanilla * 10 + 4), canalEntrada(path, numeroVentanilla * 10 + 5),canalEAdmin(path, 7 + numeroVentanilla * 10){
 		this->estacionamiento=est;
 		this->cpipe=cp;
 		this->log= log;

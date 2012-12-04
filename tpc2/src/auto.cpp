@@ -58,10 +58,10 @@ void Auto::run(){
 
 	Semaforo barrera(path ,1 + 10 * ventanilla_entrada);
 	BufferSincronizado<message> output((char*) path ,2 + 10 * ventanilla_entrada);
-	BufferSincronizado<message> input((char*) path ,4 + 10 * ventanilla_entrada);
+	BufferSincronizado<message> input((char*) path ,3 + 10 * ventanilla_entrada);
 
-	Semaforo barreraSalida(path , 6 + 10 * ventanilla_salida);
-	BufferSincronizado<message> outputSalida(path ,7 + 10 * ventanilla_salida);
+	Semaforo barreraSalida(path , 4 + 10 * ventanilla_salida);
+	BufferSincronizado<message> outputSalida(path ,5 + 10 * ventanilla_salida);
 
 	if (input.abrir()!=SEM_OK){
 		{
