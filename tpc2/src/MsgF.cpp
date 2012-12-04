@@ -68,24 +68,13 @@ MsgF::MsgF(string std){
 	  	    this->lugar=atoi(sub.c_str());
 	  }
 	    break;
-	  case lugaresOcupados:
+	  case estadoEstacionamiento:
 	  {
 	  		string sub;
 	  	    iss >> sub;
 	  	    this->estacionamiento=atoi(sub.c_str());
-	  	    iss >> sub;
-	  	    this->ventanilla=atoi(sub.c_str());
 	  	    iss >> sub;
 	  	    this->lugar=atoi(sub.c_str());
-	  }
-	    break;
-	  case montoRecaudado:
-	  {
-	  		string sub;
-	  	    iss >> sub;
-	  	    this->estacionamiento=atoi(sub.c_str());
-	  	    iss >> sub;
-	  	    this->ventanilla=atoi(sub.c_str());
 	  	    iss >> sub;
 	  	    this->monto=atof(sub.c_str());
 	  }
@@ -180,15 +169,9 @@ string MsgF::toString(){
 			copyOfStr = string(buffer);
 	  }
 	    break;
-	  case lugaresOcupados:
+	  case estadoEstacionamiento:
 	  {
-			sprintf(buffer, "%02d %02d %02d %d",this->consulta,this->estacionamiento,this->ventanilla,this->lugar);
-			copyOfStr = string(buffer);
-	  }
-	    break;
-	  case montoRecaudado:
-	  {
-			sprintf(buffer, "%02d %02d %02d %.2f",this->consulta,this->estacionamiento,this->ventanilla,this->monto);
+			sprintf(buffer, "%02d %02d %02d %d %.2f",this->consulta,this->estacionamiento,this->ventanilla,this->lugar, this->monto);
 			copyOfStr = string(buffer);
 	  }
 	    break;

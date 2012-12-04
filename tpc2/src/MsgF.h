@@ -30,8 +30,7 @@ public:
 	enum FUNCION{
 		obtenerLugar=1,
 		liberarLugar,
-		lugaresOcupados,
-		montoRecaudado,
+		estadoEstacionamiento,
 	};
 
 	int getEstado();

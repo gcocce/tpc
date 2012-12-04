@@ -7,6 +7,7 @@
 #include "proceso.h"
 #include "SignalHandler.h"
 #include "logger.h"
+#include "GestorConsult.h"
 
 using namespace std;
 
@@ -18,13 +19,6 @@ public:
 	void run();
 
 private:
-/*
-	int obtenerLugar(int estacionamiento);
-	int liberarLugar(int estacionamiento, int pos);
-	int lugaresOcupados(int estacionamiento);
-	float montoEstacionamiento(int estacionamiento);
-	float montoTotal();
-*/
 
 	int estado;
 	int estacionamientos;
@@ -35,6 +29,9 @@ private:
 	Semaforo* semInicio;
 
 	vector<Estacionamiento*> vEstacionamientos;
+
+	BufferSincronizado<MsgFST>* pvBufferGestor;
+	pid_t pgestor;
 };
 
 

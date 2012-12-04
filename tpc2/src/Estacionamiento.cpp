@@ -260,3 +260,7 @@ void Estacionamiento:: liberarEspacio(int espacio,int tiempo){
 int Estacionamiento:: getEspaciosOcupados(){
 	return this->espaciosOcupados;
 }
+
+float Estacionamiento:: getMontoRecaudado(){
+	return this->recaudacion;
+}

@@ -54,6 +54,7 @@ public:
 	void finalizar();
 
 	int getEspaciosOcupados();
+	float getMontoRecaudado();
 
 	//BufferSincronizado<MsgFString>* getBufferEntrada(int ventanilla);
 	//BufferSincronizado<MsgFString>* getBufferSalida(int ventanilla);

@@ -41,6 +41,14 @@ void AdminGral::run(){
 		this->estado=1;
 	}
 
+	// Semaforo para coordinar los estacionamientos con el genrado de autos
+	Semaforo semContinuar("AdminGral.dat",'z');
+	if(semContinuar.crear(0)!=0){
+		cout << "Error al inicar semaforo." << endl;
+		semContinuar.eliminar();
+		this->estacionamientos=1;
+	}
+
 	// Crear Estacinamientos ,Ventanillas, y administradores de estacionamientos
 	for (int i=0;i<this->estacionamientos; i++){
 		{
@@ -61,9 +69,22 @@ void AdminGral::run(){
 			this->estado=1;
 		}
 		vEstacionamientos.push_back(est);
-
-		//TODO: Crear proceso admin de estacionamientos (solo resuelve consultas)
 	}
+
+	log->debug("AdminGral: Se crea el gestor de consultas.");
+	// Se crea el gestor de consultas para los administradores
+	pgestor=fork();
+	if (pgestor==0){
+		GestorConsulta gest(this->log, "AdminGral.dat", &cpipe);
+		gest.crear();
+		gest.abrir();
+		gest.iniciar();
+		semContinuar.signal();
+		gest.run();
+		gest.eliminar();
+		gest.terminar();
+	}
+
 
 	cout << "AdminGral: Ventanillas creadas, se inicializan las comunicaciones."<< endl;
 	// Abrir los BufferSincronizados para comunicar con las ventanillas de los estacionamientos.
@@ -74,7 +95,7 @@ void AdminGral::run(){
 		log->debug(copyOfStr.c_str());
 	}
 
-	log->debug("AdminGral: Todas las ventanillas abirtas, se puede continuar.");
+	log->debug("AdminGral: Todas las ventanillas abiertas, se puede continuar.");
 
 	for (int i=0;i<this->estacionamientos; i++){
 
@@ -89,9 +110,24 @@ void AdminGral::run(){
 		if (res!=0){
 			this->estado=1;
 		}
-
-		//TODO: Abrir BuffersSincronizados para comunicar con los procesos administradores de cada estacionamiento
 	}
+
+	// Se espera hasta que esté iniciado el gestor
+	semContinuar.wait();
+
+	log->debug("AdminGral: Se abre el buffersincronizado del gestor de consultas.");
+	// Abrir buffer sincronizado del Gestor de consultas
+	BufferSincronizado<MsgFST>* pvBufferGestor=new BufferSincronizado<MsgFST>("AdminGral.dat",70);
+	if(pvBufferGestor->abrir()!=SEM_OK){
+		std::ostringstream stringStream;
+		stringStream << "AdminGal: Error al abrir BufferSincronizado del gestor de consultas";
+		std::string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+		this->estado=1;
+	}
+
+	// Se elimina el semáforo
+	semContinuar.eliminar();
 
 	cpipe.iniciar(LECTURA);
 
@@ -100,16 +136,7 @@ void AdminGral::run(){
 	cout << "AdminGral: ya se puede empezar a crear autos."<< endl;
 	this->semInicio->signal();
 
-	//char buffer[MsgF::DATASIZE+1];
-
 	while(!this->getFinalizar() && this->estado==0){
-
-		/*
-		for (int i=0;i<MsgF::DATASIZE;i++){
-			buffer[i]=0;
-		}
-		buffer[MsgF::DATASIZE+1]=0;
-		*/
 		MsgFST st;
 
 		if(cpipe.leer((void*)&st,sizeof(st))!=sizeof(st)){
@@ -120,11 +147,6 @@ void AdminGral::run(){
 		}else{
 			bloquearSigint();
 			// Usar el mensaje recibido para resolver la funcionalidad de los estacionamientos
-
-			/*string consulta;
-			for (int h=0;h<MsgF::DATASIZE;h++){
-				consulta+=buffer[h];
-			}*/
 
 			MsgF msg(st);
 			{
@@ -158,19 +180,9 @@ void AdminGral::run(){
 						log->debug((char*)copyOfStr.c_str());
 				  }
 
-					/*
-					MsgFString mensajeE;
-					for(int i=0; i<MsgF::DATASIZE;i++){
-						mensajeE.dato[i]=0;
-					}
-					strcpy (mensajeE.dato,msg.toString().c_str());
-					*/
 				  	MsgFST st=msg.toStruct();
-
     				// Enviar respuesta a la ventanilla correspondiente
-					//BufferSincronizado<MsgFString>* buff=estacion->getBufferEntrada(vent);
 					BufferSincronizado<MsgFST>* buff=estacion->getBufferEntrada(vent);
-
 
 					buff->escribir(st);
 					buff->signalRead();
@@ -203,17 +215,7 @@ void AdminGral::run(){
 						log->debug(copyOfStr.c_str());
 					}
 				// Enviar respuesta
-				/*
-				MsgFString mensajeE;
-				for(int i=0; i<MsgF::DATASIZE;i++){
-					mensajeE.dato[i]=0;
-				}
-				strcpy (mensajeE.dato,msg.toString().c_str());
-				*/
-
 			  	MsgFST st=msg.toStruct();
-
-				//BufferSincronizado<MsgFString>* buff=estacion->getBufferSalida(vent);
 			  	BufferSincronizado<MsgFST>* buff=estacion->getBufferSalida(vent);
 
 				buff->escribir(st);
@@ -226,22 +228,28 @@ void AdminGral::run(){
 				}
 		  	  }
 			    break;
-			  case MsgF::lugaresOcupados:
+			  case MsgF::estadoEstacionamiento:
 			  {
+				  // Resolver consulta y responder al gestor de consultas
 				  log->debug("AdminGral: consulta lugaresOcupados.");
-				  //TODO: resolver consulta
+				  int est=msg.getEstacionamiento();
 
+				{
+					stringstream stringStream;
+					stringStream << "AdminGral: Se recibio una consulta del Gestor de Consutlas para el estacionamiento: "<< est;
+					string copyOfStr = stringStream.str();
+					log->debug(copyOfStr.c_str());
+				}
 
+				  Estacionamiento* estacion=vEstacionamientos[est];
 
-			  }
-			    break;
-			  case MsgF::montoRecaudado:
-			  {
-				  log->debug("AdminGral: consulta montoRecaudado.");
-				  //TODO: resolver consulta
+				  msg.setLugar(estacion->getEspaciosOcupados());
+				  msg.setMonto(estacion->getMontoRecaudado());
 
+				  MsgFST st=msg.toStruct();
 
-
+				  pvBufferGestor->escribir(st);
+				  pvBufferGestor->signalRead();
 			  }
 			    break;
 			  default :
@@ -253,6 +261,15 @@ void AdminGral::run(){
 	}
 
 	log->debug("AdminGral: se inicia la finalizacion del Administrador Genral.");
+
+	// Se finaliza el gestor de consultas
+	int result=0;
+	kill(pgestor,SIGINT);
+	wait(&result);
+	pvBufferGestor->eliminar();
+	delete (pvBufferGestor);
+
+	log->debug("AdminGral: gestor de consultas finalizado.");
 
 	// Finalizar Estacinamientos ,Ventanillas, y administradores de estacionamientos
 	for (int i=0;i<this->estacionamientos; i++){
@@ -271,8 +288,6 @@ void AdminGral::run(){
 			log->debug(copyOfStr.c_str());
 		}
 		delete(estacion);
-
-		//TODO: Cerrar admin de estacionamientos
 	}
 
 	this->vEstacionamientos.erase (this->vEstacionamientos.begin(),this->vEstacionamientos.end());
