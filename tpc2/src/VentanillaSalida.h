@@ -15,6 +15,7 @@
 #include "Message.h"
 #include "logger.h"
 #include "ConcPipe.h"
+#include "MsgF.h"
 
 //class Estacionamiento;
 
@@ -27,7 +28,8 @@ private:
 	Semaforo barrera;
 	BufferSincronizado<message> canalEntrada;
 
-	BufferSincronizado<MsgFString> canalEAdmin;
+	//BufferSincronizado<MsgFString> canalEAdmin;
+	BufferSincronizado<MsgFST> canalEAdmin;
 
 	Logger* log;
 	ConcPipe* cpipe;

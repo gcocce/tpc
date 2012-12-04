@@ -25,8 +25,8 @@ public:
 	void iniciar(int Modo);
 	void eliminar();
 
-	int leer(char* buffer,int datoSize);
-	int escribir(char* dato,int datoSize);
+	int leer(void* buffer,int datoSize);
+	int escribir(void* dato,int datoSize);
 	int getEstado();
 
 

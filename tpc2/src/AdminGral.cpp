@@ -99,15 +99,20 @@ void AdminGral::run(){
 	log->debug("AdminGral: se avisa al proceso principal que puede crear el generador.");
 	cout << "AdminGral: ya se puede empezar a crear autos."<< endl;
 	this->semInicio->signal();
-	char buffer[MsgF::DATASIZE+1];
+
+	//char buffer[MsgF::DATASIZE+1];
 
 	while(!this->getFinalizar() && this->estado==0){
+
+		/*
 		for (int i=0;i<MsgF::DATASIZE;i++){
 			buffer[i]=0;
 		}
 		buffer[MsgF::DATASIZE+1]=0;
+		*/
+		MsgFST st;
 
-		if(cpipe.leer(buffer,MsgF::DATASIZE)!=MsgF::DATASIZE){
+		if(cpipe.leer((void*)&st,sizeof(st))!=sizeof(st)){
 			if(!this->getFinalizar()){
 				log->debug("AdminGral: error al leer pipe.");
 				this->estado=1;
@@ -115,15 +120,16 @@ void AdminGral::run(){
 		}else{
 			bloquearSigint();
 			// Usar el mensaje recibido para resolver la funcionalidad de los estacionamientos
-			string consulta;
+
+			/*string consulta;
 			for (int h=0;h<MsgF::DATASIZE;h++){
 				consulta+=buffer[h];
-			}
+			}*/
 
-			MsgF msg(consulta);
+			MsgF msg(st);
 			{
 				stringstream stringStream;
-				stringStream << "AdminGral: se recibe mensaje de consulta: " << consulta;
+				stringStream << "AdminGral: se recibe mensaje de consulta: " << msg.toString();
 				string copyOfStr = stringStream.str();
 				log->debug(copyOfStr.c_str());
 			}
@@ -152,16 +158,22 @@ void AdminGral::run(){
 						log->debug((char*)copyOfStr.c_str());
 				  }
 
+					/*
 					MsgFString mensajeE;
 					for(int i=0; i<MsgF::DATASIZE;i++){
 						mensajeE.dato[i]=0;
 					}
 					strcpy (mensajeE.dato,msg.toString().c_str());
+					*/
+				  	MsgFST st=msg.toStruct();
 
     				// Enviar respuesta a la ventanilla correspondiente
-					BufferSincronizado<MsgFString>* buff=estacion->getBufferEntrada(vent);
+					//BufferSincronizado<MsgFString>* buff=estacion->getBufferEntrada(vent);
+					BufferSincronizado<MsgFST>* buff=estacion->getBufferEntrada(vent);
+
+
 					buff->waitWrite();
-					buff->escribir(mensajeE);
+					buff->escribir(st);
 					buff->signalRead();
 					{
 						stringstream stringStream;
@@ -192,14 +204,21 @@ void AdminGral::run(){
 						log->debug(copyOfStr.c_str());
 					}
 				// Enviar respuesta
+				/*
 				MsgFString mensajeE;
 				for(int i=0; i<MsgF::DATASIZE;i++){
 					mensajeE.dato[i]=0;
 				}
 				strcpy (mensajeE.dato,msg.toString().c_str());
-				BufferSincronizado<MsgFString>* buff=estacion->getBufferSalida(vent);
+				*/
+
+			  	MsgFST st=msg.toStruct();
+
+				//BufferSincronizado<MsgFString>* buff=estacion->getBufferSalida(vent);
+			  	BufferSincronizado<MsgFST>* buff=estacion->getBufferSalida(vent);
+
 				buff->waitWrite();
-				buff->escribir(mensajeE);
+				buff->escribir(st);
 				buff->signalRead();
 				{
 					stringstream stringStream;

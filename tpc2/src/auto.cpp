@@ -21,7 +21,7 @@
 using namespace std;
 
 Auto::Auto(Logger* log,int est){
-	log->debug("Auto: se crea el generador.");
+	log->debug("Auto: se crea el auto.");
 	this->log=log;
 	this->estado=0;
 	this->estacionamientos=est;

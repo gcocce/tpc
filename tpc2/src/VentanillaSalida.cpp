@@ -26,10 +26,10 @@ VentanillaSalida :: VentanillaSalida(Logger* log, char *path, int est, char nume
 
 VentanillaSalida :: ~VentanillaSalida(){
 	{
-	//std::ostringstream stringStream;
-	//stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Se llamo al destructor.";
-	//std::string copyOfStr = stringStream.str();
-	//this->log->debug(copyOfStr.c_str());
+	std::ostringstream stringStream;
+	stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Se llamo al destructor.";
+	std::string copyOfStr = stringStream.str();
+	this->log->debug(copyOfStr.c_str());
 	}
 	this->log->~Logger();
 	this->cpipe->~ConcPipe();
@@ -190,26 +190,31 @@ void VentanillaSalida :: iniciar(){
 		string copyOfStr = stringStream.str();
 		this->log->debug(copyOfStr.c_str());
 		}
-		this->cpipe->escribir((char*)str.c_str(),MsgF::DATASIZE);
+
+		MsgFST st=msgf.toStruct();
+		//this->cpipe->escribir((char*)str.c_str(),MsgF::DATASIZE);
+		this->cpipe->escribir((void*)&st,sizeof(st));
 
 		// Se espera la respuesta
+		/*
 		MsgFString mensajeE;
 		for(int i=0; i<MsgF::DATASIZE;i++){
 			mensajeE.dato[i]='0';
-		}
+		}*/
+
+		MsgFST st2;
 
 		this->canalEAdmin.waitRead();
-		mensajeE=this->canalEAdmin.leer();
+		st2=this->canalEAdmin.leer();
 		this->canalEAdmin.signalWrite();
 
+		MsgF msgr(st2);
 		{
 		std::stringstream stringStream;
-		stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": respueta recibida:" << mensajeE.dato;
+		stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": respueta recibida:" << msgr.toString();
 		string copyOfStr = stringStream.str();
 		this->log->debug(copyOfStr.c_str());
 		}
-
-		MsgF msgr(string(mensajeE.dato));
 
 		{
 		std::stringstream stringStream;
@@ -234,10 +239,10 @@ void VentanillaSalida :: iniciar(){
 
 void VentanillaSalida :: finalizar(){
 	{
-	//std::ostringstream stringStream;
-	//stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": metodo finalizar().";
-	//std::string copyOfStr = stringStream.str();
-	//this->log->debug(copyOfStr.c_str());
+	std::ostringstream stringStream;
+	stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": metodo finalizar().";
+	std::string copyOfStr = stringStream.str();
+	this->log->debug(copyOfStr.c_str());
 	}
 
 	this->abierto=false;
@@ -247,10 +252,10 @@ void VentanillaSalida :: finalizar(){
 }
 
 int VentanillaSalida ::  handleSignal ( int signum ) {
-	//std::ostringstream stringStream;
-	//stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": metodo handleSignal().";
-	//std::string copyOfStr = stringStream.str();
-	//this->log->debug(copyOfStr.c_str());
+	std::ostringstream stringStream;
+	stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": metodo handleSignal().";
+	std::string copyOfStr = stringStream.str();
+	this->log->debug(copyOfStr.c_str());
 
 	if( signum == SIGINT ){
 		this->finalizar();
