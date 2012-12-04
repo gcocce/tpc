@@ -27,6 +27,7 @@ void mostrarMonto(int estacionamiento, Cola<mensaje> *queue){
 	queue->escribir(request);
 	queue->leer(getpid(),&response);
 	cout << "Monto recaudado " << response.value << "$" << endl;
+	cin.get();
 }
 
 void mostarAutos(int estacionamiento, Cola<mensaje> *queue){
@@ -38,6 +39,7 @@ void mostarAutos(int estacionamiento, Cola<mensaje> *queue){
 	queue->escribir(request);
 	queue->leer(getpid(),&response);
 	cout << "Autos estacionados " << response.value << endl;
+	cin.get();
 }
 
 void mostarRecurrente(int estacionamiento, Cola<mensaje> *queue){
