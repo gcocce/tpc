@@ -1,10 +1,12 @@
 #include "Semaforo.h"
 #include <iostream>
-#include <errno.h>
+#include <sstream>
+#include <string>
 #include <string.h>
+#include <errno.h>
 using namespace std;
 
-Semaforo :: Semaforo ( char* path, int code ) {
+Semaforo :: Semaforo ( char* path, int code ) : log(true){
 	this->id= 0;
 	this->code= code;
 	this->path= new char[strlen(path)];
@@ -36,6 +38,10 @@ int Semaforo :: crear(int valorInicial ) {
 				return ERROR_SEMCTL;
 			}
 			//cout << "Semaforo " << this->path  << " - " << (int)this->code << " creado con valor" << valorInicial << endl;
+			std::ostringstream stringStream;
+			stringStream << "Semaforo " << this->id << ": creado con valor " << valorInicial;
+			std::string copyOfStr = stringStream.str();
+			//this->log.flush(copyOfStr.c_str());
 			return SEM_OK;
 		}
 	}
@@ -73,12 +79,25 @@ int Semaforo :: wait () {
 
 	operacion.sem_num = 0;	// numero de Semaforo
 	operacion.sem_op  = -1;	// restar 1 al Semaforo
-	operacion.sem_flg = SEM_UNDO;
+	operacion.sem_flg = 0;//SEM_UNDO;
 
 	//cout << "Semaforo " << this->path  << " - " << (int)this->code << " wait." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
 		//cout <<  strerror(errno)  << endl;
+		{
+			std::ostringstream stringStream;
+			stringStream << "Semaforo " << this->id << ": wait fail.";
+			std::string copyOfStr = stringStream.str();
+			//this->log.flush(copyOfStr.c_str());
+		}
+	}else{
+		{
+			std::ostringstream stringStream;
+			stringStream << "Semaforo " << this->id << ": wait.";
+			std::string copyOfStr = stringStream.str();
+			//this->log.flush(copyOfStr.c_str());
+		}
 	}
 	return resultado;
 }
@@ -89,12 +108,25 @@ int Semaforo :: signal () {
 
 	operacion.sem_num = 0;	// numero de Semaforo
 	operacion.sem_op  = 1;	// sumar 1 al Semaforo
-	operacion.sem_flg = SEM_UNDO;
+	operacion.sem_flg = 0;//SEM_UNDO;
 
 	//cout << "Semaforo " << this->path << " - " << (int)this->code << " signal." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
 		//cout <<  strerror(errno)  << endl;
+		{
+			std::ostringstream stringStream;
+			stringStream << "Semaforo " << this->id << ": signal fail.";
+			std::string copyOfStr = stringStream.str();
+			//this->log.flush(copyOfStr.c_str());
+		}
+	}else{
+		{
+			std::ostringstream stringStream;
+			stringStream << "Semaforo " << this->id << ": signal.";
+			std::string copyOfStr = stringStream.str();
+			//this->log.flush(copyOfStr.c_str());
+		}
 	}
 	return resultado;
 }

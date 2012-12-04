@@ -18,6 +18,7 @@ LockFile :: LockFile ( char* nombre ) {
 }
 
 int LockFile :: tomarLock (int pos) {
+	this->fl.l_pid = getpid();
 	this->fl.l_type = F_WRLCK;
 	this->fl.l_start = pos * sizeof(char);
 	this->fl.l_pid = getpid();
@@ -28,6 +29,7 @@ int LockFile :: tomarLock (int pos) {
 
 int LockFile :: liberarLock (int pos) {
 	this->fl.l_type = F_UNLCK;
+	this->fl.l_pid = getpid();
 	this->fl.l_start = pos * sizeof(char);
 	this->fl.l_pid = getpid();
 	//cout << getpid() << " LockFile " << this->nombre << " liberandoo lock pos " << pos << endl;

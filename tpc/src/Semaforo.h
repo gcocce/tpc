@@ -9,6 +9,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/types.h>
+#include "logger.h"
 
 class Semaforo {
 
@@ -16,6 +17,7 @@ private:
 	int id;
 	char* path;
 	int code;
+	Logger log;
 
 public:
 	Semaforo (char* path, int code);
