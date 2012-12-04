@@ -41,7 +41,8 @@ void AdminGral::run(){
 		this->estado=1;
 	}
 
-	// Semaforo para coordinar los estacionamientos con el genrado de autos
+	// Semaforo para coordinar la creación del Gestor de Consultas con el
+	// inicio del bufferSincronizado que usa para comunicarse con este proceso
 	Semaforo semContinuar("AdminGral.dat",'z');
 	if(semContinuar.crear(0)!=0){
 		cout << "Error al inicar semaforo." << endl;
@@ -72,7 +73,7 @@ void AdminGral::run(){
 	}
 
 	log->debug("AdminGral: Se crea el gestor de consultas.");
-	// Se crea el gestor de consultas para los administradores
+	// Se crea el Gestor de Consultas para los administradores
 	pgestor=fork();
 	if (pgestor==0){
 		GestorConsulta gest(this->log, "AdminGral.dat", &cpipe);
@@ -84,7 +85,6 @@ void AdminGral::run(){
 		gest.eliminar();
 		gest.terminar();
 	}
-
 
 	cout << "AdminGral: Ventanillas creadas, se inicializan las comunicaciones."<< endl;
 	// Abrir los BufferSincronizados para comunicar con las ventanillas de los estacionamientos.
@@ -230,7 +230,7 @@ void AdminGral::run(){
 			    break;
 			  case MsgF::estadoEstacionamiento:
 			  {
-				  // Resolver consulta y responder al gestor de consultas
+				  // Resolver consulta y responder al Gestor de Consultas
 				  log->debug("AdminGral: consulta lugaresOcupados.");
 				  int est=msg.getEstacionamiento();
 

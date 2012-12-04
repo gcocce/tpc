@@ -104,9 +104,7 @@ int Estacionamiento::abrirMemorias(){
 
 	// BufferSincronizado de las ventanillas de entrada
 	for(int i=0;i<3;i++){
-		//BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,90+i*2);
 		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,6+i*10);
-
 
 		if(buff->abrir()!=SEM_OK){
 			std::ostringstream stringStream;
@@ -121,7 +119,6 @@ int Estacionamiento::abrirMemorias(){
 
 	// BufferSincronizado de las ventanillas de salida
 	for(int i=0;i<2;i++){
-		//BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,110+i*2);
 		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,7+i*10);
 
 		if(buff->abrir()!=SEM_OK){
@@ -157,20 +154,13 @@ void Estacionamiento::finalizar(){
 
 	int result=0;
 
-	//cout << "Est: Se cierran ventanillas." << endl;
-
+	// Se cierran las ventanillas de entrada
 	wait(&result);
-	//cout << "Est: Ventanilla cerrada, quedan 4." << endl;
-
 	wait(&result);
-	//cout << "Est: Ventanilla cerrada, quedan 3." << endl;
-
 	wait(&result);
 
 	for(int i=0;i<3;i++){
-		//BufferSincronizado<MsgFString>* buff=this->vBuffersE[i];
 		BufferSincronizado<MsgFST>* buff=this->vBuffersE[i];
-
 		buff->eliminar();
 		delete (buff);
 	}
@@ -179,28 +169,27 @@ void Estacionamiento::finalizar(){
 		this->vBuffersE.pop_back();
 	}
 
-	// No cerrar ventanillas salida mientras queden autos.
-	// Cambiar por semaforo que despierta al llegar a 0.
-
-	while(this->getEspaciosOcupados()>0){
-		sleep(1);
+	// Comprobar que no quedan autos
+	if (this->getEspaciosOcupados()>0){
+		cout << "Est: " << this->id << " Error, aun quedan autos al finalizar." << endl;
+		{
+		std::ostringstream stringStream;
+		stringStream << "Est num: " << this->id << " Error: aun quedan autos al finalizar.";
+		std::string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
+		}
 	}
 
+	// Se cierran las ventanillas de salida
 	for(int i=0;i<2;i++){
 		kill(this->ventanillasSalida[i],SIGINT);
 	}
 
-	//cout << "Est: Ventanilla cerrada, quedan 2." << endl;
-
 	wait(&result);
-	//cout << "Est: Ventanilla cerrada, quedan 1." << endl;
-
 	wait(&result);
 
 	for(int i=0;i<2;i++){
-		//BufferSincronizado<MsgFString>* buff=this->vBuffersS[i];
 		BufferSincronizado<MsgFST>* buff=this->vBuffersS[i];
-
 		buff->eliminar();
 		delete (buff);
 	}

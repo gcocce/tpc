@@ -162,9 +162,6 @@ int main(int argc, char **argv) {
 		wait(&status);
 		cout << "Finaliza el generador de autos con estado: "<< status << endl;
 
-		//Dormimos para comprobar cierre de comunicaciones issue
-		sleep(5);
-
 		// Se indica al AdminGral que debe terminar
 		kill(pid_admin,SIGINT);
 		wait(&status);
