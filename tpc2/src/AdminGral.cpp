@@ -160,7 +160,6 @@ void AdminGral::run(){
 
     				// Enviar respuesta a la ventanilla correspondiente
 					BufferSincronizado<MsgFString>* buff=estacion->getBufferEntrada(vent);
-					buff->waitWrite();
 					buff->escribir(mensajeE);
 					buff->signalRead();
 					{
@@ -198,7 +197,6 @@ void AdminGral::run(){
 				}
 				strcpy (mensajeE.dato,msg.toString().c_str());
 				BufferSincronizado<MsgFString>* buff=estacion->getBufferSalida(vent);
-				buff->waitWrite();
 				buff->escribir(mensajeE);
 				buff->signalRead();
 				{

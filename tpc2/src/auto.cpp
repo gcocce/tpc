@@ -138,7 +138,6 @@ void Auto::run(){
 	msg.time=tiempo_estacionado;
 	bloquearSigint();
 	barrera.wait();
-	output.waitWrite();
 
 	{
 	std::stringstream stringStream;
@@ -151,7 +150,6 @@ void Auto::run(){
 	output.signalRead();
 	input.waitRead();
 	msg= input.leer();
-	input.signalWrite();
 	desbloquearSigint();
 
 	//barrera.cerrar();
@@ -204,7 +202,6 @@ void Auto::run(){
 		}
 
 		barreraSalida.wait();
-		outputSalida.waitWrite();
 
 		{
 		std::stringstream stringStream;

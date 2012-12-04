@@ -46,7 +46,7 @@ void VentanillaEntrada :: crear(){
 			this->log->debug(copyOfStr.c_str());
 			exit(1);
 		}
-		if (this->canalEntrada.crear(0,1)!=SEM_OK){
+		if (this->canalEntrada.crear(0)!=SEM_OK){
 			this->barrera.eliminar();
 			std::ostringstream stringStream;
 			stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Error al crear canalEntrada.";
@@ -54,7 +54,7 @@ void VentanillaEntrada :: crear(){
 			this->log->debug(copyOfStr.c_str());
 			exit(1);
 		}
-		if (this->canalSalida.crear(0,1)!=SEM_OK){
+		if (this->canalSalida.crear(0)!=SEM_OK){
 			this->barrera.eliminar();
 			this->canalEntrada.eliminar();
 			std::ostringstream stringStream;
@@ -63,7 +63,7 @@ void VentanillaEntrada :: crear(){
 			this->log->debug(copyOfStr.c_str());
 			exit(1);
 		}
-		if (this->canalEAdmin.crear(0,1)!=SEM_OK){
+		if (this->canalEAdmin.crear(0)!=SEM_OK){
 			this->barrera.eliminar();
 			this->canalEntrada.eliminar();
 			this->canalSalida.eliminar();
@@ -181,7 +181,6 @@ void VentanillaEntrada :: iniciar(){
 			this->log->debug(copyOfStr.c_str());
 			}
 
-			this->canalEntrada.signalWrite();
 			msg.pid = getpid();
 			if(this->abierta==true){
 				{
@@ -217,7 +216,6 @@ void VentanillaEntrada :: iniciar(){
 
 				this->canalEAdmin.waitRead();
 				mensajeE=this->canalEAdmin.leer();
-				this->canalEAdmin.signalWrite();
 
 				//mensajeE.dato[MsgF::DATASIZE-1]='\0';
 
@@ -254,8 +252,6 @@ void VentanillaEntrada :: iniciar(){
 			//string copyOfStr = stringStream.str();
 			//this->log->debug(copyOfStr.c_str());
 			}
-
-			this->canalSalida.waitWrite();
 
 			{
 			std::stringstream stringStream;

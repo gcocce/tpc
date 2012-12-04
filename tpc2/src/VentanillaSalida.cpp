@@ -45,7 +45,7 @@ void VentanillaSalida :: crear(){
 		this->log->debug(copyOfStr.c_str());
 		exit(1);
 	}
-	if (this->canalEntrada.crear(0,1)!=SEM_OK){
+	if (this->canalEntrada.crear(0)!=SEM_OK){
 		this->barrera.eliminar();
 		std::ostringstream stringStream;
 		stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Error al crear canalEntrada.";
@@ -53,7 +53,7 @@ void VentanillaSalida :: crear(){
 		this->log->debug(copyOfStr.c_str());
 		exit(1);
 	}
-	if (this->canalEAdmin.crear(0,1)!=SEM_OK){
+	if (this->canalEAdmin.crear(0)!=SEM_OK){
 		this->barrera.eliminar();
 		this->canalEntrada.eliminar();
 		this->canalEAdmin.eliminar();
@@ -166,8 +166,6 @@ void VentanillaSalida :: iniciar(){
 		this->log->debug(copyOfStr.c_str());
 		}
 
-		this->canalEntrada.signalWrite();
-
 		{
 		std::stringstream stringStream;
 		stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": consultar AdminGral.";
@@ -200,7 +198,6 @@ void VentanillaSalida :: iniciar(){
 
 		this->canalEAdmin.waitRead();
 		mensajeE=this->canalEAdmin.leer();
-		this->canalEAdmin.signalWrite();
 
 		{
 		std::stringstream stringStream;

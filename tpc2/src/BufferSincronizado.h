@@ -8,26 +8,23 @@ template <class T> class BufferSincronizado {
 
 private:
 	Semaforo semRead;
-	Semaforo semWrite;
 	MemoriaCompartida<T> mem;
 
 public:
 	BufferSincronizado (char* path, int code);
 	~BufferSincronizado();
 
-	int crear(int valorRead, int valorWrite);
+	int crear(int valorRead);
 	int abrir();
 	int waitRead();
 	int signalRead();
-	int waitWrite();
-	int signalWrite();
 	void escribir ( T dato );
 	T leer ();
 	void eliminar();
 	void cerrar();
 };
 
-template <class T> BufferSincronizado<T> :: BufferSincronizado (char* path, int code) : semRead(path, code), semWrite(path, code+1) {
+template <class T> BufferSincronizado<T> :: BufferSincronizado (char* path, int code) : semRead(path, code){
 	mem.crear(path,(char)code);
 }
 
@@ -35,50 +32,22 @@ template <class T> BufferSincronizado<T> :: ~BufferSincronizado (){
 	//mem.liberar();
 }
 
-template <class T> int BufferSincronizado<T> :: crear(int valorRead, int valorWrite ) {
+template <class T> int BufferSincronizado<T> :: crear(int valorRead) {
 	int result=this->semRead.crear(valorRead);
-	if (result == SEM_OK){
-		result=this->semWrite.crear(valorWrite);
-		if (result==SEM_OK){
-			return SEM_OK;
-		}else{
-			this->semRead.eliminar();
-			return result;
-		}
-	}else{
-		return result;
-	}
+	return result;
 }
 
 template <class T> int BufferSincronizado<T> :: abrir() {
 	int result=this->semRead.abrir();
-	if (result == SEM_OK){
-		result=this->semWrite.abrir();
-		if (result==SEM_OK){
-			return SEM_OK;
-		}else{
-			this->semRead.eliminar();
-			return result;
-		}
-	}else{
-		return result;
-	}
+	return result;
 }
 
 template <class T> int BufferSincronizado<T> :: waitRead() {
 	return this->semRead.wait();
 }
 
-template <class T> int BufferSincronizado<T> :: waitWrite() {
-	return this->semWrite.wait();
-}
-
 template <class T> int BufferSincronizado<T> :: signalRead() {
 	return this->semRead.signal();
-}
-
-template <class T> int BufferSincronizado<T> :: signalWrite() {
-	return this->semWrite.signal();
 }
 
 template <class T> void BufferSincronizado<T> :: escribir ( T dato ){
@@ -91,12 +60,10 @@ template <class T> T BufferSincronizado<T> :: leer (){
 
 template <class T> void BufferSincronizado<T> :: cerrar (){
 	//this->semRead.cerrar();
-	//this->semWrite.cerrar();
 }
 
 template <class T> void BufferSincronizado<T> :: eliminar (){
 	this->semRead.eliminar();
-	this->semWrite.eliminar();
 	this->mem.liberar();
 }
 
