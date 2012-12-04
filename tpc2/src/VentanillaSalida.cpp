@@ -194,16 +194,16 @@ void VentanillaSalida :: iniciar(){
 		this->cpipe->escribir((void*)&st,sizeof(st));
 
 		// Se espera la respuesta
-
+		/*
 		MsgFString mensajeE;
 		for(int i=0; i<MsgF::DATASIZE;i++){
 			mensajeE.dato[i]='0';
-		}
+		}*/
 
 		MsgFST st2;
 
 		this->canalEAdmin.waitRead();
-		mensajeE=this->canalEAdmin.leer();
+		st2=this->canalEAdmin.leer();
 
 		MsgF msgr(st2);
 		{

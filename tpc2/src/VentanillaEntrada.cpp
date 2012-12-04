@@ -214,18 +214,17 @@ void VentanillaEntrada :: iniciar(){
 				this->cpipe->escribir((void*)&st,sizeof(st));
 
 				// Se espera la respuesta
-
+				/*
 				MsgFString mensajeE;
 				for(int i=0; i<MsgF::DATASIZE;i++){
 					mensajeE.dato[i]='0';
 				}
-
+				*/
 
 				MsgFST st2;
 
 				this->canalEAdmin.waitRead();
-				mensajeE=this->canalEAdmin.leer();
-
+				st2=this->canalEAdmin.leer();
 
 				//mensajeE.dato[MsgF::DATASIZE-1]='\0';
 
@@ -264,6 +263,7 @@ void VentanillaEntrada :: iniciar(){
 			//string copyOfStr = stringStream.str();
 			//this->log->debug(copyOfStr.c_str());
 			}
+
 
 			{
 			std::stringstream stringStream;

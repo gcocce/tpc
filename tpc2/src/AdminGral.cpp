@@ -158,15 +158,21 @@ void AdminGral::run(){
 						log->debug((char*)copyOfStr.c_str());
 				  }
 
-
+					/*
 					MsgFString mensajeE;
 					for(int i=0; i<MsgF::DATASIZE;i++){
 						mensajeE.dato[i]=0;
 					}
 					strcpy (mensajeE.dato,msg.toString().c_str());
+					*/
+				  	MsgFST st=msg.toStruct();
+
     				// Enviar respuesta a la ventanilla correspondiente
-					BufferSincronizado<MsgFString>* buff=estacion->getBufferEntrada(vent);
-					buff->escribir(mensajeE);
+					//BufferSincronizado<MsgFString>* buff=estacion->getBufferEntrada(vent);
+					BufferSincronizado<MsgFST>* buff=estacion->getBufferEntrada(vent);
+
+
+					buff->escribir(st);
 					buff->signalRead();
 					{
 						stringstream stringStream;
@@ -197,15 +203,20 @@ void AdminGral::run(){
 						log->debug(copyOfStr.c_str());
 					}
 				// Enviar respuesta
-
+				/*
 				MsgFString mensajeE;
 				for(int i=0; i<MsgF::DATASIZE;i++){
 					mensajeE.dato[i]=0;
 				}
 				strcpy (mensajeE.dato,msg.toString().c_str());
+				*/
 
-				BufferSincronizado<MsgFString>* buff=estacion->getBufferSalida(vent);
-				buff->escribir(mensajeE);
+			  	MsgFST st=msg.toStruct();
+
+				//BufferSincronizado<MsgFString>* buff=estacion->getBufferSalida(vent);
+			  	BufferSincronizado<MsgFST>* buff=estacion->getBufferSalida(vent);
+
+				buff->escribir(st);
 				buff->signalRead();
 				{
 					stringstream stringStream;

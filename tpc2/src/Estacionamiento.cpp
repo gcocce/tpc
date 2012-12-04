@@ -33,7 +33,7 @@ BufferSincronizado<MsgFST>* Estacionamiento::getBufferEntrada(int ventanilla){
 	return this->vBuffersE[ventanilla];
 }
 
-BufferSincronizado<MsgFST>* Estacionamiento::getBufferSalida(int ventanilla){
+BufferSincronizado<MsgFST>* Estacionamiento:: getBufferSalida(int ventanilla){
 	return this->vBuffersS[ventanilla];
 }
 
