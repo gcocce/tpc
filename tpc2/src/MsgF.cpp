@@ -13,6 +13,17 @@ MsgF::MsgF(){
 	this->tiempo=0;
 }
 
+MsgF::MsgF(MsgFST st){
+	this->estado=0;
+
+	this->consulta=st.consulta;
+	this->ventanilla=st.ventanilla;
+	this->estacionamiento=st.estacionamiento;
+	this->lugar=st.lugar;
+	this->monto=st.monto;
+	this->tiempo=st.tiempo;
+}
+
 MsgF::MsgF(string std){
 	this->estado=0;
 
@@ -191,4 +202,16 @@ string MsgF::toString(){
 	return copyOfStr;
 }
 
+MsgFST MsgF::toStruct(){
+	MsgFST st;
+
+	st.consulta=this->consulta;
+	st.estacionamiento=this->estacionamiento;
+	st.lugar=this->lugar;
+	st.monto=this->monto;
+	st.ventanilla=this->ventanilla;
+	st.tiempo=this->tiempo;
+
+	return st;
+}
 

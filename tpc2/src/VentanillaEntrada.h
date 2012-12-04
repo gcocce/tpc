@@ -8,6 +8,7 @@
 #include "Message.h"
 #include "logger.h"
 #include "ConcPipe.h"
+#include "MsgF.h"
 
 class VentanillaEntrada : public EventHandler {
 
@@ -19,7 +20,8 @@ private:
 	BufferSincronizado<message> canalEntrada;
 	BufferSincronizado<message> canalSalida;
 
-	BufferSincronizado<MsgFString> canalEAdmin;
+	//BufferSincronizado<MsgFString> canalEAdmin;
+	BufferSincronizado<MsgFST> canalEAdmin;
 
 	Logger* log;
 	ConcPipe* cpipe;

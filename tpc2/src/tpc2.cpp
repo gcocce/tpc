@@ -148,13 +148,22 @@ int main(int argc, char **argv) {
 
 		// El proceso principal espera el tiempo indicado
 		sleep(tiempo);
+		{// Log
+		std::stringstream stringStream;
+		stringStream << "Main: Termina el tiempo de la simulacion.";
+		string copyOfStr = stringStream.str();
+		log.debug(copyOfStr.c_str());
+		}
 
-		// Se indica al genrador de autos que debe terminar
+		// Se indica al generador de autos que debe terminar
 		kill(pid_g,SIGINT);
 
 		int status=0;
 		wait(&status);
 		cout << "Finaliza el generador de autos con estado: "<< status << endl;
+
+		//Dormimos para comprobar cierre de comunicaciones issue
+		sleep(5);
 
 		// Se indica al AdminGral que debe terminar
 		kill(pid_admin,SIGINT);

@@ -26,14 +26,14 @@ Estacionamiento::Estacionamiento(int id, int espacios, float costo, Logger* log,
 };
 
 Estacionamiento :: ~Estacionamiento(){
-	//this->log->debug("Est: destructor del estacionamiento.");
+	this->log->debug("Est: destructor del estacionamiento.");
 };
 
-BufferSincronizado<MsgFString>* Estacionamiento::getBufferEntrada(int ventanilla){
+BufferSincronizado<MsgFST>* Estacionamiento::getBufferEntrada(int ventanilla){
 	return this->vBuffersE[ventanilla];
 }
 
-BufferSincronizado<MsgFString>* Estacionamiento:: getBufferSalida(int ventanilla){
+BufferSincronizado<MsgFST>* Estacionamiento::getBufferSalida(int ventanilla){
 	return this->vBuffersS[ventanilla];
 }
 
@@ -104,7 +104,9 @@ int Estacionamiento::abrirMemorias(){
 
 	// BufferSincronizado de las ventanillas de entrada
 	for(int i=0;i<3;i++){
-		BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,90+i*2);
+		//BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,90+i*2);
+		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,90+i*2);
+
 
 		if(buff->abrir()!=SEM_OK){
 			std::ostringstream stringStream;
@@ -119,7 +121,8 @@ int Estacionamiento::abrirMemorias(){
 
 	// BufferSincronizado de las ventanillas de salida
 	for(int i=0;i<2;i++){
-		BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,110+i*2);
+		//BufferSincronizado<MsgFString>* buff=new BufferSincronizado<MsgFString>(this->path,110+i*2);
+		BufferSincronizado<MsgFST>* buff=new BufferSincronizado<MsgFST>(this->path,110+i*2);
 
 		if(buff->abrir()!=SEM_OK){
 			std::ostringstream stringStream;
@@ -165,7 +168,9 @@ void Estacionamiento::finalizar(){
 	wait(&result);
 
 	for(int i=0;i<3;i++){
-		BufferSincronizado<MsgFString>* buff=this->vBuffersE[i];
+		//BufferSincronizado<MsgFString>* buff=this->vBuffersE[i];
+		BufferSincronizado<MsgFST>* buff=this->vBuffersE[i];
+
 		buff->eliminar();
 		delete (buff);
 	}
@@ -193,7 +198,9 @@ void Estacionamiento::finalizar(){
 	wait(&result);
 
 	for(int i=0;i<2;i++){
-		BufferSincronizado<MsgFString>* buff=this->vBuffersS[i];
+		//BufferSincronizado<MsgFString>* buff=this->vBuffersS[i];
+		BufferSincronizado<MsgFST>* buff=this->vBuffersS[i];
+
 		buff->eliminar();
 		delete (buff);
 	}

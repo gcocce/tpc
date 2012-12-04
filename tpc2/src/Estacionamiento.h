@@ -28,8 +28,13 @@ private:
 	float recaudacion;
 
 	vector<int> vCocheras;
-	vector<BufferSincronizado<MsgFString>*> vBuffersE;
-	vector<BufferSincronizado<MsgFString>*> vBuffersS;
+
+	//vector<BufferSincronizado<MsgFString>*> vBuffersE;
+	//vector<BufferSincronizado<MsgFString>*> vBuffersS;
+
+	vector<BufferSincronizado<MsgFST>*> vBuffersE;
+	vector<BufferSincronizado<MsgFST>*> vBuffersS;
+
 
 	int id;
 	int fd;
@@ -49,8 +54,13 @@ public:
 	void finalizar();
 
 	int getEspaciosOcupados();
-	BufferSincronizado<MsgFString>* getBufferEntrada(int ventanilla);
-	BufferSincronizado<MsgFString>* getBufferSalida(int ventanilla);
+
+	//BufferSincronizado<MsgFString>* getBufferEntrada(int ventanilla);
+	//BufferSincronizado<MsgFString>* getBufferSalida(int ventanilla);
+
+	BufferSincronizado<MsgFST>* getBufferEntrada(int ventanilla);
+	BufferSincronizado<MsgFST>* getBufferSalida(int ventanilla);
+
 	int obtenerEspacio();
 	void liberarEspacio(int espacio, int tiempo);
 

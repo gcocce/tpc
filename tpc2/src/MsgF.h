@@ -10,10 +10,21 @@
 
 using namespace std;
 
+struct MsgFST{
+	int consulta;
+	int ventanilla;
+	int estacionamiento;
+	int lugar;
+	float monto;
+	int tiempo;
+};
+
+
 class MsgF{
 public:
 	MsgF();
 	MsgF(string std);
+	MsgF(MsgFST st);
 	~MsgF();
 
 	enum FUNCION{
@@ -39,6 +50,8 @@ public:
 	int getVentanilla();
 
 	string toString();
+	MsgFST toStruct();
+
 
 	static const int DATASIZE=32;
 private:
@@ -48,8 +61,6 @@ private:
 	int ventanilla;
 	int estacionamiento;
 	int lugar;
-
-	//int espacios;
 	float monto;
 	int tiempo;
 

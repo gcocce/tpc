@@ -26,12 +26,14 @@ VentanillaEntrada :: VentanillaEntrada(Logger* log, char *path, int est, char nu
 	}
 
 VentanillaEntrada :: ~VentanillaEntrada(){
+	/*
 	{
-	//std::ostringstream stringStream;
-	//stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Se llamo al destructor.";
-	//std::string copyOfStr = stringStream.str();
-	//this->log->debug(copyOfStr.c_str());
+	std::ostringstream stringStream;
+	stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Se llamo al destructor.";
+	std::string copyOfStr = stringStream.str();
+	this->log->debug(copyOfStr.c_str());
 	}
+	*/
 	this->log->~Logger();
 	this->cpipe->~ConcPipe();
 	SignalHandler::getInstance()->destruir();
@@ -205,27 +207,37 @@ void VentanillaEntrada :: iniciar(){
 				this->log->debug(copyOfStr.c_str());
 				}
 
+				MsgFST st=msgf.toStruct();
+
 				// Se envia la consulta al administrador general
-				this->cpipe->escribir((char*)str.c_str(),MsgF::DATASIZE);
+				//this->cpipe->escribir((char*)str.c_str(),MsgF::DATASIZE);
+				this->cpipe->escribir((void*)&st,sizeof(st));
 
 				// Se espera la respuesta
+
 				MsgFString mensajeE;
 				for(int i=0; i<MsgF::DATASIZE;i++){
 					mensajeE.dato[i]='0';
 				}
 
+
+				MsgFST st2;
+
 				this->canalEAdmin.waitRead();
 				mensajeE=this->canalEAdmin.leer();
 
+
 				//mensajeE.dato[MsgF::DATASIZE-1]='\0';
 
+				MsgF msgr(st2);
 				{
 				std::stringstream stringStream;
-				stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": respuesta recibida: " << mensajeE.dato;
+				stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": respuesta recibida: " << msgr.toString();
 				string copyOfStr = stringStream.str();
 				this->log->debug(copyOfStr.c_str());
 				}
-				MsgF msgr(string(mensajeE.dato));
+
+				//MsgF msgr(string(mensajeE.dato));
 
 				{
 				std::stringstream stringStream;

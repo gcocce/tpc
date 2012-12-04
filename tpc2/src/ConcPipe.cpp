@@ -51,7 +51,7 @@ void ConcPipe::iniciar(int Modo){
 	this->semItemListos->abrir();
 }
 
-int ConcPipe::escribir( char* dato,int datoSize ){
+int ConcPipe::escribir( void* dato,int datoSize ){
 	int res=0;
 
 	//printf("tuberia escribir %d\n",getpid());
@@ -80,15 +80,16 @@ int ConcPipe::escribir( char* dato,int datoSize ){
 	return res;
 }
 
-int ConcPipe::leer( char* buffer,int datoSize ){
+int ConcPipe::leer( void* buffer,int datoSize ){
 	int res=0;
 	int leido=0;
 
 	//printf("tuberia leer %d\n",getpid());
 
+	/*
 	for (int i=0;i<datoSize;i++){
 		buffer[i]=0;
-	}
+	}*/
 
 	res=this->semItemListos->wait();
 	if (res!=0){

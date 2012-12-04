@@ -19,7 +19,7 @@ void Pipe :: setearModo ( int modo ) {
 	}
 }
 
-int Pipe :: escribir ( char* dato,int datoSize ) {
+int Pipe :: escribir ( void* dato,int datoSize ) {
 	if ( this->lectura == true ) {
 		close ( this->descriptores[0] );
 		this->lectura = false;
@@ -29,15 +29,15 @@ int Pipe :: escribir ( char* dato,int datoSize ) {
 	return resultado;
 }
 
-int Pipe :: leer ( char* buffer,int buffSize ) {
+int Pipe :: leer ( void* buffer,int buffSize ) {
 	if ( this->escritura == true ) {
 		close ( this->descriptores[1] );
 		this->escritura = false;
 	}
 
-	for (int i=0;i<buffSize;i++){
+	/*for (int i=0;i<buffSize;i++){
 		buffer[i]=0;
-	}
+	}*/
 
 	int resultado = read ( this->descriptores[0],buffer,buffSize );
 	return resultado;
