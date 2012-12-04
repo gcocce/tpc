@@ -62,6 +62,7 @@ void Auto::run(){
 
 	Semaforo barreraSalida(path , 4 + 10 * ventanilla_salida);
 	BufferSincronizado<message> outputSalida(path ,5 + 10 * ventanilla_salida);
+	Semaforo salidaACK(path , 8 + 10 * ventanilla_salida);
 
 	if (input.abrir()!=SEM_OK){
 		{
@@ -131,7 +132,18 @@ void Auto::run(){
 		this->log->~Logger();
 		exit(27);
 	}
-
+	if (salidaACK.abrir()!=SEM_OK){
+		{
+		stringstream stringStream;
+		stringStream << "Auto: venanilla salida " << ventanilla_salida << " cerrada. Me voy.";
+		string copyOfStr = stringStream.str();
+		log->debug(copyOfStr.c_str());
+		}
+		log->debug("Auto: Finaliza el proceso.");
+		this->terminar();
+		this->log->~Logger();
+		exit(26);
+	}
 	message msg;
 	msg.pid=getpid();
 	msg.place=0;
@@ -213,6 +225,7 @@ void Auto::run(){
 
 		outputSalida.escribir(msg);
 		outputSalida.signalRead();
+		salidaACK.wait();
 		//barreraSalida.cerrar();
 		outputSalida.cerrar();
 	}
