@@ -1,9 +1,7 @@
 //============================================================================
 // Name        : admin2.cpp
 // Author      : Pablo L
-// Version     :
-// Copyright   : 
-// Description : Hello World in C++, Ansi-style
+// Version     : 2.0
 //============================================================================
 
 #include <iostream>
@@ -140,16 +138,48 @@ int obtenerCantidadEstacionamientos(Cola<mensaje> *queue){
 	return response.value;
 }
 
-int main() {
+void mostrarAyuda(){
+	cout << "Uso del programa:"										<< endl;
+	cout << "comando estacionamiento"								<< endl;
+	cout << ""														<< endl;
+	cout << "estacionamiento: numero de estacionamiento (entero)"	<< endl;
+}
+
+bool parsearParametros(int cantidadArgumentos, char **argumentos, int &estacionamiento){
+	if(cantidadArgumentos < 1){
+		mostrarAyuda();
+		return false;
+	}else{
+		if(isdigit(*argumentos[1])){
+			estacionamiento=atoi(argumentos[1]);
+			if (estacionamiento==0){
+				cerr << "Error: el tiempo de la simulacion no puede ser cero." << endl;
+				return false;
+			}
+			return true;
+		}else{
+			cerr << "Error: El primer argumento debe ser numerico." << endl;
+			return false;
+		}
+	}
+}
+
+int main(int argc, char **argv) {
+	int estacionamiento=0;
+	parsearParametros(argc,argv,estacionamiento);
 	SignalHandler::getInstance()->registrarHandler(SIGINT,&finEjecucion );
 
-	Cola<mensaje> queue("AdminGral.dat",'M');
+	char buffer [100];
+	sprintf (buffer, "Estacionamiento.%d.dat", estacionamiento);
+	Cola<mensaje> queue(buffer,'M');
 	if(queue.ready==false){
 		mostrarError(1);
 		return 0;
 	}
-
+	/*
 	int estacionamientos= obtenerCantidadEstacionamientos(&queue);
 	menuGeneral(estacionamientos, &queue);
+	 */
+	menuEstacionamiento(estacionamiento,&queue);
 	return 0;
 }
