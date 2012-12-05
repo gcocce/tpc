@@ -146,7 +146,7 @@ void mostrarAyuda(){
 }
 
 bool parsearParametros(int cantidadArgumentos, char **argumentos, int &estacionamiento){
-	if(cantidadArgumentos < 1){
+	if(cantidadArgumentos < 2){
 		mostrarAyuda();
 		return false;
 	}else{
@@ -165,8 +165,8 @@ bool parsearParametros(int cantidadArgumentos, char **argumentos, int &estaciona
 }
 
 int main(int argc, char **argv) {
-	int estacionamiento=0;
-	parsearParametros(argc,argv,estacionamiento);
+	//int estacionamiento=0;
+	//parsearParametros(argc,argv,estacionamiento);
 	SignalHandler::getInstance()->registrarHandler(SIGINT,&finEjecucion );
 
 	Cola<mensaje> queue("AdminGral.dat",'M');
