@@ -56,6 +56,7 @@ void GestorConsulta::eliminar(){
 		this->log->debug(copyOfStr.c_str());
 	}
 		this->canalEAdmin.eliminar();
+		this->queue.destruir();
 }
 
 void GestorConsulta:: abrir(){
@@ -82,10 +83,16 @@ void GestorConsulta::run(){
 
 		mensaje buffer;
 		if(this->queue.ready==true){
-			this->queue.leer(0,&buffer);
+			this->queue.leer(1,&buffer);
 		}else{
 			this->estado=1;
 			continue;
+		}
+		{
+		std::stringstream stringStream;
+		stringStream << "GestorConsulta, mensaje recibido: from-" << buffer.id << " tipo-" << buffer.type << " estacionamiento-" << buffer.value;
+		string copyOfStr = stringStream.str();
+		this->log->debug(copyOfStr.c_str());
 		}
 		bloquearSigint();
 		switch (buffer.type) {

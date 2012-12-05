@@ -18,32 +18,34 @@ SIGINT_Handler finEjecucion;
 
 void mostrarMonto(int estacionamiento, Cola<mensaje> *queue){
 	mensaje request, response;
-	request.mtype= 0;
+	request.mtype= 1;
 	request.id= getpid();
 	request.type= 1;
 	request.value= estacionamiento;
 	queue->escribir(request);
 	queue->leer(getpid(),&response);
-	cout << "Monto recaudado " << response.value << "$" << endl;
+	printf("Monto recaudado %3.2f $.\n",response.value);
+	cin.get();
 	cin.get();
 }
 
 void mostarAutos(int estacionamiento, Cola<mensaje> *queue){
 	mensaje request, response;
-	request.mtype= 0;
+	request.mtype= 1;
 	request.id= getpid();
 	request.type= 2;
 	request.value= estacionamiento;
 	queue->escribir(request);
 	queue->leer(getpid(),&response);
-	cout << "Autos estacionados " << response.value << endl;
+	printf("Autos estacionados %3.0f. \n",response.value);
+	cin.get();
 	cin.get();
 }
 
 void mostarRecurrente(int estacionamiento, Cola<mensaje> *queue){
 	do {
 		mensaje request, response, response2;
-			request.mtype= 0;
+			request.mtype= 1;
 			request.id= getpid();
 			request.type= 1;
 			request.value= estacionamiento;
@@ -52,7 +54,8 @@ void mostarRecurrente(int estacionamiento, Cola<mensaje> *queue){
 			request.type= 2;
 			queue->escribir(request);
 			queue->leer(getpid(),&response2);
-			cout << "Monto recaudado " << response.value << "$. Autos estacionados " << response2.value << endl;
+			printf("Monto recaudado %3.2f $. Autos estacionados %3.0f. \n",response.value, response2.value);
+			sleep(2);
 	} while (finEjecucion.getGracefulQuit()==0);
 	finEjecucion.setGracefulQuit(0);
 }
@@ -77,10 +80,10 @@ void menuEstacionamiento(int estacionamiento, Cola<mensaje> *queue){
 			case 0: // SALIR
 				salir = true;
 				break;
-			case 1: // MONTO
+			case 2: // MONTO
 				mostrarMonto(estacionamiento,queue);
 				break;
-			case 2: // AUTOS
+			case 1: // AUTOS
 				mostarAutos(estacionamiento,queue);
 				break;
 			case 3: // RECURRENTE
@@ -129,7 +132,7 @@ void mostrarError(int code){
 
 int obtenerCantidadEstacionamientos(Cola<mensaje> *queue){
 	mensaje request, response;
-	request.mtype= 0;
+	request.mtype= 1;
 	request.id= getpid();
 	request.type= 0;
 	request.value= 0;
@@ -145,28 +148,7 @@ void mostrarAyuda(){
 	cout << "estacionamiento: numero de estacionamiento (entero)"	<< endl;
 }
 
-bool parsearParametros(int cantidadArgumentos, char **argumentos, int &estacionamiento){
-	if(cantidadArgumentos < 2){
-		mostrarAyuda();
-		return false;
-	}else{
-		if(isdigit(*argumentos[1])){
-			estacionamiento=atoi(argumentos[1]);
-			if (estacionamiento==0){
-				cerr << "Error: el tiempo de la simulacion no puede ser cero." << endl;
-				return false;
-			}
-			return true;
-		}else{
-			cerr << "Error: El primer argumento debe ser numerico." << endl;
-			return false;
-		}
-	}
-}
-
 int main(int argc, char **argv) {
-	//int estacionamiento=0;
-	//parsearParametros(argc,argv,estacionamiento);
 	SignalHandler::getInstance()->registrarHandler(SIGINT,&finEjecucion );
 
 	Cola<mensaje> queue("AdminGral.dat",'M');
