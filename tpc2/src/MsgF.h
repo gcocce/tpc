@@ -31,6 +31,7 @@ public:
 		obtenerLugar=1,
 		liberarLugar,
 		estadoEstacionamiento,
+		cantidadEstacionamientos
 	};
 
 	int getEstado();

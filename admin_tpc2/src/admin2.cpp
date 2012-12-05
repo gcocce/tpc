@@ -169,17 +169,12 @@ int main(int argc, char **argv) {
 	parsearParametros(argc,argv,estacionamiento);
 	SignalHandler::getInstance()->registrarHandler(SIGINT,&finEjecucion );
 
-	char buffer [100];
-	sprintf (buffer, "Estacionamiento.%d.dat", estacionamiento);
-	Cola<mensaje> queue(buffer,'M');
+	Cola<mensaje> queue("AdminGral.dat",'M');
 	if(queue.ready==false){
 		mostrarError(1);
 		return 0;
 	}
-	/*
 	int estacionamientos= obtenerCantidadEstacionamientos(&queue);
 	menuGeneral(estacionamientos, &queue);
-	 */
-	menuEstacionamiento(estacionamiento,&queue);
 	return 0;
 }

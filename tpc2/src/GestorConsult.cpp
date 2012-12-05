@@ -14,7 +14,7 @@
 
 using namespace std;
 
-GestorConsulta::GestorConsulta(Logger* log, char *path, ConcPipe* cp):canalEAdmin(path, 70){
+GestorConsulta::GestorConsulta(Logger* log, char *path, ConcPipe* cp):canalEAdmin(path, 70),queue(path,'M'){
 	{
 		stringstream stringStream;
 		stringStream << "GestorConsulta: se crea el gestor de consultas.";
@@ -29,6 +29,7 @@ GestorConsulta::GestorConsulta(Logger* log, char *path, ConcPipe* cp):canalEAdmi
 GestorConsulta::~GestorConsulta(){
 	this->log->~Logger();
 	this->cpipe->~ConcPipe();
+	this->queue.destruir();
 	exit(this->estado);
 }
 
@@ -78,73 +79,139 @@ void GestorConsulta::run(){
 	log->debug("GestorConsulta: se inicia el metodo run.");
 
 	while(!this->getFinalizar() && this->estado==0){
-		int lugaresOcupados=0;
-		int montoRecaudado=0;
 
-		//quitar el sleep luego
-		sleep(1);
-
-		/* Recibir mensaje de admin2  */
-		//TODO: procesar mensaje de la cola
-		// instanciar esta variable al procesar el mensaje
-		int estacionamiento=0;
-
-
-
-
-		//bloquearSigint();
-		// Datos de la consulta:  numero de estacionamiento
-		// Respuesta: lugares ocupados y monto recaudado
-		//Poner lo que corresponda según se procesa o no el mensaje
-		if (false){
-			/* Consultar al AdministradorGeneral */
-			MsgF msgf;
-			msgf.setConsulta(MsgF::estadoEstacionamiento);
-			msgf.setEstacionamiento(estacionamiento);
-
-			string str=msgf.toString();
-			{
-			std::stringstream stringStream;
-			stringStream << "GestorConsulta: Est " << estacionamiento << ": consulta enviada: " << str;
-			string copyOfStr = stringStream.str();
-			this->log->debug(copyOfStr.c_str());
-			}
-
-			MsgFST st=msgf.toStruct();
-
-			// Se envia la consulta al administrador general
-			this->cpipe->escribir((void*)&st,sizeof(st));
-
-
-			/* Esperar respuesta del AdministradorGeneral */
-			MsgFST st2;
-
-			this->canalEAdmin.waitRead();
-			st2=this->canalEAdmin.leer();
-
-			MsgF msgr(st2);
-			{
-			std::stringstream stringStream;
-			stringStream << "GestorConsulta: Est " << estacionamiento << ": respuesta recibida: " << msgr.toString();
-			string copyOfStr = stringStream.str();
-			this->log->debug(copyOfStr.c_str());
-			}
-
-			lugaresOcupados=msgr.getLugar();
-			montoRecaudado=msgr.getMonto();
+		mensaje buffer;
+		if(this->queue.ready==true){
+			this->queue.leer(0,&buffer);
+		}else{
+			this->estado=1;
+			continue;
 		}
+		bloquearSigint();
+		switch (buffer.type) {
+			case 0: //Cantidad estacionamientos
+				{
+					MsgF msgf;
+					msgf.setConsulta(MsgF::cantidadEstacionamientos);
+					msgf.setEstacionamiento(0);
 
-		/* Responder mensaje */
-		//TODO: contestar mensaje a admin2
+					string str=msgf.toString();
+					{
+					std::stringstream stringStream;
+					stringStream << "GestorConsulta, consulta enviada: " << str;
+					string copyOfStr = stringStream.str();
+					this->log->debug(copyOfStr.c_str());
+					}
+
+					MsgFST st=msgf.toStruct();
+					// Se envia la consulta al administrador general
+					this->cpipe->escribir((void*)&st,sizeof(st));
+
+					/* Esperar respuesta del AdministradorGeneral */
+					MsgFST st2;
+
+					this->canalEAdmin.waitRead();
+					st2=this->canalEAdmin.leer();
+
+					MsgF msgr(st2);
+					{
+					std::stringstream stringStream;
+					stringStream << "GestorConsulta, respuesta recibida: " << msgr.toString();
+					string copyOfStr = stringStream.str();
+					this->log->debug(copyOfStr.c_str());
+					}
+
+					buffer.mtype=buffer.id;
+					buffer.value=msgr.getEstacionamiento();
+					queue.escribir(buffer);
+				}
+				break;
+			case 1: //Monto recaudado
+				/* Consultar al AdministradorGeneral */
+				{
+					MsgF msgf;
+					msgf.setConsulta(MsgF::estadoEstacionamiento);
+					msgf.setEstacionamiento(buffer.value);
+
+					string str=msgf.toString();
+					{
+					std::stringstream stringStream;
+					stringStream << "GestorConsulta: Est " << (int)buffer.value << ": consulta enviada: " << str;
+					string copyOfStr = stringStream.str();
+					this->log->debug(copyOfStr.c_str());
+					}
+
+					MsgFST st=msgf.toStruct();
+
+					// Se envia la consulta al administrador general
+					this->cpipe->escribir((void*)&st,sizeof(st));
 
 
+					/* Esperar respuesta del AdministradorGeneral */
+					MsgFST st2;
+
+					this->canalEAdmin.waitRead();
+					st2=this->canalEAdmin.leer();
+
+					MsgF msgr(st2);
+					{
+					std::stringstream stringStream;
+					stringStream << "GestorConsulta: Est " << (int)buffer.value << ": respuesta recibida: " << msgr.toString();
+					string copyOfStr = stringStream.str();
+					this->log->debug(copyOfStr.c_str());
+					}
+
+					buffer.mtype=buffer.id;
+					buffer.value=msgr.getMonto();
+					queue.escribir(buffer);
+				}
+				break;
+			case 2: //Autos estacionados
+				/* Consultar al AdministradorGeneral */
+				{
+					MsgF msgf;
+					msgf.setConsulta(MsgF::estadoEstacionamiento);
+					msgf.setEstacionamiento(buffer.value);
+
+					string str=msgf.toString();
+					{
+					std::stringstream stringStream;
+					stringStream << "GestorConsulta: Est " << (int)buffer.value << ": consulta enviada: " << str;
+					string copyOfStr = stringStream.str();
+					this->log->debug(copyOfStr.c_str());
+					}
+
+					MsgFST st=msgf.toStruct();
+
+					// Se envia la consulta al administrador general
+					this->cpipe->escribir((void*)&st,sizeof(st));
 
 
+					/* Esperar respuesta del AdministradorGeneral */
+					MsgFST st2;
 
-		//desbloquearSigint();
+					this->canalEAdmin.waitRead();
+					st2=this->canalEAdmin.leer();
+
+					MsgF msgr(st2);
+					{
+					std::stringstream stringStream;
+					stringStream << "GestorConsulta: Est " << (int)buffer.value << ": respuesta recibida: " << msgr.toString();
+					string copyOfStr = stringStream.str();
+					this->log->debug(copyOfStr.c_str());
+					}
+
+					buffer.mtype=buffer.id;
+					buffer.value=msgr.getLugar();
+					queue.escribir(buffer);
+				}
+				break;
+			default:
+				this->log->debug("Consulta extraña.");
+			break;
+		}
+		desbloquearSigint();
 	}
-
-
 	log->debug("GestorConsulta: finaliza el metodo run.");
 }
 

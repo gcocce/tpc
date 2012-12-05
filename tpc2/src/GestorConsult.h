@@ -12,6 +12,8 @@
 #include "MsgF.h"
 #include "logger.h"
 #include "proceso.h"
+#include "Cola.h"
+#include "Mensajes.h"
 
 class GestorConsulta: public Proceso{
 public:
@@ -24,7 +26,7 @@ public:
 
 private:
 	Logger* log;
-
+	Cola<mensaje> queue;
 	ConcPipe* cpipe;
 	BufferSincronizado<MsgFST> canalEAdmin;
 

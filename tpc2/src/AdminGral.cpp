@@ -20,6 +20,7 @@ AdminGral::AdminGral(Logger* log, int estacionamientos, Semaforo* semCrear, int 
 	this->estacionamientos=estacionamientos;
 	this->espacios=espacios;
 	this->costo=costo;
+	this->pgestor=0;
 }
 
 AdminGral::~AdminGral(){
@@ -252,6 +253,23 @@ void AdminGral::run(){
 				  pvBufferGestor->signalRead();
 			  }
 			    break;
+			  case MsgF::cantidadEstacionamientos:
+			  	  {
+					  log->debug("AdminGral: consulta total estacionamientos.");
+					  msg.setEstacionamiento(this->estacionamientos);
+
+					  MsgFST st=msg.toStruct();
+
+					  pvBufferGestor->escribir(st);
+					  pvBufferGestor->signalRead();
+					{
+						stringstream stringStream;
+						stringStream << "AdminGral: Mensaje enviado: " << msg.toString();
+						string copyOfStr = stringStream.str();
+						log->debug(copyOfStr.c_str());
+					}
+				  }
+			 	break;
 			  default :
 			    this->estado=1;
 			    break;

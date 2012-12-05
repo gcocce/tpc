@@ -8,6 +8,7 @@
 #include "SignalHandler.h"
 #include "logger.h"
 #include "GestorConsult.h"
+#include <stdlib.h>
 
 using namespace std;
 
@@ -29,8 +30,6 @@ private:
 	Semaforo* semInicio;
 
 	vector<Estacionamiento*> vEstacionamientos;
-
-	BufferSincronizado<MsgFST>* pvBufferGestor;
 	pid_t pgestor;
 };
 
