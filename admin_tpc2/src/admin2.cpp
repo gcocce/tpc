@@ -16,15 +16,31 @@ using namespace std;
 
 SIGINT_Handler finEjecucion;
 
+void mostrarError(int code){
+	switch (code) {
+		case 1:
+			cout << "El Servidor de Estacionamiento no esta disponible." << endl;
+			break;
+		default:
+			cout << "Error. Codigo " << code << "." << endl;
+			break;
+	}
+}
+
 void mostrarMonto(int estacionamiento, Cola<mensaje> *queue){
 	mensaje request, response;
 	request.mtype= 1;
 	request.id= getpid();
 	request.type= 1;
 	request.value= estacionamiento;
-	queue->escribir(request);
-	queue->leer(getpid(),&response);
-	printf("Monto recaudado %3.2f $.\n",response.value);
+	queue->check();
+	if(queue->ready==true){
+		queue->escribir(request);
+		queue->leer(getpid(),&response);
+		printf("Monto recaudado %3.2f $.\n",response.value);
+	}else{
+		mostrarError(1);
+	}
 	cin.get();
 	cin.get();
 }
@@ -35,9 +51,14 @@ void mostarAutos(int estacionamiento, Cola<mensaje> *queue){
 	request.id= getpid();
 	request.type= 2;
 	request.value= estacionamiento;
-	queue->escribir(request);
-	queue->leer(getpid(),&response);
-	printf("Autos estacionados %3.0f. \n",response.value);
+	queue->check();
+	if(queue->ready==true){
+		queue->escribir(request);
+		queue->leer(getpid(),&response);
+		printf("Autos estacionados %3.0f. \n",response.value);
+	}else{
+		mostrarError(1);
+	}
 	cin.get();
 	cin.get();
 }
@@ -49,14 +70,20 @@ void mostarRecurrente(int estacionamiento, Cola<mensaje> *queue){
 			request.id= getpid();
 			request.type= 1;
 			request.value= estacionamiento;
-			queue->escribir(request);
-			queue->leer(getpid(),&response);
-			request.type= 2;
-			queue->escribir(request);
-			queue->leer(getpid(),&response2);
-			printf("Monto recaudado %3.2f $. Autos estacionados %3.0f. \n",response.value, response2.value);
-			sleep(2);
-	} while (finEjecucion.getGracefulQuit()==0);
+			queue->check();
+			if(queue->ready==true){
+				queue->escribir(request);
+				queue->leer(getpid(),&response);
+				request.type= 2;
+				queue->escribir(request);
+				queue->leer(getpid(),&response2);
+				printf("Monto recaudado %3.2f $. Autos estacionados %3.0f. \n",response.value, response2.value);
+				sleep(2);
+			}else{
+				mostrarError(1);
+				sleep(2);
+			}
+	} while (finEjecucion.getGracefulQuit()==0 && queue->ready==true);
 	finEjecucion.setGracefulQuit(0);
 }
 
@@ -117,17 +144,6 @@ void menuGeneral(int estacionamientos, Cola<mensaje> *queue){
 			menuEstacionamiento(opcion, queue);
 		}
 	}while (salir==false && finEjecucion.getGracefulQuit()==0);
-}
-
-void mostrarError(int code){
-	switch (code) {
-		case 1:
-			cout << "El Servidor de Estacionamiento no esta disponible." << endl;
-			break;
-		default:
-			cout << "Error. Codigo " << code << "." << endl;
-			break;
-	}
 }
 
 int obtenerCantidadEstacionamientos(Cola<mensaje> *queue){

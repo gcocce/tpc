@@ -17,6 +17,7 @@ template <class T> class Cola {
 		int escribir ( T dato );
 		int leer ( int tipo,T* buffer );
 		int destruir ();
+		void check();
 		bool ready;
 };
 
@@ -40,6 +41,14 @@ template <class T> Cola<T> :: ~Cola () {
 template <class T> int Cola<T> :: destruir () {
 	int resultado = msgctl ( this->id,IPC_RMID,NULL );
 	return resultado;
+}
+
+template <class T> void Cola<T> :: check () {
+	msqid_ds info;
+	int resultado = msgctl ( this->id,IPC_STAT,&info );
+	if(resultado!=0){
+		this->ready=false;
+	}
 }
 
 template <class T> int Cola<T> :: escribir ( T dato ) {
