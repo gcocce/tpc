@@ -25,7 +25,7 @@ template <class T> Cola<T> :: Cola ( char* archivo,char letra ) {
 	if ( this->clave == -1 ){
 		this->ready=false;
 	}else{
-		this->id = msgget ( this->clave,0777 );
+		this->id = msgget ( this->clave,0777|IPC_CREAT );
 		if ( this->id == -1 ){
 			this->ready=false;
 		}else{
