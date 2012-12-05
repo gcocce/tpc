@@ -60,6 +60,10 @@ bool parsearParametros(int cantidadArgumentos, char **argumentos, int &tiempo, i
 
 		if(isdigit(*argumentos[3])){
 			estacionamientos=atof(argumentos[3]);
+			if (estacionamientos > 5){
+				cout << "La simulacion soporta hasta 5 estacionamientos." << endl;
+				return false;
+			}
 		}else{
 			cerr << "Error: El tercer argumento debe ser numerico." << endl;
 			ayuda=true;
