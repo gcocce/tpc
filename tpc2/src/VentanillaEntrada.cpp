@@ -1,9 +1,3 @@
-/*
- * VentanillaEntrada.h
- *
- *  Created on: Oct 16, 2012
- *      Author: plucadei
- */
 #include "VentanillaEntrada.h"
 #include <iostream>
 #include <sstream>
@@ -26,14 +20,6 @@ VentanillaEntrada :: VentanillaEntrada(Logger* log, char *path, int est, char nu
 	}
 
 VentanillaEntrada :: ~VentanillaEntrada(){
-	/*
-	{
-	std::ostringstream stringStream;
-	stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Se llamo al destructor.";
-	std::string copyOfStr = stringStream.str();
-	this->log->debug(copyOfStr.c_str());
-	}
-	*/
 	this->log->~Logger();
 	this->cpipe->~ConcPipe();
 	SignalHandler::getInstance()->destruir();
@@ -83,12 +69,6 @@ void VentanillaEntrada :: crear(){
 	}
 
 void VentanillaEntrada :: eliminar(){
-	{
-	//	std::ostringstream stringStream;
-	//	stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Se llamo al metodo eliminar.";
-	//	std::string copyOfStr = stringStream.str();
-	//	this->log->debug(copyOfStr.c_str());
-	}
 		this->barrera.eliminar();
 		this->canalEntrada.eliminar();
 		this->canalSalida.eliminar();
@@ -157,22 +137,8 @@ void VentanillaEntrada :: iniciar(){
 		}
 
 		while(this->abierta==true){
-			{
-			//stringstream stringStream;
-			//stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": canalEntrada.waitRead().";
-			//string copyOfStr = stringStream.str();
-			//this->log->debug(copyOfStr.c_str());
-			}
-
 			this->canalEntrada.waitRead();
 			bloquearSigint();
-
-			{
-			//std::stringstream stringStream;
-			//stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": mensaje recibido, canalEntrada.leer().";
-			//string copyOfStr = stringStream.str();
-			//this->log->debug(copyOfStr.c_str());
-			}
 
 			message msg= this->canalEntrada.leer();
 
@@ -210,7 +176,6 @@ void VentanillaEntrada :: iniciar(){
 				MsgFST st=msgf.toStruct();
 
 				// Se envia la consulta al administrador general
-				//this->cpipe->escribir((char*)str.c_str(),MsgF::DATASIZE);
 				this->cpipe->escribir((void*)&st,sizeof(st));
 
 				// Se espera la respuesta
@@ -219,8 +184,6 @@ void VentanillaEntrada :: iniciar(){
 				this->canalEAdmin.waitRead();
 				st2=this->canalEAdmin.leer();
 
-				//mensajeE.dato[MsgF::DATASIZE-1]='\0';
-
 				MsgF msgr(st2);
 				{
 				std::stringstream stringStream;
@@ -228,8 +191,6 @@ void VentanillaEntrada :: iniciar(){
 				string copyOfStr = stringStream.str();
 				this->log->debug(copyOfStr.c_str());
 				}
-
-				//MsgF msgr(string(mensajeE.dato));
 
 				{
 				std::stringstream stringStream;
@@ -249,15 +210,6 @@ void VentanillaEntrada :: iniciar(){
 				msg.place= -1;
 			}
 
-
-			{
-			//std::stringstream stringStream;
-			//stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": canalSalida.waitWrite().";
-			//string copyOfStr = stringStream.str();
-			//this->log->debug(copyOfStr.c_str());
-			}
-
-
 			{
 			std::stringstream stringStream;
 			stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Escribe mensaje, pid: " << msg.pid << " lugar: " << (int)msg.place << " tiempo: " << (int)msg.time;
@@ -267,13 +219,6 @@ void VentanillaEntrada :: iniciar(){
 
 			this->canalSalida.escribir(msg);
 
-			{
-			//std::stringstream stringStream;
-			//stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": canalEntrada.signalRead().";
-			//string copyOfStr = stringStream.str();
-			//this->log->debug(copyOfStr.c_str());
-			}
-
 			this->canalSalida.signalRead();
 			desbloquearSigint();
 			this->barrera.signal();
@@ -282,13 +227,6 @@ void VentanillaEntrada :: iniciar(){
 }
 
 void VentanillaEntrada :: finalizar(){
-	{
-	//std::ostringstream stringStream;
-	//stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Se llamo al metodo finalizar.";
-	//std::string copyOfStr = stringStream.str();
-	//this->log->debug(copyOfStr.c_str());
-	}
-
 	this->abierta=false;
 	this->eliminar();
 	this->~VentanillaEntrada();
@@ -296,11 +234,6 @@ void VentanillaEntrada :: finalizar(){
 }
 
 int VentanillaEntrada ::  handleSignal ( int signum ) {
-	//std::ostringstream stringStream;
-	//stringStream << "Vent Ent " << (int)numeroVentanilla << " Est " << this->estacionamiento<< ": Se llamo al metodo handSignal.";
-	//std::string copyOfStr = stringStream.str();
-	//this->log->debug(copyOfStr.c_str());
-
 	if( signum == SIGINT ){
 		this->finalizar();
 	}

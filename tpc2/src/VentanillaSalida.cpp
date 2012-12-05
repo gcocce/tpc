@@ -1,9 +1,3 @@
-/*
- * VentanillaEntrada.h
- *
- *  Created on: Oct 16, 2012
- *      Author: plucadei
- */
 #include "VentanillaSalida.h"
 #include <iostream>
 #include <sstream>
@@ -103,8 +97,6 @@ void VentanillaSalida :: abrir(){
 		exit(1);
 	}
 	if(this->canalEntrada.abrir()!=SEM_OK){
-		//this->barrera.cerrar();
-
 		std::ostringstream stringStream;
 		stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Error al abrir canalEntrada.";
 		std::string copyOfStr = stringStream.str();
@@ -139,7 +131,6 @@ void VentanillaSalida :: abrir(){
 }
 
 void VentanillaSalida :: cerrar(){
-		//this->barrera.cerrar();
 		this->canalEntrada.cerrar();
 		std::ostringstream stringStream;
 		stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": Ventanilla cerrada.";
@@ -160,23 +151,9 @@ void VentanillaSalida :: iniciar(){
 	}
 
 	while(abierto == true ){
-		{
-		//std::stringstream stringStream;
-		//stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": canalEntrada.waitRead().";
-		//string copyOfStr = stringStream.str();
-		//this->log->debug(copyOfStr.c_str());
-		}
-
 		this->canalEntrada.waitRead();
 
 		bloquearSigint();
-
-		{
-		//std::stringstream stringStream;
-		//stringStream << "Vent Sal " << (int)numeroVentanilla << " Est " << this->estacionamiento << ": canalEntrada.leer().";
-		//string copyOfStr = stringStream.str();
-		//this->log->debug(copyOfStr.c_str());
-		}
 
 		message msg= this->canalEntrada.leer();
 
@@ -194,7 +171,6 @@ void VentanillaSalida :: iniciar(){
 		this->log->debug(copyOfStr.c_str());
 		}
 
-		//this->estacionamiento->freePlace(msg.place,msg.time);
 		MsgF msgf;
 		msgf.setConsulta(MsgF::liberarLugar);
 		msgf.setEstacionamiento(this->estacionamiento);
@@ -211,16 +187,9 @@ void VentanillaSalida :: iniciar(){
 		}
 
 		MsgFST st=msgf.toStruct();
-		//this->cpipe->escribir((char*)str.c_str(),MsgF::DATASIZE);
 		this->cpipe->escribir((void*)&st,sizeof(st));
 
 		// Se espera la respuesta
-		/*
-		MsgFString mensajeE;
-		for(int i=0; i<MsgF::DATASIZE;i++){
-			mensajeE.dato[i]='0';
-		}*/
-
 		MsgFST st2;
 
 		this->canalEAdmin.waitRead();

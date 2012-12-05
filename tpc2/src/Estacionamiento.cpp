@@ -211,7 +211,7 @@ void Estacionamiento::finalizar(){
 
 	unlink(this->path);
 
-	cout << "Est: " << this->id << " cerrado." << endl;
+	cout << "Est: " << this->id << " cerrado. Recaudacion: " << this->recaudacion << endl;
 }
 
 int Estacionamiento:: obtenerEspacio(){

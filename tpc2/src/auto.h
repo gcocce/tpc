@@ -1,10 +1,3 @@
-/*
- * car.h
- *
- *  Created on: 04/10/2012
- *      Author: gk
- */
-
 #ifndef CAR_H_
 #define CAR_H_
 

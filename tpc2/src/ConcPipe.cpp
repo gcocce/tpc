@@ -1,10 +1,3 @@
-/*
- * ConcPipe.cpp
- *
- *  Created on: 09/11/2012
- *      Author: gk
- */
-
 #include "ConcPipe.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -54,28 +47,22 @@ void ConcPipe::iniciar(int Modo){
 int ConcPipe::escribir( void* dato,int datoSize ){
 	int res=0;
 
-	//printf("tuberia escribir %d\n",getpid());
-
 	res=this->semAcceso->wait();
 	if (res!=0){
-		printf("hijo semAcceso->wait() %d",res);
+		return res;
 	}
 
 	res=this->tuberia.escribir(dato,datoSize);
-	//printf("tuberia escribir %d\n",res);
 
 	res=this->semAcceso->signal();
 	if (res!=0){
-		printf("hijo semAcceso->signal() %d",res);
+		return res;
 	}
 
 	res=this->semItemListos->signal();
 	if (res!=0){
-		printf("semItemListos->signal() %d",res);
+		return res;
 	}
-
-
-	//printf("tuberia escrita %d\n",getpid());
 
 	return res;
 }
@@ -84,41 +71,25 @@ int ConcPipe::leer( void* buffer,int datoSize ){
 	int res=0;
 	int leido=0;
 
-	//printf("tuberia leer %d\n",getpid());
-
-	/*
-	for (int i=0;i<datoSize;i++){
-		buffer[i]=0;
-	}*/
-
 	res=this->semItemListos->wait();
 	if (res!=0){
-		printf("semItemListos->wait() %d\n",res);
 		return -1;
 	}
 
 	res=this->semAcceso->wait();
 	if (res!=0){
-		printf("leer semAcceso->wait() %d\n",res);
 		return -1;
 	}
-
 
 	leido=this->tuberia.leer(buffer,datoSize);
 	if (leido!=datoSize){
-		printf("error en la cantidad de datos leidos\n");
 		return -1;
 	}
-
-	//printf("tuberia bytes leidos %d\n",leido);
 
 	res=this->semAcceso->signal();
 	if (res!=0){
-		printf("leer semAcceso->signal() %d\n",res);
 		return -1;
 	}
-
-	//printf("tuberia leida %d\n",getpid());
 
 	return leido;
 }

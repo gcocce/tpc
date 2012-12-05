@@ -1,10 +1,3 @@
-/*
- * car.cpp
- *
- *  Created on: 04/10/2012
- *      Author: gk
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

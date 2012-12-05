@@ -1,10 +1,3 @@
-/*
- * VentanillaEntrada.h
- *
- *  Created on: Oct 16, 2012
- *      Author: plucadei
- */
-
 #ifndef VENTANILLASALIDA_H_
 #define VENTANILLASALIDA_H_
 

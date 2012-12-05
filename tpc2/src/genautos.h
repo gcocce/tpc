@@ -1,7 +1,3 @@
-/*
- * cargenerator.h
- *
-  */
 #ifndef CARGENERATOR_H_
 #define CARGENERATOR_H_
 

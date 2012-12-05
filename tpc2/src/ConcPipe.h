@@ -1,9 +1,3 @@
-/*
- * ConcPipe.h
- *
- *  Created on: 09/11/2012
- *      Author: gk
- */
 #ifndef CONCPIPE_H_
 #define CONCPIPE_H_
 

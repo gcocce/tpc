@@ -1,10 +1,3 @@
-/*
- * logger.cpp
- *
- *  Created on: 13/10/2012
- *      Author: gk
- */
-
 #include "logger.h"
 #include <string.h>
 

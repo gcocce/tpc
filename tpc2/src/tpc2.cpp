@@ -1,6 +1,5 @@
 //============================================================================
 // Name        : tpc2.cpp
-// Author      : Gk y Palo
 // Version     : 1.0
 // Description : Segundo Proyecto de Tecnicas Concurrentes I
 //============================================================================
@@ -149,9 +148,13 @@ int main(int argc, char **argv) {
 			g.terminar();
 		}
 
+		cout << "Simulacion corriendo..." << endl;
 
 		// El proceso principal espera el tiempo indicado
 		sleep(tiempo);
+
+		cout << "Se cumplio el tiempo de la simulacion." << endl;
+
 		{// Log
 		std::stringstream stringStream;
 		stringStream << "Main: Termina el tiempo de la simulacion.";

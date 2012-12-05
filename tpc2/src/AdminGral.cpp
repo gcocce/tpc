@@ -87,7 +87,6 @@ void AdminGral::run(){
 		gest.terminar();
 	}
 
-	cout << "AdminGral: Ventanillas creadas, se inicializan las comunicaciones."<< endl;
 	// Abrir los BufferSincronizados para comunicar con las ventanillas de los estacionamientos.
 	{
 		stringstream stringStream;
@@ -132,9 +131,8 @@ void AdminGral::run(){
 
 	cpipe.iniciar(LECTURA);
 
-	// Avisar al proceso principal
+	// Avisar al proceso principal que ya se pueden crear los autos
 	log->debug("AdminGral: se avisa al proceso principal que puede crear el generador.");
-	cout << "AdminGral: ya se puede empezar a crear autos."<< endl;
 	this->semInicio->signal();
 
 	while(!this->getFinalizar() && this->estado==0){
@@ -302,8 +300,10 @@ void AdminGral::run(){
 
 	log->debug("AdminGral: gestor de consultas finalizado.");
 
-	// Finalizar Estacinamientos ,Ventanillas, y administradores de estacionamientos
+	// Finalizar Estacionamientos ,Ventanillas, y administradores de estacionamientos
+	float recaudacion=0;
 	for (int i=0;i<this->estacionamientos; i++){
+
 		{
 			stringstream stringStream;
 			stringStream << "AdminGral: se finaliza el estacionamiento " << i;
@@ -311,6 +311,9 @@ void AdminGral::run(){
 			log->debug(copyOfStr.c_str());
 		}
 		Estacionamiento* estacion=vEstacionamientos[i];
+
+		recaudacion+=estacion->getMontoRecaudado();
+
 		estacion->finalizar();
 		{
 			stringstream stringStream;
@@ -320,6 +323,15 @@ void AdminGral::run(){
 		}
 		delete(estacion);
 	}
+
+	{
+		stringstream stringStream;
+		stringStream << "AdminGral: recaudacion total: " << recaudacion;
+		string copyOfStr = stringStream.str();
+		log->debug(copyOfStr.c_str());
+	}
+
+	cout << "Recaudacion total: "<< recaudacion << endl;
 
 	this->vEstacionamientos.erase (this->vEstacionamientos.begin(),this->vEstacionamientos.end());
 	while(!this->vEstacionamientos.empty()){

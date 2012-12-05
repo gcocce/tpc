@@ -1,9 +1,3 @@
-/*
- * proceso.h
- *
- *  Created on: 06/11/2012
- *      Author: gk
- */
 #ifndef PROCESO_H_
 #define PROCESO_H_
 

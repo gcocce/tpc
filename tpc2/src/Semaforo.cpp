@@ -24,16 +24,14 @@ int Semaforo :: crear(int valorInicial ) {
 		ushort* array;
 	};
 
-	//cout << "Semaforo.crear() path: " << this->path  << " - " << (int)this->code << endl;
-
 	key_t clave = ftok ( this->path,this->code );
 	if(clave == -1){
-		cout << "Error ftok: " << strerror(errno) << endl;
+		//cout << "Error ftok: " << strerror(errno) << endl;
 		return ERROR_FTOK;
 	}else{
 		this->id = semget ( clave, 1, 0666 | IPC_CREAT);
 		if(this->id == -1){
-			cout <<  "Error semget: " << strerror(errno)  << endl;
+			//cout <<  "Error semget: " << strerror(errno)  << endl;
 			return ERROR_SEMGET;
 		}else{
 			semnum init;
@@ -85,10 +83,9 @@ int Semaforo :: wait () {
 	//operacion.sem_flg = SEM_UNDO;
 	operacion.sem_flg = 0;
 
-	//cout << "Semaforo " << this->path  << " - " << this->id << "-" << (int)this->code << " wait." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
-		cout <<  "Error semop: " << strerror(errno)  << endl;
+		//cout <<  "Error semop: " << strerror(errno)  << endl;
 	}
 	return resultado;
 }
@@ -102,15 +99,13 @@ int Semaforo :: signal () {
 	//operacion.sem_flg = SEM_UNDO;
 	operacion.sem_flg = 0;
 
-	//cout << "Semaforo " << this->path << " - " << this->id << "-" << (int)this->code << " signal." << endl;
 	int resultado = semop ( this->id,&operacion,1 );
 	if(resultado==-1){
-		cout << "Error semop: " << strerror(errno)  << endl;
+		//cout << "Error semop: " << strerror(errno)  << endl;
 	}
 	return resultado;
 }
 
 void Semaforo :: eliminar () {
 	semctl ( this->id,0,IPC_RMID );
-	//cout << "Semaforo " << this->path << " - " << (int)this->code << " eliminado." << endl;
 }

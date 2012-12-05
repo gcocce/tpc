@@ -1,10 +1,3 @@
-/*
- * cargenerator.cpp
- *
- *  Created on: 04/10/2012
- *      Author: gk
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -93,10 +86,6 @@ void GenAutos::run(){
 			}
 		}
 	}
-
-	// Se recibio la senial SIGINT, el proceso termina
-	//SignalHandler::getInstance()->removerHandler ( SIGINT);
-	//SignalHandler::destruir ();
 
 	log->debug("Gen: Inicia la finalizacion del proceso");
 

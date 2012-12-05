@@ -29,9 +29,6 @@ private:
 
 	vector<int> vCocheras;
 
-	//vector<BufferSincronizado<MsgFString>*> vBuffersE;
-	//vector<BufferSincronizado<MsgFString>*> vBuffersS;
-
 	vector<BufferSincronizado<MsgFST>*> vBuffersE;
 	vector<BufferSincronizado<MsgFST>*> vBuffersS;
 
@@ -40,7 +37,6 @@ private:
 	int fd;
 	char path[32];
 
-	//Semaforo* semEstAbiertos;
 	ConcPipe* cPipe;
 	Logger* log;
 
@@ -55,9 +51,6 @@ public:
 
 	int getEspaciosOcupados();
 	float getMontoRecaudado();
-
-	//BufferSincronizado<MsgFString>* getBufferEntrada(int ventanilla);
-	//BufferSincronizado<MsgFString>* getBufferSalida(int ventanilla);
 
 	BufferSincronizado<MsgFST>* getBufferEntrada(int ventanilla);
 	BufferSincronizado<MsgFST>* getBufferSalida(int ventanilla);
