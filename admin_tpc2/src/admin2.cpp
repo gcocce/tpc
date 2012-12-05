@@ -119,7 +119,7 @@ void menuEstacionamiento(int estacionamiento, Cola<mensaje> *queue){
 			default:
 				break;
 		}
-	}while (salir==false && finEjecucion.getGracefulQuit()==0);
+	}while (salir==false && finEjecucion.getGracefulQuit()==0 && queue->ready==true);
 }
 
 void mostrarMenu(int estacionamientos){
@@ -143,7 +143,7 @@ void menuGeneral(int estacionamientos, Cola<mensaje> *queue){
 		}else if (opcion < estacionamientos && opcion >=0){
 			menuEstacionamiento(opcion, queue);
 		}
-	}while (salir==false && finEjecucion.getGracefulQuit()==0);
+	}while (salir==false && finEjecucion.getGracefulQuit()==0 && queue->ready==true);
 }
 
 int obtenerCantidadEstacionamientos(Cola<mensaje> *queue){
