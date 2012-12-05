@@ -232,7 +232,7 @@ void AdminGral::run(){
 			  case MsgF::estadoEstacionamiento:
 			  {
 				  // Resolver consulta y responder al Gestor de Consultas
-				  log->debug("AdminGral: consulta lugaresOcupados.");
+				  log->debug("AdminGral: consulta estado Estacionamiento.");
 				  int est=msg.getEstacionamiento();
 
 				{
@@ -242,20 +242,33 @@ void AdminGral::run(){
 					log->debug(copyOfStr.c_str());
 				}
 
-				  Estacionamiento* estacion=vEstacionamientos[est];
+				if (est >= 0 && est < this->estacionamientos){
+					Estacionamiento* estacion=vEstacionamientos[est];
 
-				  msg.setLugar(estacion->getEspaciosOcupados());
-				  msg.setMonto(estacion->getMontoRecaudado());
+					msg.setLugar(estacion->getEspaciosOcupados());
+					msg.setMonto(estacion->getMontoRecaudado());
+				}else{
+					log->debug("AdminGral: El gestor consulta por un numero de estacionamiento no valido.");
+					msg.setLugar(-1);
+					msg.setMonto(-1);
+				}
 
 				  MsgFST st=msg.toStruct();
 
 				  pvBufferGestor->escribir(st);
 				  pvBufferGestor->signalRead();
+
+				{
+					stringstream stringStream;
+					stringStream << "AdminGral: respuesta enviada al Gestor: "<< msg.toString();
+					string copyOfStr = stringStream.str();
+					log->debug(copyOfStr.c_str());
+				}
 			  }
 			    break;
 			  case MsgF::cantidadEstacionamientos:
 			  	  {
-					  log->debug("AdminGral: consulta total estacionamientos.");
+					  log->debug("AdminGral: el Gestor consulta total estacionamientos.");
 					  msg.setEstacionamiento(this->estacionamientos);
 
 					  MsgFST st=msg.toStruct();
@@ -270,7 +283,7 @@ void AdminGral::run(){
 					}
 				  }
 			 	break;
-			  default :
+			  default:
 			    this->estado=1;
 			    break;
 			}

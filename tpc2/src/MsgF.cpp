@@ -175,6 +175,12 @@ string MsgF::toString(){
 			copyOfStr = string(buffer);
 	  }
 	    break;
+	  case cantidadEstacionamientos:
+	  {
+			sprintf(buffer, "%02d %02d %02d %d %.2f",this->consulta,this->estacionamiento,this->ventanilla,this->lugar, this->monto);
+			copyOfStr = string(buffer);
+	  }
+	    break;
 	  default :
 	    this->estado=1;
 	    break;

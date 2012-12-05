@@ -99,10 +99,10 @@ void mostrarMenu(int estacionamientos){
 	system("clear");
 	cout << "Seleccione estacionamiento:" << endl;
 	cout << "---------------------------" << endl;
-	for(int i=1; i<=estacionamientos; i++){
+	for(int i=0; i<estacionamientos; i++){
 		cout << i <<") Estacionamiento " << i  << "." << endl;
 	}
-	cout << "0) Salir." << endl << endl;
+	cout << "-1) Salir." << endl << endl;
 }
 
 void menuGeneral(int estacionamientos, Cola<mensaje> *queue){
@@ -111,9 +111,9 @@ void menuGeneral(int estacionamientos, Cola<mensaje> *queue){
 	do {
 		mostrarMenu(estacionamientos);
 		cin >> opcion;
-		if(opcion==0){
+		if(opcion==-1){
 			salir=true;
-		}else if (opcion <= estacionamientos && opcion >0){
+		}else if (opcion < estacionamientos && opcion >=0){
 			menuEstacionamiento(opcion, queue);
 		}
 	}while (salir==false && finEjecucion.getGracefulQuit()==0);
@@ -157,6 +157,8 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 	int estacionamientos= obtenerCantidadEstacionamientos(&queue);
+
+	cout << "Numero de estacionamientos obtenido: " << estacionamientos << endl;
 	menuGeneral(estacionamientos, &queue);
 	return 0;
 }

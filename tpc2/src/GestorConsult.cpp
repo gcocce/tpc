@@ -90,6 +90,8 @@ void GestorConsulta::run(){
 		}
 		// Comprobamos que no se le indicó finalizar al programa
 		if (!this->getFinalizar()){
+			bloquearSigint();
+
 			{
 			std::stringstream stringStream;
 			stringStream << "GestorConsulta, mensaje recibido: from-" << buffer.id << " tipo-" << buffer.type << " estacionamiento-" << buffer.value;
@@ -97,7 +99,6 @@ void GestorConsulta::run(){
 			this->log->debug(copyOfStr.c_str());
 			}
 
-			bloquearSigint();
 			switch (buffer.type) {
 				case 0: //Cantidad estacionamientos
 					{
@@ -105,10 +106,9 @@ void GestorConsulta::run(){
 						msgf.setConsulta(MsgF::cantidadEstacionamientos);
 						msgf.setEstacionamiento(0);
 
-						string str=msgf.toString();
 						{
 						std::stringstream stringStream;
-						stringStream << "GestorConsulta, consulta enviada: " << str;
+						stringStream << "GestorConsulta, consulta enviada: " << msgf.toString();
 						string copyOfStr = stringStream.str();
 						this->log->debug(copyOfStr.c_str());
 						}
@@ -143,10 +143,9 @@ void GestorConsulta::run(){
 						msgf.setConsulta(MsgF::estadoEstacionamiento);
 						msgf.setEstacionamiento(buffer.value);
 
-						string str=msgf.toString();
 						{
 						std::stringstream stringStream;
-						stringStream << "GestorConsulta: Est " << (int)buffer.value << ": consulta enviada: " << str;
+						stringStream << "GestorConsulta: Est " << (int)buffer.value << ": consulta enviada: " << msgf.toString();
 						string copyOfStr = stringStream.str();
 						this->log->debug(copyOfStr.c_str());
 						}
